@@ -1,0 +1,202 @@
+local tweenService = game:GetService("TweenService")
+local tweenSpeed = 150 -- Speed in studs per second
+
+-- Function to calculate tween duration based on distance and speed
+local function calculateTweenDuration(startPos, endPos, speed)
+    local distance = (endPos - startPos).magnitude
+    return distance / speed
+end
+
+-- Define tween information with a default duration
+local function createTweenInfo(startPos, endPos)
+    local duration = calculateTweenDuration(startPos, endPos, tweenSpeed)
+    return TweenInfo.new(duration, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
+end
+
+-- Toggle mode variable
+local isTweenMode = false -- Start in teleport mode
+local currentTween = nil
+
+-- Define text color
+local textColor = Color3.fromRGB(255, 0, 0) -- Example: Red text color
+
+-- Hold references to buttons
+local teleportButtons = {}
+local visibilityToggleButton
+local modeToggleButton
+
+-- Function to create a Frame and TextButton
+local function createButton(parent, position, text, clickFunction, textColor, backgroundColor)
+    local frame = Instance.new("Frame")
+    frame.Parent = parent
+    frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255) -- White background
+    frame.BackgroundTransparency = 0.9
+    frame.BorderColor3 = Color3.fromRGB(0, 0, 255) -- Blue border
+    frame.BorderSizePixel = 2
+    frame.Size = UDim2.new(1, -10, 0.1, -10) -- Adjust size to fit within the container
+    frame.Position = position
+    frame.Active = true
+    frame.Draggable = true
+
+    local textButton = Instance.new("TextButton")
+    textButton.Parent = frame
+    textButton.BackgroundColor3 = backgroundColor or Color3.fromRGB(255, 255, 255) -- White background
+    textButton.BackgroundTransparency = 0.5
+    textButton.Position = UDim2.new(0.05, 0, 0.05, 0)
+    textButton.TextColor3 = textColor or textColor -- Use provided textColor or default to defined color
+    textButton.Size = UDim2.new(0.9, 0, 0.9, 0)
+    textButton.Font = Enum.Font.PatrickHand
+    textButton.FontSize = Enum.FontSize.Size14
+    textButton.Text = text
+    textButton.TextScaled = true
+    textButton.TextSize = 14
+    textButton.TextWrapped = true
+
+    textButton.MouseButton1Click:Connect(clickFunction)
+
+    -- Store the button frame for visibility toggle
+    table.insert(teleportButtons, frame)
+end
+
+-- Create the main ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = game.CoreGui
+
+-- Create a Frame to hold all buttons
+local buttonContainer = Instance.new("Frame")
+buttonContainer.Parent = screenGui
+buttonContainer.BackgroundTransparency = 1 -- Make background invisible
+buttonContainer.Size = UDim2.new(0.2, 0, 0.8, 0) -- Adjust to be a vertical column
+buttonContainer.Position = UDim2.new(0.8, 0, 0.2, 0) -- Position on the right side of the screen
+buttonContainer.Visible = true -- Initially visible
+
+-- Create Buttons
+createButton(buttonContainer, UDim2.new(0, 0, 0.15, 0), "Tp-Diamond Chest", function()
+    local chest = game:GetService("Workspace"):FindFirstChild("Chest3")
+    if chest then
+        local playerHRP = game.Players.LocalPlayer.Character.HumanoidRootPart
+        local startPos = playerHRP.Position
+        local endPos = chest.Position + Vector3.new(0, 2, 0)
+        if isTweenMode then
+            -- Stop any existing tween
+            if currentTween then
+                currentTween:Cancel()
+            end
+
+            -- Tween mode
+            local tweenInfo = createTweenInfo(startPos, endPos)
+            local goal = {CFrame = CFrame.new(endPos)}
+            currentTween = tweenService:Create(playerHRP, tweenInfo, goal)
+            currentTween:Play()
+        else
+            -- Teleport mode
+            playerHRP.CFrame = CFrame.new(endPos)
+        end
+    else
+        warn("Chest not found: Chest3")
+    end
+end, textColor)
+
+createButton(buttonContainer, UDim2.new(0, 0, 0.25, 0), "Tp-Gold Chest", function()
+    local chest = game:GetService("Workspace"):FindFirstChild("Chest2")
+    if chest then
+        local playerHRP = game.Players.LocalPlayer.Character.HumanoidRootPart
+        local startPos = playerHRP.Position
+        local endPos = chest.Position + Vector3.new(0, 2, 0)
+        if isTweenMode then
+            if currentTween then
+                currentTween:Cancel()
+            end
+            local tweenInfo = createTweenInfo(startPos, endPos)
+            local goal = {CFrame = CFrame.new(endPos)}
+            currentTween = tweenService:Create(playerHRP, tweenInfo, goal)
+            currentTween:Play()
+        else
+            playerHRP.CFrame = CFrame.new(endPos)
+        end
+    else
+        warn("Chest not found: Chest2")
+    end
+end, textColor)
+
+createButton(buttonContainer, UDim2.new(0, 0, 0.35, 0), "Tp-Silver Chest", function()
+    local chest = game:GetService("Workspace"):FindFirstChild("Chest1")
+    if chest then
+        local playerHRP = game.Players.LocalPlayer.Character.HumanoidRootPart
+        local startPos = playerHRP.Position
+        local endPos = chest.Position + Vector3.new(0, 2, 0)
+        if isTweenMode then
+            if currentTween then
+                currentTween:Cancel()
+            end
+            local tweenInfo = createTweenInfo(startPos, endPos)
+            local goal = {CFrame = CFrame.new(endPos)}
+            currentTween = tweenService:Create(playerHRP, tweenInfo, goal)
+            currentTween:Play()
+        else
+            playerHRP.CFrame = CFrame.new(endPos)
+        end
+    else
+        warn("Chest not found: Chest1")
+    end
+end, textColor)
+
+-- Create the toggle button for hiding/showing other buttons
+visibilityToggleButton = Instance.new("TextButton")
+visibilityToggleButton.Parent = screenGui
+visibilityToggleButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255) -- White background to match other buttons
+visibilityToggleButton.BackgroundTransparency = 0.5 -- Set transparency to 0.5
+visibilityToggleButton.BorderColor3 = Color3.fromRGB(0, 0, 255) -- Blue border
+visibilityToggleButton.BorderSizePixel = 2
+visibilityToggleButton.Position = UDim2.new(0.8, 0, 0.05, 0) -- Position on the right side, above the ButtonContainer
+visibilityToggleButton.Size = UDim2.new(0.2, 0, 0.1, 0)
+visibilityToggleButton.Text = "Hide Buttons" -- Initial text
+visibilityToggleButton.TextColor3 = textColor -- Apply text color
+visibilityToggleButton.Font = Enum.Font.PatrickHand
+visibilityToggleButton.FontSize = Enum.FontSize.Size14
+visibilityToggleButton.TextScaled = true
+
+-- Add rounded corners to the toggle button
+local uiCornerVisibility = Instance.new("UICorner")
+uiCornerVisibility.CornerRadius = UDim.new(0.5, 0) -- Fully rounded corners
+uiCornerVisibility.Parent = visibilityToggleButton
+
+-- Visibility toggle function
+local isVisible = true
+visibilityToggleButton.MouseButton1Click:Connect(function()
+    isVisible = not isVisible
+    buttonContainer.Visible = isVisible
+    modeToggleButton.Visible = isVisible -- Hide or show the mode toggle button
+    visibilityToggleButton.Text = isVisible and "Hide Buttons" or "Show Buttons" -- Update text based on visibility
+end)
+
+-- Create the toggle button for switching modes
+modeToggleButton = Instance.new("TextButton")
+modeToggleButton.Parent = screenGui
+modeToggleButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255) -- White background to match other buttons
+modeToggleButton.BackgroundTransparency = 0.5 -- Set transparency to 0.5
+modeToggleButton.BorderColor3 = Color3.fromRGB(0, 0, 255) -- Blue border
+modeToggleButton.BorderSizePixel = 2
+modeToggleButton.Position = UDim2.new(0.8, 0, 0.15, 0) -- Position just below the visibility toggle button
+modeToggleButton.Size = UDim2.new(0.2, 0, 0.1, 0)
+modeToggleButton.Text = "Teleport Mode" -- Start in teleport mode
+modeToggleButton.TextColor3 = textColor -- Apply text color
+modeToggleButton.Font = Enum.Font.PatrickHand
+modeToggleButton.FontSize = Enum.FontSize.Size14
+modeToggleButton.TextScaled = true
+
+-- Add rounded corners to the toggle button
+local uiCornerMode = Instance.new("UICorner")
+uiCornerMode.CornerRadius = UDim.new(0.5, 0) -- Fully rounded corners
+uiCornerMode.Parent = modeToggleButton
+
+-- Toggle mode function
+modeToggleButton.MouseButton1Click:Connect(function()
+    isTweenMode = not isTweenMode
+    modeToggleButton.Text = isTweenMode and "Tween Mode" or "Teleport Mode"
+    
+    -- Cancel current tween if switching to teleport mode
+    if not isTweenMode and currentTween then
+        currentTween:Cancel()
+    end
+end)
