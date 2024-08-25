@@ -1,0 +1,240 @@
+local coreGui = game:GetService("CoreGui")
+local player = game.Players.LocalPlayer
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = coreGui
+
+-- Function to create a frame with buttons and UICorner
+local function createFrame(parent, position, buttonTexts, isSpeedControl)
+    local frame = Instance.new("Frame")
+    frame.Parent = screenGui
+    frame.BackgroundColor3 = Color3.new(0, 0, 0)
+    frame.BackgroundTransparency = 0.5
+    frame.BorderColor3 = Color3.new(0, 0, 1)
+    frame.BorderSizePixel = 2
+    frame.Position = position
+    frame.Size = UDim2.new(0.1, 0, 0.2, 0) -- Adjusted size for multiple buttons
+    frame.Active = true
+    frame.Draggable = true
+    
+    local uiCorner = Instance.new("UICorner")
+    uiCorner.Parent = frame
+    
+    local yOffset = 0
+    local buttons = {}
+    
+    for _, buttonText in ipairs(buttonTexts) do
+        local textButton = Instance.new("TextButton")
+        textButton.Parent = frame
+        textButton.BackgroundColor3 = Color3.new(1, 1, 1)
+        textButton.BackgroundTransparency = 0.5
+        textButton.Position = UDim2.new(0.1, 0, yOffset, 0)
+        textButton.Size = UDim2.new(0.8, 0, 0.2, 0)
+        textButton.Font = Enum.Font.SourceSansLight
+        textButton.TextScaled = true
+        textButton.TextWrapped = true
+        textButton.Text = buttonText
+        yOffset = yOffset + 0.22 -- Update yOffset for next button
+        table.insert(buttons, textButton)
+    end
+    
+    if isSpeedControl then
+        local speedTextBox = Instance.new("TextBox")
+        speedTextBox.Parent = frame
+        speedTextBox.BackgroundColor3 = Color3.new(1, 1, 1)
+        speedTextBox.BackgroundTransparency = 0.5
+        speedTextBox.Position = UDim2.new(0.1, 0, yOffset, 0)
+        speedTextBox.Size = UDim2.new(0.8, 0, 0.4, 0)
+        speedTextBox.Font = Enum.Font.SourceSansLight
+        speedTextBox.TextScaled = true
+        speedTextBox.PlaceholderText = "Change WalkSpeed"
+        speedTextBox.Text = ""
+        speedTextBox.ClearTextOnFocus = false
+        return buttons, speedTextBox
+    else
+        return buttons
+    end
+end
+
+-- Create the first button frame with multiple buttons
+local buttonTexts1 = {"Spawn Plate: On", "Tp: Players Randomiser"}
+local buttons1, _ = createFrame(screenGui, UDim2.new(0.6, 0, 0.491666675, 0), buttonTexts1)
+
+-- Create the second button frame for speed control with TextBox
+local buttonTexts2 = {"Your WalkSpeed"}
+local buttons2, speedTextBox = createFrame(screenGui, UDim2.new(0.6, 0, 0.65, 0), buttonTexts2, true)
+
+-- State variable to track whether the platform is active
+local platformActive = false
+local lastPlate
+
+-- Function to toggle platform creation
+local function togglePlatform()
+    platformActive = not platformActive
+    buttons1[1].Text = platformActive and "Spawn Plate: Off" or "Spawn Plate: On"
+    
+    -- Destroy the current platform if it exists when turning off
+    if not platformActive and lastPlate then
+        lastPlate:Destroy()
+        lastPlate = nil
+    end
+end
+
+-- Function to create and update the platform
+local function updatePlatform()
+    local playerChar = player.Character
+    local humanoidRootPart = playerChar and playerChar:FindFirstChild("HumanoidRootPart")
+
+    if not humanoidRootPart then
+        return
+    end
+
+    -- Destroy the previous platform if it exists
+    if lastPlate then
+        lastPlate:Destroy()
+    end
+
+    -- Create a new platform
+    local newPlate = Instance.new("Part")
+    newPlate.Parent = workspace
+    newPlate.Name = "Platform"
+    newPlate.Anchored = true
+    newPlate.Color = Color3.new(0, 1, 1)
+    newPlate.Material = Enum.Material.Grass
+    newPlate.Size = Vector3.new(20, 1, 20)
+    newPlate.Transparency = 0.95
+    newPlate.Position = humanoidRootPart.Position + Vector3.new(0, -3.9, 0)
+
+    lastPlate = newPlate
+end
+
+-- Function to teleport to a random player
+local function teleportToRandomPlayer()
+    local players = game.Players:GetPlayers()
+    if #players <= 1 then
+        print("Not enough players to teleport to.")
+        return
+    end
+    
+    -- Filter out the local player
+    local otherPlayers = {}
+    for _, p in ipairs(players) do
+        if p ~= player then
+            table.insert(otherPlayers, p)
+        end
+    end
+
+    if #otherPlayers == 0 then
+        print("No other players to teleport to.")
+        return
+    end
+    
+    -- Pick a random player
+    local randomPlayer = otherPlayers[math.random(#otherPlayers)]
+    local randomChar = randomPlayer.Character
+    local randomHumanoidRootPart = randomChar and randomChar:FindFirstChild("HumanoidRootPart")
+    
+    if randomHumanoidRootPart then
+        player.Character.HumanoidRootPart.CFrame = randomHumanoidRootPart.CFrame
+    end
+end
+
+-- Button click events
+buttons1[1].MouseButton1Click:Connect(function()
+    togglePlatform()
+end)
+
+buttons1[2].MouseButton1Click:Connect(function()
+    teleportToRandomPlayer()
+end)
+
+-- Button click event for speed control
+buttons2[1].MouseButton1Click:Connect(function()
+    local speedText = speedTextBox.Text
+    local newSpeed = tonumber(speedText)
+    
+    if newSpeed and newSpeed > 0 then
+        local playerChar = player.Character
+        local humanoid = playerChar and playerChar:FindFirstChild("Humanoid")
+        
+        if humanoid then
+            humanoid.WalkSpeed = newSpeed
+        end
+    end
+end)
+
+-- TextBox FocusLost event for speed control
+speedTextBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        local speedText = speedTextBox.Text
+        local newSpeed = tonumber(speedText)
+        
+        if newSpeed and newSpeed > 0 then
+            local playerChar = player.Character
+            local humanoid = playerChar and playerChar:FindFirstChild("Humanoid")
+            
+            if humanoid then
+                humanoid.WalkSpeed = newSpeed
+            end
+        end
+    end
+end)
+
+-- Update platform position if active
+game:GetService("RunService").RenderStepped:Connect(function()
+    if platformActive then
+        local playerChar = player.Character
+        local humanoidRootPart = playerChar and playerChar:FindFirstChild("HumanoidRootPart")
+        
+        if humanoidRootPart then
+            if not lastPlate then
+                updatePlatform()
+            else
+                lastPlate.Position = humanoidRootPart.Position + Vector3.new(0, -3.9, 0)
+            end
+        end
+    end
+end)
+
+
+
+
+local tweenService = game:GetService("TweenService")
+local player = game.Players.LocalPlayer
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = player:WaitForChild("PlayerGui")  -- Parent ScreenGui to PlayerGui
+
+local function showWelcomeMessage()
+    -- Create a new TextButton for the welcome message
+    local welcomeTextButton = Instance.new("TextButton")
+    welcomeTextButton.Parent = screenGui
+    welcomeTextButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    welcomeTextButton.BackgroundTransparency = 0.5
+    welcomeTextButton.BorderColor3 = Color3.fromRGB(255, 255, 255)
+    welcomeTextButton.BorderSizePixel = 2
+    welcomeTextButton.Position = UDim2.new(0.5, -100, 0.5, -50)  -- Center of the screen
+    welcomeTextButton.Size = UDim2.new(0, 200, 0, 100)
+    welcomeTextButton.Text = "Welcome to my script! | Script by Acient | Tips: you can change your walkspeed by writed inside text box below a number to moving faster or slower, other GUI... one is make you float by it create a Transparency plate below your character, second is teleportation you to random players exist in server | Tap this GUI to make it disappear ! Bye"
+    welcomeTextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    welcomeTextButton.Font = Enum.Font.PatrickHand
+    welcomeTextButton.TextScaled = true
+    welcomeTextButton.TextWrapped = true
+
+    local uiCornerWelcomeTextButton = Instance.new("UICorner")
+    uiCornerWelcomeTextButton.CornerRadius = UDim.new(0.5, 0)
+    uiCornerWelcomeTextButton.Parent = welcomeTextButton
+
+    local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.In)
+    local goal = {TextTransparency = 1}
+    local tween = tweenService:Create(welcomeTextButton, tweenInfo, goal)
+
+    local function onClick()
+        tween:Play()
+        tween.Completed:Connect(function()
+            welcomeTextButton:Destroy()
+        end)
+    end
+
+    welcomeTextButton.MouseButton1Click:Connect(onClick)
+end
+
+showWelcomeMessage()
