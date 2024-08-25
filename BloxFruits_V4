@@ -1,0 +1,325 @@
+local tweenService = game:GetService("TweenService")
+local tweenSpeed = 150 -- Default speed in studs per second
+
+-- Function to calculate tween duration based on distance and speed
+local function calculateTweenDuration(startPos, endPos, speed)
+    local distance = (endPos - startPos).magnitude
+    return distance / speed
+end
+
+-- Define a function to create tween information
+local function createTweenInfo(startPos, endPos)
+    local duration = calculateTweenDuration(startPos, endPos, tweenSpeed)
+    return TweenInfo.new(duration, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
+end
+
+-- Toggle mode variable
+local isTweenMode = false
+local currentTween = nil
+
+-- Hold references to buttons and other UI elements
+local teleportButtons = {}
+local visibilityToggleButton, modeToggleButton, textBox, speedTextBox
+
+-- Function to create a Frame and TextButton with customizable text color
+local function createButton(parent, position, text, clickFunction, textColor, backgroundColor)
+    local frame = Instance.new("Frame")
+    frame.Parent = parent
+    frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255) -- White background
+    frame.BackgroundTransparency = 0.9
+    frame.BorderColor3 = Color3.fromRGB(0, 0, 255) -- Blue border
+    frame.BorderSizePixel = 2
+    frame.Size = UDim2.new(1, -10, 0.1, -10)
+    frame.Position = position
+    frame.Active = true
+    frame.Draggable = true
+
+    local textButton = Instance.new("TextButton")
+    textButton.Parent = frame
+    textButton.BackgroundColor3 = backgroundColor or Color3.fromRGB(255, 255, 255)
+    textButton.BackgroundTransparency = 0.5
+    textButton.Position = UDim2.new(0.05, 0, 0.05, 0)
+    textButton.TextColor3 = textColor or Color3.fromRGB(255, 0, 0)
+    textButton.Size = UDim2.new(0.9, 0, 0.9, 0)
+    textButton.Font = Enum.Font.PatrickHand
+    textButton.FontSize = Enum.FontSize.Size14
+    textButton.Text = text
+    textButton.TextScaled = true
+    textButton.TextSize = 14
+    textButton.TextWrapped = true
+
+    textButton.MouseButton1Click:Connect(clickFunction)
+
+    table.insert(teleportButtons, frame)
+end
+
+-- Function to print all player names to the console
+local function printAllPlayerNames()
+    for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+        print(player.Name)
+    end
+end
+
+-- Execute the printAllPlayerNames function immediately
+printAllPlayerNames()
+
+-- Create the main ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = game.CoreGui
+
+-- Create a Frame to hold all buttons
+local buttonContainer = Instance.new("Frame")
+buttonContainer.Parent = screenGui
+buttonContainer.BackgroundTransparency = 1
+buttonContainer.Size = UDim2.new(0.2, 0, 0.8, 0)
+buttonContainer.Position = UDim2.new(0.8, 0, 0.2, 0)
+buttonContainer.Visible = true
+
+-- Create Buttons with customizable text colors
+createButton(buttonContainer, UDim2.new(0, 0, 0.25, 0), "Tp-Diamond Chest", function()
+    local chest = game:GetService("Workspace"):FindFirstChild("Chest3")
+    if chest then
+        local playerPos = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
+        if isTweenMode then
+            if currentTween then
+                currentTween:Cancel()
+            end
+            local goal = {CFrame = chest.CFrame + Vector3.new(0, 2, 0)}
+            local tweenInfo = createTweenInfo(playerPos, goal.CFrame.Position)
+            currentTween = tweenService:Create(game.Players.LocalPlayer.Character.HumanoidRootPart, tweenInfo, goal)
+            currentTween:Play()
+        else
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = chest.CFrame + Vector3.new(0, 2, 0)
+        end
+    else
+        warn("Chest not found: Chest3")
+    end
+end, Color3.fromRGB(135, 206, 250)) -- Blue color
+
+createButton(buttonContainer, UDim2.new(0, 0, 0.35, 0), "Tp-Gold Chest", function()
+    local chest = game:GetService("Workspace"):FindFirstChild("Chest2")
+    if chest then
+        local playerPos = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
+        if isTweenMode then
+            if currentTween then
+                currentTween:Cancel()
+            end
+            local goal = {CFrame = chest.CFrame + Vector3.new(0, 2, 0)}
+            local tweenInfo = createTweenInfo(playerPos, goal.CFrame.Position)
+            currentTween = tweenService:Create(game.Players.LocalPlayer.Character.HumanoidRootPart, tweenInfo, goal)
+            currentTween:Play()
+        else
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = chest.CFrame + Vector3.new(0, 2, 0)
+        end
+    else
+        warn("Chest not found: Chest2")
+    end
+end, Color3.fromRGB(255, 223, 0)) -- Bright yellow color
+
+createButton(buttonContainer, UDim2.new(0, 0, 0.45, 0), "Tp-Silver Chest", function()
+    local chest = game:GetService("Workspace"):FindFirstChild("Chest1")
+    if chest then
+        local playerPos = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
+        if isTweenMode then
+            if currentTween then
+                currentTween:Cancel()
+            end
+            local goal = {CFrame = chest.CFrame + Vector3.new(0, 2, 0)}
+            local tweenInfo = createTweenInfo(playerPos, goal.CFrame.Position)
+            currentTween = tweenService:Create(game.Players.LocalPlayer.Character.HumanoidRootPart, tweenInfo, goal)
+            currentTween:Play()
+        else
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = chest.CFrame + Vector3.new(0, 2, 0)
+        end
+    else
+        warn("Chest not found: Chest1")
+    end
+end, Color3.fromRGB(192, 192, 192)) -- Silver color
+
+-- Create the new button to set player health to 0
+createButton(buttonContainer, UDim2.new(0, 0, 0.55, 0), "Reset Character", function()
+    local player = game.Players.LocalPlayer
+    if player and player.Character and player.Character:FindFirstChild("Humanoid") then
+        player.Character.Humanoid.Health = 0
+    else
+        warn("Player or Humanoid not found")
+    end
+end, Color3.fromRGB(255, 0, 0)) -- Red color
+
+-- Create the toggle button for hiding/showing other buttons
+visibilityToggleButton = Instance.new("TextButton")
+visibilityToggleButton.Parent = screenGui
+visibilityToggleButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+visibilityToggleButton.BackgroundTransparency = 0.5
+visibilityToggleButton.BorderColor3 = Color3.fromRGB(0, 0, 255)
+visibilityToggleButton.BorderSizePixel = 2
+visibilityToggleButton.Position = UDim2.new(0.8, 0, 0.05, 0)
+visibilityToggleButton.Size = UDim2.new(0.2, 0, 0.1, 0)
+visibilityToggleButton.Text = "Close"
+visibilityToggleButton.TextColor3 = Color3.fromRGB(0, 191, 255)
+visibilityToggleButton.Font = Enum.Font.PatrickHand
+visibilityToggleButton.FontSize = Enum.FontSize.Size14
+visibilityToggleButton.TextScaled = true
+
+local uiCornerVisibility = Instance.new("UICorner")
+uiCornerVisibility.CornerRadius = UDim.new(0.5, 0)
+uiCornerVisibility.Parent = visibilityToggleButton
+
+-- Visibility toggle function
+local isVisible = true
+visibilityToggleButton.MouseButton1Click:Connect(function()
+    isVisible = not isVisible
+    buttonContainer.Visible = isVisible
+    modeToggleButton.Visible = isVisible
+    textBox.Visible = isVisible
+    speedTextBox.Visible = isVisible
+    visibilityToggleButton.Text = isVisible and "Close" or "Open"
+end)
+
+-- Create the toggle button for switching modes
+modeToggleButton = Instance.new("TextButton")
+modeToggleButton.Parent = screenGui
+modeToggleButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+modeToggleButton.BackgroundTransparency = 0.5
+modeToggleButton.BorderColor3 = Color3.fromRGB(0, 0, 255)
+modeToggleButton.BorderSizePixel = 2
+modeToggleButton.Position = UDim2.new(0.8, 0, 0.15, 0)
+modeToggleButton.Size = UDim2.new(0.2, 0, 0.1, 0)
+modeToggleButton.Text = "Instantly-Tp"
+modeToggleButton.TextColor3 = Color3.fromRGB(220, 20, 60)
+modeToggleButton.Font = Enum.Font.PatrickHand
+modeToggleButton.FontSize = Enum.FontSize.Size14
+modeToggleButton.TextScaled = true
+
+local uiCornerMode = Instance.new("UICorner")
+uiCornerMode.CornerRadius = UDim.new(0.5, 0)
+uiCornerMode.Parent = modeToggleButton
+
+-- Toggle mode function
+modeToggleButton.MouseButton1Click:Connect(function()
+    isTweenMode = not isTweenMode
+    modeToggleButton.Text = isTweenMode and "Fly-Tp" or "Instantly-Tp"
+    modeToggleButton.TextColor3 = isTweenMode and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(220, 20, 60)
+    
+    if not isTweenMode and currentTween then
+        currentTween:Cancel()
+    end
+end)
+
+-- Create the TextBox for entering player usernames
+textBox = Instance.new("TextBox")
+textBox.Parent = screenGui
+textBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+textBox.BackgroundTransparency = 0.5
+textBox.BorderColor3 = Color3.fromRGB(0, 0, 255)
+textBox.BorderSizePixel = 2
+textBox.Position = UDim2.new(0.8, 0, 0.25, 0)
+textBox.Size = UDim2.new(0.2, 0, 0.1, 0)
+textBox.Text = "Tp-PlayerName.."
+textBox.TextColor3 = Color3.fromRGB(255, 255, 0)
+textBox.Font = Enum.Font.PatrickHand
+textBox.TextScaled = true
+textBox.ClearTextOnFocus = false
+
+local uiCornerTextBox = Instance.new("UICorner")
+uiCornerTextBox.CornerRadius = UDim.new(0.5, 0)
+uiCornerTextBox.Parent = textBox
+
+textBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        local username = textBox.Text
+        local player = game:GetService("Players"):FindFirstChild(username)
+        if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local targetPosition = player.Character.HumanoidRootPart.Position + Vector3.new(0, 2, 0)
+            local playerPos = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
+            if isTweenMode then
+                if currentTween then
+                    currentTween:Cancel()
+                end
+
+                local goal = {CFrame = CFrame.new(targetPosition)}
+                local tweenInfo = createTweenInfo(playerPos, targetPosition)
+                currentTween = tweenService:Create(game.Players.LocalPlayer.Character.HumanoidRootPart, tweenInfo, goal)
+                currentTween:Play()
+            else
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(targetPosition)
+            end
+        else
+            warn("Player not found: " .. username)
+        end
+    end
+end)
+
+-- Create the TextBox for changing tween speed
+speedTextBox = Instance.new("TextBox")
+speedTextBox.Parent = screenGui
+speedTextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+speedTextBox.BackgroundTransparency = 0.5
+speedTextBox.BorderColor3 = Color3.fromRGB(0, 0, 255)
+speedTextBox.BorderSizePixel = 2
+speedTextBox.Position = UDim2.new(0.7, 0, -0.1, 0)
+speedTextBox.Size = UDim2.new(0.05, 0, 0.1, 0)
+speedTextBox.Text = tostring(tweenSpeed)
+speedTextBox.TextColor3 = Color3.fromRGB(170, 0, 255)
+speedTextBox.Font = Enum.Font.PatrickHand
+speedTextBox.TextScaled = true
+speedTextBox.ClearTextOnFocus = false
+
+local uiCornerSpeedTextBox = Instance.new("UICorner")
+uiCornerSpeedTextBox.CornerRadius = UDim.new(0.5, 0)
+uiCornerSpeedTextBox.Parent = speedTextBox
+
+speedTextBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        local newSpeed = tonumber(speedTextBox.Text)
+        if newSpeed and newSpeed > 0 then
+            tweenSpeed = newSpeed
+        else
+            warn("Invalid tween speed: " .. tostring(speedTextBox.Text))
+        end
+    end
+end)
+
+
+
+
+local tweenService = game:GetService("TweenService")
+local player = game.Players.LocalPlayer
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = player:WaitForChild("PlayerGui")  -- Parent ScreenGui to PlayerGui
+
+local function showWelcomeMessage()
+    -- Create a new TextButton for the welcome message
+    local welcomeTextButton = Instance.new("TextButton")
+    welcomeTextButton.Parent = screenGui
+    welcomeTextButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    welcomeTextButton.BackgroundTransparency = 0.5
+    welcomeTextButton.BorderColor3 = Color3.fromRGB(255, 255, 255)
+    welcomeTextButton.BorderSizePixel = 2
+    welcomeTextButton.Position = UDim2.new(0.5, -100, 0.5, -50)  -- Center of the screen
+    welcomeTextButton.Size = UDim2.new(0, 200, 0, 100)
+    welcomeTextButton.Text = "Welcome to my script! In Fly-Tp mode switched back to Instantly-Tp mode to cancel Fly-Tp and there is a small box with number 150 you can use to change fly speed | Script by Acient made for fun |Tips: you can do Instantly-Tp and then Reset Character to teleport island and teleport again to chest !"
+    welcomeTextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    welcomeTextButton.Font = Enum.Font.PatrickHand
+    welcomeTextButton.TextScaled = true
+    welcomeTextButton.TextWrapped = true
+
+    local uiCornerWelcomeTextButton = Instance.new("UICorner")
+    uiCornerWelcomeTextButton.CornerRadius = UDim.new(0.5, 0)
+    uiCornerWelcomeTextButton.Parent = welcomeTextButton
+
+    local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.In)
+    local goal = {TextTransparency = 1}
+    local tween = tweenService:Create(welcomeTextButton, tweenInfo, goal)
+
+    local function onClick()
+        tween:Play()
+        tween.Completed:Connect(function()
+            welcomeTextButton:Destroy()
+        end)
+    end
+
+    welcomeTextButton.MouseButton1Click:Connect(onClick)
+end
+
+showWelcomeMessage()
