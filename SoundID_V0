@@ -1,0 +1,164 @@
+-- Create a ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "MyScreenGui"
+screenGui.Parent = game.CoreGui
+
+-- Create TextBox for Sound ID
+local soundIdBox = Instance.new("TextBox")
+soundIdBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+soundIdBox.BackgroundTransparency = 0.8
+soundIdBox.BorderColor3 = Color3.fromRGB(255, 0, 0)
+soundIdBox.BorderSizePixel = 2
+soundIdBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+soundIdBox.Font = Enum.Font.PatrickHand
+soundIdBox.TextScaled = true
+soundIdBox.Size = UDim2.new(0.1, 0, 0.1, 0)
+soundIdBox.Position = UDim2.new(0.3, 0, -0.1, 0)
+soundIdBox.PlaceholderText = "Custom SoundID: 15689451063"
+soundIdBox.Text = ""
+soundIdBox.ClearTextOnFocus = true
+soundIdBox.Parent = screenGui
+
+-- Create UI Corner for Sound ID TextBox
+local idBoxCorner = Instance.new("UICorner")
+idBoxCorner.CornerRadius = UDim.new(0.2, 0)
+idBoxCorner.Parent = soundIdBox
+
+-- Create TextBox for Pitch
+local pitchBox = Instance.new("TextBox")
+pitchBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+pitchBox.BackgroundTransparency = 0.8
+pitchBox.BorderColor3 = Color3.fromRGB(0, 255, 0)
+pitchBox.BorderSizePixel = 2
+pitchBox.TextColor3 = Color3.fromRGB(255, 255, 0)
+pitchBox.Font = Enum.Font.PatrickHand
+pitchBox.TextScaled = true
+pitchBox.Size = UDim2.new(0.05, 0, 0.1, 0)
+pitchBox.Position = UDim2.new(0.41, 0, -0.1, 0)
+pitchBox.PlaceholderText = "Pitch value from 0 to 3"
+pitchBox.Text = ""
+pitchBox.ClearTextOnFocus = true
+pitchBox.Parent = screenGui
+
+-- Create UI Corner for Pitch TextBox
+local pitchBoxCorner = Instance.new("UICorner")
+pitchBoxCorner.CornerRadius = UDim.new(0.2, 0)
+pitchBoxCorner.Parent = pitchBox
+
+-- Create a ToggleButton for Looping
+local loopToggleButton = Instance.new("TextButton")
+loopToggleButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+loopToggleButton.BackgroundTransparency = 0.8
+loopToggleButton.BorderColor3 = Color3.fromRGB(0, 0, 255)
+loopToggleButton.BorderSizePixel = 2
+loopToggleButton.TextColor3 = Color3.fromRGB(127, 0, 255)
+loopToggleButton.Font = Enum.Font.PatrickHand
+loopToggleButton.TextScaled = true
+loopToggleButton.Size = UDim2.new(0.05, 0, 0.1, 0)
+loopToggleButton.Position = UDim2.new(0.47, 0, -0.1, 0)
+loopToggleButton.Text = "ON"
+loopToggleButton.Parent = screenGui
+
+-- Create UI Corner for Loop ToggleButton
+local loopButtonCorner = Instance.new("UICorner")
+loopButtonCorner.CornerRadius = UDim.new(0.2, 0)
+loopButtonCorner.Parent = loopToggleButton
+
+-- Create a Sound instance in the SoundService
+local sound = Instance.new("Sound")
+sound.Parent = game:GetService("SoundService")
+
+-- Variable to track loop status
+local isLooping = false
+
+-- Function to update sound based on TextBox inputs
+local function updateSound()
+    local soundId = tonumber(soundIdBox.Text)
+    if soundId then
+        if sound.IsPlaying then
+            sound:Stop()
+        end
+        sound.SoundId = "rbxassetid://" .. soundId
+        sound:Play()
+    end
+end
+
+-- Function to update pitch
+local function updatePitch()
+    local pitch = tonumber(pitchBox.Text)
+    if pitch and pitch > 0 and pitch <= 3 then
+        sound.PlaybackSpeed = pitch
+    end
+end
+
+-- Function to toggle looping
+local function toggleLoop()
+    isLooping = not isLooping
+    sound.Looped = isLooping
+    if isLooping and not sound.IsPlaying then
+        sound:Play()
+    end
+end
+
+-- Update sound when Enter is pressed in Sound ID TextBox
+soundIdBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        updateSound()
+    end
+end)
+
+-- Update pitch when Enter is pressed in Pitch TextBox
+pitchBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        updatePitch()
+    end
+end)
+
+-- Toggle looping when the ToggleButton is clicked
+loopToggleButton.MouseButton1Click:Connect(function()
+    toggleLoop()
+    loopToggleButton.Text = isLooping and "OFF" or "ON"
+end)
+
+------ Welcome Message ------
+
+local tweenService = game:GetService("TweenService")
+local player = game.Players.LocalPlayer
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = player:WaitForChild("PlayerGui")  -- Parent ScreenGui to PlayerGui
+
+local function showWelcomeMessage()
+    -- Create a new TextButton for the welcome message
+    local welcomeTextButton = Instance.new("TextButton")
+    welcomeTextButton.Parent = screenGui
+    welcomeTextButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    welcomeTextButton.BackgroundTransparency = 0.8
+    welcomeTextButton.BorderColor3 = Color3.fromRGB(255, 255, 255)
+    welcomeTextButton.BorderSizePixel = 2
+    welcomeTextButton.Position = UDim2.new(0.5, -100, 0.5, -50)  -- Center of the screen
+    welcomeTextButton.Size = UDim2.new(0, 200, 0, 100)
+    welcomeTextButton.Text = "Welcome to my script! | Script by Acient | How to use GUI: First box is using to insert soundid inside when you done press enter it playing sound or music, second box is using to change sound or music speed faster or slower, third is a button.. right now is called 'ON' is not mean it's already active it need you press to active, when active it does replaying music when music it's in the end | My SoundID Store: 7028540590, 15689451063, 16190783444 | Tap this GUI to make it disappear ! Bye"
+    welcomeTextButton.TextColor3 = Color3.fromRGB(255, 255, 0)
+    welcomeTextButton.Font = Enum.Font.PatrickHand
+    welcomeTextButton.TextScaled = true
+    welcomeTextButton.TextWrapped = true
+
+    local uiCornerWelcomeTextButton = Instance.new("UICorner")
+    uiCornerWelcomeTextButton.CornerRadius = UDim.new(0.5, 0)
+    uiCornerWelcomeTextButton.Parent = welcomeTextButton
+
+    local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.In)
+    local goal = {TextTransparency = 1}
+    local tween = tweenService:Create(welcomeTextButton, tweenInfo, goal)
+
+    local function onClick()
+        tween:Play()
+        tween.Completed:Connect(function()
+            welcomeTextButton:Destroy()
+        end)
+    end
+
+    welcomeTextButton.MouseButton1Click:Connect(onClick)
+end
+
+showWelcomeMessage()
