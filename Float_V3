@@ -1,0 +1,394 @@
+local coreGui = game:GetService("CoreGui")
+local player = game.Players.LocalPlayer
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = coreGui
+
+-- Function to create a frame with buttons and textboxes
+local function createFrame(parent, position)
+    local frame = Instance.new("Frame")
+    frame.Parent = screenGui
+    frame.BackgroundColor3 = Color3.new(0, 0, 0)
+    frame.BackgroundTransparency = 0.5
+    frame.BorderColor3 = Color3.new(0, 0, 1)
+    frame.BorderSizePixel = 2
+    frame.Position = position
+    frame.Size = UDim2.new(0.3, 0, 0.8, 0) -- Adjusted size
+    frame.Active = true
+    frame.Draggable = true
+
+    local uiCorner = Instance.new("UICorner")
+    uiCorner.Parent = frame
+
+    local yOffset = 0
+
+    -- Button for spawning plate
+    local spawnPlateButton = Instance.new("TextButton")
+    spawnPlateButton.Parent = frame
+    spawnPlateButton.BackgroundColor3 = Color3.new(1, 1, 1)
+    spawnPlateButton.BackgroundTransparency = 0.5
+    spawnPlateButton.Position = UDim2.new(0.1, 0, yOffset, 0)
+    spawnPlateButton.Size = UDim2.new(0.8, 0, 0.15, 0)
+    spawnPlateButton.Font = Enum.Font.SourceSansLight
+    spawnPlateButton.TextScaled = true
+    spawnPlateButton.TextWrapped = true
+    spawnPlateButton.Text = "Air Walk - Geppo"
+    yOffset = yOffset + 0.17
+
+    -- Button for teleporting to a random player
+    local teleportButton = Instance.new("TextButton")
+    teleportButton.Parent = frame
+    teleportButton.BackgroundColor3 = Color3.new(1, 1, 1)
+    teleportButton.BackgroundTransparency = 0.5
+    teleportButton.Position = UDim2.new(0.1, 0, yOffset, 0)
+    teleportButton.Size = UDim2.new(0.8, 0, 0.15, 0)
+    teleportButton.Font = Enum.Font.SourceSansLight
+    teleportButton.TextScaled = true
+    teleportButton.TextWrapped = true
+    teleportButton.Text = "Flash Step - Soru"
+    yOffset = yOffset + 0.17
+
+    -- Toggle button for spawning part
+    local spawnPartButton = Instance.new("TextButton")
+    spawnPartButton.Parent = frame
+    spawnPartButton.BackgroundColor3 = Color3.new(1, 1, 1)
+    spawnPartButton.BackgroundTransparency = 0.5
+    spawnPartButton.Position = UDim2.new(0.1, 0, yOffset, 0)
+    spawnPartButton.Size = UDim2.new(0.8, 0, 0.15, 0)
+    spawnPartButton.Font = Enum.Font.SourceSansLight
+    spawnPartButton.TextScaled = true
+    spawnPartButton.TextWrapped = true
+    spawnPartButton.Text = "Summoning Cube"
+    yOffset = yOffset + 0.17
+
+    -- TextBox for changing WalkSpeed
+    local speedTextBox = Instance.new("TextBox")
+    speedTextBox.Parent = frame
+    speedTextBox.BackgroundColor3 = Color3.new(1, 1, 1)
+    speedTextBox.BackgroundTransparency = 0.5
+    speedTextBox.Position = UDim2.new(0.1, 0, yOffset, 0)
+    speedTextBox.Size = UDim2.new(0.8, 0, 0.15, 0)
+    speedTextBox.Font = Enum.Font.SourceSansLight
+    speedTextBox.TextScaled = true
+    speedTextBox.PlaceholderText = "Change WalkSpeed"
+    speedTextBox.ClearTextOnFocus = false
+    yOffset = yOffset + 0.17
+
+    -- TextBox for changing Part Size
+    local sizeTextBox = Instance.new("TextBox")
+    sizeTextBox.Parent = frame
+    sizeTextBox.BackgroundColor3 = Color3.new(1, 1, 1)
+    sizeTextBox.BackgroundTransparency = 0.5
+    sizeTextBox.Position = UDim2.new(0.1, 0, yOffset, 0)
+    sizeTextBox.Size = UDim2.new(0.8, 0, 0.15, 0)
+    sizeTextBox.Font = Enum.Font.SourceSansLight
+    sizeTextBox.TextScaled = true
+    sizeTextBox.PlaceholderText = "Cube Size Example Code: (?, ?, ?)"
+    sizeTextBox.ClearTextOnFocus = false
+    yOffset = yOffset + 0.17
+
+    -- TextBox for changing Part Transparency
+    local transparencyTextBox = Instance.new("TextBox")
+    transparencyTextBox.Parent = frame
+    transparencyTextBox.BackgroundColor3 = Color3.new(1, 1, 1)
+    transparencyTextBox.BackgroundTransparency = 0.5
+    transparencyTextBox.Position = UDim2.new(0.1, 0, yOffset, 0)
+    transparencyTextBox.Size = UDim2.new(0.8, 0, 0.15, 0)
+    transparencyTextBox.Font = Enum.Font.SourceSansLight
+    transparencyTextBox.TextScaled = true
+    transparencyTextBox.PlaceholderText = "Cube Visibility Example code: 0.1 or 1"
+    transparencyTextBox.ClearTextOnFocus = false
+
+    return spawnPlateButton, teleportButton, spawnPartButton, speedTextBox, sizeTextBox, transparencyTextBox, frame
+end
+
+-- Create the frame and buttons
+local spawnPlateButton, teleportButton, spawnPartButton, speedTextBox, sizeTextBox, transparencyTextBox, frame = createFrame(screenGui, UDim2.new(0.6, 0, 0.2, 0))
+
+-- Create the toggle button outside the frame
+local hideGuiButton = Instance.new("TextButton")
+hideGuiButton.Parent = screenGui
+hideGuiButton.BackgroundColor3 = Color3.new(1, 1, 1)
+hideGuiButton.BackgroundTransparency = 0.5
+hideGuiButton.Position = UDim2.new(0.5, 0, -0.1, 0)
+hideGuiButton.Size = UDim2.new(0.1, 0, 0.1, 0)
+hideGuiButton.Font = Enum.Font.SourceSansLight
+hideGuiButton.TextScaled = true
+hideGuiButton.TextWrapped = true
+hideGuiButton.Text = "Close"
+
+local ui = Instance.new("UICorner")
+ui.Parent = hideGuiButton
+
+-- State variables
+local platformActive = false
+local lastPlate
+local partActive = false
+local lastPart
+local partSize = Vector3.new(5, 1, 5) -- Default part size
+local partTransparency = 0.95 -- Default part transparency
+local partSpawnPosition
+local guiVisible = true -- Track visibility of the GUI
+
+-- Function to toggle platform creation
+local function togglePlatform()
+    platformActive = not platformActive
+    spawnPlateButton.Text = platformActive and "Ground Walk - unGeppo" or "Air Walk - Geppo"
+    
+    if not platformActive and lastPlate then
+        lastPlate:Destroy()
+        lastPlate = nil
+    end
+end
+
+-- Function to create and update the platform
+local function updatePlatform()
+    local playerChar = player.Character
+    local humanoidRootPart = playerChar and playerChar:FindFirstChild("HumanoidRootPart")
+
+    if not humanoidRootPart then
+        return
+    end
+
+    if lastPlate then
+        lastPlate:Destroy()
+    end
+
+    local newPlate = Instance.new("Part")
+    newPlate.Parent = workspace
+    newPlate.Name = "Platform"
+    newPlate.Anchored = true
+    newPlate.Color = Color3.new(0, 1, 0) -- Green
+    newPlate.Material = Enum.Material.Grass
+    newPlate.Size = Vector3.new(20, 1, 20)
+    newPlate.Transparency = 0.95
+    newPlate.Position = humanoidRootPart.Position + Vector3.new(0, -3.9, 0)
+
+    lastPlate = newPlate
+end
+
+-- Function to create and update the part
+local function updatePart()
+    local playerChar = player.Character
+    local humanoidRootPart = playerChar and playerChar:FindFirstChild("HumanoidRootPart")
+
+    if not humanoidRootPart then
+        return
+    end
+
+    if lastPart then
+        lastPart:Destroy()
+    end
+
+    local newPart = Instance.new("Part")
+    newPart.Parent = workspace
+    newPart.Name = "SpawnedPart"
+    newPart.Anchored = true
+    newPart.Color = Color3.new(0, 1, 0) -- Green
+    newPart.Material = Enum.Material.Grass
+    newPart.Size = partSize
+    newPart.Position = partSpawnPosition
+    newPart.Transparency = partTransparency
+
+    lastPart = newPart
+end
+
+-- Function to teleport to a random player
+local function teleportToRandomPlayer()
+    local players = game.Players:GetPlayers()
+    if #players <= 1 then
+        print("Not enough players to teleport to.")
+        return
+    end
+
+    local otherPlayers = {}
+    for _, p in ipairs(players) do
+        if p ~= player then
+            table.insert(otherPlayers, p)
+        end
+    end
+
+    if #otherPlayers == 0 then
+        print("No other players to teleport to.")
+        return
+    end
+
+    local randomPlayer = otherPlayers[math.random(#otherPlayers)]
+    local randomChar = randomPlayer.Character
+    local randomHumanoidRootPart = randomChar and randomChar:FindFirstChild("HumanoidRootPart")
+    
+    if randomHumanoidRootPart then
+        player.Character.HumanoidRootPart.CFrame = randomHumanoidRootPart.CFrame
+    end
+end
+
+-- Button click events
+spawnPlateButton.MouseButton1Click:Connect(function()
+    togglePlatform()
+end)
+
+teleportButton.MouseButton1Click:Connect(function()
+    teleportToRandomPlayer()
+end)
+
+spawnPartButton.MouseButton1Click:Connect(function()
+    partActive = not partActive
+    spawnPartButton.Text = partActive and "Remove Summoning" or "Summoning Cube"
+
+    if partActive and not lastPart then
+        partSpawnPosition = player.Character.HumanoidRootPart.Position + Vector3.new(0, -3, 0)
+        updatePart()
+    elseif not partActive and lastPart then
+        lastPart:Destroy()
+        lastPart = nil
+    end
+end)
+
+-- TextBox FocusLost event for WalkSpeed control
+speedTextBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        local speedText = speedTextBox.Text
+        local newSpeed = tonumber(speedText)
+
+        if newSpeed and newSpeed > 0 then
+            local playerChar = player.Character
+            local humanoid = playerChar and playerChar:FindFirstChild("Humanoid")
+
+            if humanoid then
+                humanoid.WalkSpeed = newSpeed
+            end
+        end
+    end
+end)
+
+-- TextBox FocusLost event for Part Size control
+sizeTextBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        local sizeText = sizeTextBox.Text
+        local function parseVector3(input)
+            local x, y, z = input:match("%(([%d%.]+),%s*([%d%.]+),%s*([%d%.]+)%)")
+            if x and y and z then
+                return Vector3.new(tonumber(x), tonumber(y), tonumber(z))
+            end
+            return nil
+        end
+
+        local size = parseVector3(sizeText)
+
+        if size then
+            partSize = size
+            print("Part Size Changed to:", partSize)
+
+            if partActive and lastPart then
+                lastPart.Size = partSize
+            end
+        else
+            print("Invalid size format. Use format like (10, 2, 10).")
+        end
+    end
+end)
+
+-- TextBox FocusLost event for Part Transparency control
+transparencyTextBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        local transparencyText = transparencyTextBox.Text
+        local transparency = tonumber(transparencyText)
+
+        if transparency and transparency >= 0 and transparency <= 1 then
+            partTransparency = transparency
+            print("Part Transparency Changed to:", partTransparency)
+
+            if partActive and lastPart then
+                lastPart.Transparency = partTransparency
+            end
+        else
+            print("Invalid transparency value. Use a number between 0 and 1.")
+        end
+    end
+end)
+
+-- Toggle button click event for hiding/showing GUI
+hideGuiButton.MouseButton1Click:Connect(function()
+    guiVisible = not guiVisible
+    frame.Visible = guiVisible
+    spawnPlateButton.Visible = guiVisible
+    teleportButton.Visible = guiVisible
+    spawnPartButton.Visible = guiVisible
+    speedTextBox.Visible = guiVisible
+    sizeTextBox.Visible = guiVisible
+    transparencyTextBox.Visible = guiVisible
+    hideGuiButton.Text = guiVisible and "Close" or "Open"
+end)
+
+-- Update platform and part positions if active
+game:GetService("RunService").RenderStepped:Connect(function()
+    if platformActive then
+        local playerChar = player.Character
+        local humanoidRootPart = playerChar and playerChar:FindFirstChild("HumanoidRootPart")
+
+        if humanoidRootPart then
+            if not lastPlate then
+                updatePlatform()
+            else
+                lastPlate.Position = humanoidRootPart.Position + Vector3.new(0, -3.9, 0)
+            end
+        end
+    end
+
+    if partActive then
+        local playerChar = player.Character
+        local humanoidRootPart = playerChar and playerChar:FindFirstChild("HumanoidRootPart")
+
+        if humanoidRootPart then
+            if not lastPart then
+                partSpawnPosition = humanoidRootPart.Position + Vector3.new(0, -3, 0)
+                updatePart()
+            else
+                lastPart.Position = partSpawnPosition
+            end
+        end
+    end
+end)
+
+
+
+
+local tweenService = game:GetService("TweenService")
+local player = game.Players.LocalPlayer
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = player:WaitForChild("PlayerGui")  -- Parent ScreenGui to PlayerGui
+
+local function showWelcomeMessage()
+    -- Create a new TextButton for the welcome message
+    local welcomeTextButton = Instance.new("TextButton")
+    welcomeTextButton.Parent = screenGui
+    welcomeTextButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    welcomeTextButton.BackgroundTransparency = 0.5
+    welcomeTextButton.BorderColor3 = Color3.fromRGB(255, 255, 255)
+    welcomeTextButton.BorderSizePixel = 2
+    welcomeTextButton.Position = UDim2.new(0.5, -100, 0.5, -50)  -- Center of the screen
+    welcomeTextButton.Size = UDim2.new(0, 200, 0, 100)
+    welcomeTextButton.Text = "Welcome to my script! | Script by Acient | Tips: you can change your Walkspeed in first textbox, second textbox is for changing size of Cube Summoning (Example code writed it like this inside textbox: (9, 1, 9) for number 9 first placed it a Z position 1 is Y and others 9 it X) ,lastly it's use to change Cube Transparency from 0 to 1, done of explaining thing | Tap this GUI to make it disappear ! Bye"
+    welcomeTextButton.TextColor3 = Color3.fromRGB(255, 255, 0)
+    welcomeTextButton.Font = Enum.Font.PatrickHand
+    welcomeTextButton.TextScaled = true
+    welcomeTextButton.TextWrapped = true
+
+    local uiCornerWelcomeTextButton = Instance.new("UICorner")
+    uiCornerWelcomeTextButton.CornerRadius = UDim.new(0.5, 0)
+    uiCornerWelcomeTextButton.Parent = welcomeTextButton
+
+    local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.In)
+    local goal = {TextTransparency = 1}
+    local tween = tweenService:Create(welcomeTextButton, tweenInfo, goal)
+
+    local function onClick()
+        tween:Play()
+        tween.Completed:Connect(function()
+            welcomeTextButton:Destroy()
+        end)
+    end
+
+    welcomeTextButton.MouseButton1Click:Connect(onClick)
+end
+
+showWelcomeMessage()
