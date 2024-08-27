@@ -1,0 +1,295 @@
+local coreGui = game:GetService("CoreGui")
+local player = game.Players.LocalPlayer
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = coreGui
+
+-- Function to create a frame with buttons and textboxes
+local function createFrame(parent, position)
+    local frame = Instance.new("Frame")
+    frame.Parent = screenGui
+    frame.BackgroundColor3 = Color3.new(0, 0, 0)
+    frame.BackgroundTransparency = 0.5
+    frame.BorderColor3 = Color3.new(0, 0, 1)
+    frame.BorderSizePixel = 2
+    frame.Position = position
+    frame.Size = UDim2.new(0.3, 0, 0.6, 0) -- Adjusted size
+    frame.Active = true
+    frame.Draggable = true
+
+    local uiCorner = Instance.new("UICorner")
+    uiCorner.Parent = frame
+
+    local yOffset = 0
+
+    -- Button for spawning plate
+    local spawnPlateButton = Instance.new("TextButton")
+    spawnPlateButton.Parent = frame
+    spawnPlateButton.BackgroundColor3 = Color3.new(1, 1, 1)
+    spawnPlateButton.BackgroundTransparency = 0.5
+    spawnPlateButton.Position = UDim2.new(0.1, 0, yOffset, 0)
+    spawnPlateButton.Size = UDim2.new(0.8, 0, 0.15, 0)
+    spawnPlateButton.Font = Enum.Font.SourceSansLight
+    spawnPlateButton.TextScaled = true
+    spawnPlateButton.TextWrapped = true
+    spawnPlateButton.Text = "Spawn Plate"
+    yOffset = yOffset + 0.17
+
+    -- Button for teleporting to a random player
+    local teleportButton = Instance.new("TextButton")
+    teleportButton.Parent = frame
+    teleportButton.BackgroundColor3 = Color3.new(1, 1, 1)
+    teleportButton.BackgroundTransparency = 0.5
+    teleportButton.Position = UDim2.new(0.1, 0, yOffset, 0)
+    teleportButton.Size = UDim2.new(0.8, 0, 0.15, 0)
+    teleportButton.Font = Enum.Font.SourceSansLight
+    teleportButton.TextScaled = true
+    teleportButton.TextWrapped = true
+    teleportButton.Text = "Teleport Random Player"
+    yOffset = yOffset + 0.17
+
+    -- Toggle button for spawning part
+    local spawnPartButton = Instance.new("TextButton")
+    spawnPartButton.Parent = frame
+    spawnPartButton.BackgroundColor3 = Color3.new(1, 1, 1)
+    spawnPartButton.BackgroundTransparency = 0.5
+    spawnPartButton.Position = UDim2.new(0.1, 0, yOffset, 0)
+    spawnPartButton.Size = UDim2.new(0.8, 0, 0.15, 0)
+    spawnPartButton.Font = Enum.Font.SourceSansLight
+    spawnPartButton.TextScaled = true
+    spawnPartButton.TextWrapped = true
+    spawnPartButton.Text = "Spawn Part"
+    yOffset = yOffset + 0.17
+
+    -- TextBox for changing WalkSpeed
+    local speedTextBox = Instance.new("TextBox")
+    speedTextBox.Parent = frame
+    speedTextBox.BackgroundColor3 = Color3.new(1, 1, 1)
+    speedTextBox.BackgroundTransparency = 0.5
+    speedTextBox.Position = UDim2.new(0.1, 0, yOffset, 0)
+    speedTextBox.Size = UDim2.new(0.8, 0, 0.15, 0)
+    speedTextBox.Font = Enum.Font.SourceSansLight
+    speedTextBox.TextScaled = true
+    speedTextBox.PlaceholderText = "Change WalkSpeed"
+    speedTextBox.ClearTextOnFocus = false
+    yOffset = yOffset + 0.17
+
+    -- TextBox for changing Part Size
+    local sizeTextBox = Instance.new("TextBox")
+    sizeTextBox.Parent = frame
+    sizeTextBox.BackgroundColor3 = Color3.new(1, 1, 1)
+    sizeTextBox.BackgroundTransparency = 0.5
+    sizeTextBox.Position = UDim2.new(0.1, 0, yOffset, 0)
+    sizeTextBox.Size = UDim2.new(0.8, 0, 0.15, 0)
+    sizeTextBox.Font = Enum.Font.SourceSansLight
+    sizeTextBox.TextScaled = true
+    sizeTextBox.PlaceholderText = "Part Size (e.g., (5, 1, 5))"
+    sizeTextBox.ClearTextOnFocus = false
+
+    return spawnPlateButton, teleportButton, spawnPartButton, speedTextBox, sizeTextBox
+end
+
+-- Create the frame and buttons
+local spawnPlateButton, teleportButton, spawnPartButton, speedTextBox, sizeTextBox = createFrame(screenGui, UDim2.new(0.6, 0, 0.4, 0))
+
+-- State variables
+local platformActive = false
+local lastPlate
+local partActive = false
+local lastPart
+local partSize = Vector3.new(5, 1, 5) -- Default part size
+local partSpawnPosition
+
+-- Function to toggle platform creation
+local function togglePlatform()
+    platformActive = not platformActive
+    spawnPlateButton.Text = platformActive and "Spawn Plate: Off" or "Spawn Plate"
+    
+    if not platformActive and lastPlate then
+        lastPlate:Destroy()
+        lastPlate = nil
+    end
+end
+
+-- Function to create and update the platform
+local function updatePlatform()
+    local playerChar = player.Character
+    local humanoidRootPart = playerChar and playerChar:FindFirstChild("HumanoidRootPart")
+
+    if not humanoidRootPart then
+        return
+    end
+
+    if lastPlate then
+        lastPlate:Destroy()
+    end
+
+    local newPlate = Instance.new("Part")
+    newPlate.Parent = workspace
+    newPlate.Name = "Platform"
+    newPlate.Anchored = true
+    newPlate.Color = Color3.new(0, 1, 1)
+    newPlate.Material = Enum.Material.Grass
+    newPlate.Size = Vector3.new(20, 1, 20)
+    newPlate.Transparency = 0.95
+    newPlate.Position = humanoidRootPart.Position + Vector3.new(0, -3.9, 0)
+
+    lastPlate = newPlate
+end
+
+-- Function to create and update the part
+local function updatePart()
+    local playerChar = player.Character
+    local humanoidRootPart = playerChar and playerChar:FindFirstChild("HumanoidRootPart")
+
+    if not humanoidRootPart then
+        return
+    end
+
+    if lastPart then
+        lastPart:Destroy()
+    end
+
+    local newPart = Instance.new("Part")
+    newPart.Parent = workspace
+    newPart.Name = "SpawnedPart"
+    newPart.Anchored = true
+    newPart.Color = Color3.new(1, 0, 0)
+    newPart.Material = Enum.Material.SmoothPlastic
+    newPart.Size = partSize
+    newPart.Position = partSpawnPosition
+
+    lastPart = newPart
+end
+
+-- Function to teleport to a random player
+local function teleportToRandomPlayer()
+    local players = game.Players:GetPlayers()
+    if #players <= 1 then
+        print("Not enough players to teleport to.")
+        return
+    end
+
+    local otherPlayers = {}
+    for _, p in ipairs(players) do
+        if p ~= player then
+            table.insert(otherPlayers, p)
+        end
+    end
+
+    if #otherPlayers == 0 then
+        print("No other players to teleport to.")
+        return
+    end
+
+    local randomPlayer = otherPlayers[math.random(#otherPlayers)]
+    local randomChar = randomPlayer.Character
+    local randomHumanoidRootPart = randomChar and randomChar:FindFirstChild("HumanoidRootPart")
+    
+    if randomHumanoidRootPart then
+        player.Character.HumanoidRootPart.CFrame = randomHumanoidRootPart.CFrame
+    end
+end
+
+-- Button click events
+spawnPlateButton.MouseButton1Click:Connect(function()
+    togglePlatform()
+end)
+
+teleportButton.MouseButton1Click:Connect(function()
+    teleportToRandomPlayer()
+end)
+
+-- Toggle button click event for spawning and updating part
+spawnPartButton.MouseButton1Click:Connect(function()
+    partActive = not partActive
+    spawnPartButton.Text = partActive and "Spawn Part: Off" or "Spawn Part"
+    
+    if not partActive and lastPart then
+        lastPart:Destroy()
+        lastPart = nil
+    end
+    
+    if partActive then
+        local playerChar = player.Character
+        local humanoidRootPart = playerChar and playerChar:FindFirstChild("HumanoidRootPart")
+        
+        if humanoidRootPart then
+            partSpawnPosition = humanoidRootPart.Position + Vector3.new(0, -3, 0)
+            updatePart()
+        end
+    end
+end)
+
+-- TextBox FocusLost event for WalkSpeed control
+speedTextBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        local speedText = speedTextBox.Text
+        local newSpeed = tonumber(speedText)
+        
+        if newSpeed and newSpeed > 0 then
+            local playerChar = player.Character
+            local humanoid = playerChar and playerChar:FindFirstChild("Humanoid")
+            
+            if humanoid then
+                humanoid.WalkSpeed = newSpeed
+            end
+        end
+    end
+end)
+
+-- TextBox FocusLost event for Part Size control
+sizeTextBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        local sizeText = sizeTextBox.Text
+        local function parseVector3(input)
+            local x, y, z = input:match("%(([%d%.]+),%s*([%d%.]+),%s*([%d%.]+)%)")
+            if x and y and z then
+                return Vector3.new(tonumber(x), tonumber(y), tonumber(z))
+            end
+            return nil
+        end
+        
+        local size = parseVector3(sizeText)
+        
+        if size then
+            partSize = size
+            print("Part Size Changed to:", partSize)
+            
+            if partActive and lastPart then
+                lastPart.Size = partSize
+            end
+        else
+            print("Invalid size format. Use format like (10, 2, 10).")
+        end
+    end
+end)
+
+-- Update platform and part positions if active
+game:GetService("RunService").RenderStepped:Connect(function()
+    if platformActive then
+        local playerChar = player.Character
+        local humanoidRootPart = playerChar and playerChar:FindFirstChild("HumanoidRootPart")
+        
+        if humanoidRootPart then
+            if not lastPlate then
+                updatePlatform()
+            else
+                lastPlate.Position = humanoidRootPart.Position + Vector3.new(0, -3.9, 0)
+            end
+        end
+    end
+
+    if partActive then
+        local playerChar = player.Character
+        local humanoidRootPart = playerChar and playerChar:FindFirstChild("HumanoidRootPart")
+        
+        if humanoidRootPart then
+            if not lastPart then
+                partSpawnPosition = humanoidRootPart.Position + Vector3.new(0, -3, 0)
+                updatePart()
+            else
+                lastPart.Position = partSpawnPosition
+            end
+        end
+    end
+end)
