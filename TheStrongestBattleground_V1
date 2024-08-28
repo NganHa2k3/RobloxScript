@@ -1,0 +1,155 @@
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "TeleportGui"
+screenGui.Parent = game.CoreGui
+
+
+local function createTextButton(name, position, text, parent)
+    local button = Instance.new("TextButton")
+    button.Name = name
+    button.Size = UDim2.new(0.1, 0, 0.1, 0)
+    button.Position = position
+    button.Text = text
+    button.Parent = parent
+    
+    local uiCorner = Instance.new("UICorner")
+    uiCorner.Parent = button
+    
+    return button
+end
+
+
+local teleportButton = createTextButton("Teleport", UDim2.new(0.7, 0, 0.4, 0), "Teleport", screenGui)
+local emoteButton = createTextButton("Emote", UDim2.new(0, 0, 0.3, 0), "Emote", screenGui)
+local anim1Button = createTextButton("Anim1", UDim2.new(0, 0, 0.4, 0), "Anim 1", screenGui)
+local anim2Button = createTextButton("Anim2", UDim2.new(0, 0, 0.52, 0), "Anim 2", screenGui)
+local anim3Button = createTextButton("Anim3", UDim2.new(0, 0, 0.64, 0), "Anim 3", screenGui)
+
+
+anim1Button.Visible = false
+anim2Button.Visible = false
+anim3Button.Visible = false
+
+
+local animationIds = {
+    ["Teleport"] = "rbxassetid://15957361339",  -- Replace with your animation ID for teleport
+    ["Anim1"] = "rbxassetid://17275798442",  -- Replace with your animation ID for Anim 1
+    ["Anim2"] = "rbxassetid://17861841334",  -- Replace with your animation ID for Anim 2
+    ["Anim3"] = "rbxassetid://ANIMATION_ID_3"   -- Replace with your animation ID for Anim 3
+}
+
+
+local function playAnimation(animationId)
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    if character and character:FindFirstChild("HumanoidRootPart") then
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if not humanoid then
+            humanoid = Instance.new("Humanoid", character)
+        end
+        
+        
+        for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+            track:Stop()
+        end
+        
+        local animation = Instance.new("Animation")
+        animation.AnimationId = animationId
+        local animationTrack = humanoid:LoadAnimation(animation)
+        animationTrack:Play()
+    else
+        print("HumanoidRootPart or character not found.")
+    end
+end
+
+
+local function teleportToRandomPlayer()
+    local player = game.Players.LocalPlayer
+    local players = game.Players:GetPlayers()
+    local availablePlayers = {}
+
+    
+    for _, p in ipairs(players) do
+        if p ~= player then
+            table.insert(availablePlayers, p)
+        end
+    end
+
+    local targetPosition
+    if #availablePlayers > 0 then
+        
+        local randomPlayer = availablePlayers[math.random(#availablePlayers)]
+        local randomCharacter = randomPlayer.Character
+        if randomCharacter and randomCharacter:FindFirstChild("HumanoidRootPart") then
+            targetPosition = randomCharacter.HumanoidRootPart.CFrame
+        end
+    else
+        
+        local npc = game:GetService("Workspace").Live:FindFirstChild("Weakest Dummy")
+        if npc and npc:FindFirstChild("HumanoidRootPart") then
+            targetPosition = npc.HumanoidRootPart.CFrame
+        else
+            print("Fallback NPC not found or does not have a HumanoidRootPart.")
+        end
+    end
+
+    if targetPosition then
+        
+        local character = player.Character
+        if character and character:FindFirstChild("HumanoidRootPart") then
+            character.HumanoidRootPart.CFrame = targetPosition
+
+            
+            playAnimation(animationIds["Teleport"])
+        else
+            print("HumanoidRootPart or character not found.")
+        end
+    else
+        print("No valid target position found.")
+    end
+end
+
+
+teleportButton.MouseButton1Click:Connect(function()
+    
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    if character then
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                track:Stop()
+            end
+        end
+    end
+
+    teleportToRandomPlayer()
+end)
+
+emoteButton.MouseButton1Click:Connect(function()
+    anim1Button.Visible = not anim1Button.Visible
+    anim2Button.Visible = not anim2Button.Visible
+    anim3Button.Visible = not anim3Button.Visible
+end)
+
+anim1Button.MouseButton1Click:Connect(function()
+    playAnimation(animationIds["Anim1"])
+end)
+
+anim2Button.MouseButton1Click:Connect(function()
+    playAnimation(animationIds["Anim2"])
+end)
+
+anim3Button.MouseButton1Click:Connect(function()
+    playAnimation(animationIds["Anim3"])
+end)
+
+
+
+
+emoteButton.Transparency = 0.8
+
+teleportButton.Transparency = 0.8
+
+anim1Button.Transparency = 0.8
+anim2Button.Transparency = 0.8
+anim3Button.Transparency = 0.8
