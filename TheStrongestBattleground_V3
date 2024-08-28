@@ -1,0 +1,115 @@
+-- Create the main ScreenGui
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = game.CoreGui
+
+-- Create a Frame to hold all buttons
+local ButtonContainer = Instance.new("Frame")
+ButtonContainer.Parent = ScreenGui
+ButtonContainer.BackgroundTransparency = 1  -- Make background invisible
+ButtonContainer.Size = UDim2.new(0.2, 0, 0.9, 0)  -- Adjust to be a vertical column on the right
+ButtonContainer.Position = UDim2.new(0.8, 0, 0.2, 0)  -- Position on the right side of the screen, moved down
+ButtonContainer.Visible = true  -- Initially visible
+
+-- TweenService
+local TweenService = game:GetService("TweenService")
+
+-- Function to create a Frame and TextButton
+local function createButton(parent, position, text, clickFunction, textColor, backgroundColor, index)
+    local Frame = Instance.new("Frame")
+    Frame.Parent = parent
+    Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)  -- White background
+    Frame.BackgroundTransparency = 0.9
+    Frame.BorderColor3 = Color3.fromRGB(0, 0, 255)  -- Blue border
+    Frame.BorderSizePixel = 2
+    Frame.Position = UDim2.new(0, 0, 0, 0)  -- Start offscreen
+    Frame.Size = UDim2.new(1, -10, 0.1, -10)  -- Adjust size to fit within the container
+    Frame.Active = true
+    Frame.Draggable = true
+
+    local TextButton = Instance.new("TextButton")
+    TextButton.Parent = Frame
+    TextButton.BackgroundColor3 = backgroundColor or Color3.fromRGB(255, 255, 255)  -- White background
+    TextButton.BackgroundTransparency = 0.5
+    TextButton.Position = UDim2.new(0.05, 0, 0.05, 0)
+    TextButton.TextColor3 = textColor
+    TextButton.Size = UDim2.new(0.9, 0, 0.9, 0)
+    TextButton.Font = Enum.Font.PatrickHand
+    TextButton.FontSize = Enum.FontSize.Size14
+    TextButton.Text = text
+    TextButton.TextScaled = true
+    TextButton.TextSize = 8
+    TextButton.TextWrapped = true
+
+    TextButton.MouseButton1Click:Connect(clickFunction)
+
+    -- Create the tween to animate the button from offscreen to its position
+    local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, 0, false, 0)
+    local goal = {Position = position}
+    local tween = TweenService:Create(Frame, tweenInfo, goal)
+    tween:Play()
+end
+
+-- Create Buttons with adjusted vertical spacing and animation
+createButton(ButtonContainer, UDim2.new(0, 0, 0, 0), "Portal: Players", function()
+    local player = game.Players.LocalPlayer
+    local players = game.Players:GetPlayers()
+    local otherPlayers = {}
+    for _, p in pairs(players) do
+        if p ~= player then
+            table.insert(otherPlayers, p)
+        end
+    end
+    local randomPlayer = otherPlayers[math.random(#otherPlayers)]
+    player.Character:SetPrimaryPartCFrame(randomPlayer.Character.HumanoidRootPart.CFrame)
+end, Color3.fromRGB(255, 0, 0), Color3.fromRGB(255, 255, 255), UDim2.new(0, 0, 0, 0))
+
+createButton(ButtonContainer, UDim2.new(0, 0, 0.1, 0), "Portal: Weakest Dummy", function()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+    local dummy = game:GetService("Workspace").Live:FindFirstChild("Weakest Dummy")
+    if humanoidRootPart and dummy and dummy:FindFirstChild("HumanoidRootPart") then
+        local dummyHRP = dummy.HumanoidRootPart
+        local behindPosition = dummyHRP.Position - (dummyHRP.CFrame.LookVector * 3)
+        humanoidRootPart.CFrame = CFrame.new(behindPosition)
+    end
+end, Color3.fromRGB(255, 0, 255), Color3.fromRGB(255, 255, 255), UDim2.new(0, 0, 0.1, 0))
+
+createButton(ButtonContainer, UDim2.new(0, 0, 0.2, 0), "Portal: AtomRoom", function()
+    local player = game.Players.LocalPlayer
+    player.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Cutscenes.Atoms.sphere.Model.atom.root.CFrame
+end, Color3.fromRGB(255, 0, 0), Color3.fromRGB(255, 255, 255), UDim2.new(0, 0, 0.2, 0))
+
+createButton(ButtonContainer, UDim2.new(0, 0, 0.3, 0), "Portal: DeathCounter Room", function()
+    local player = game.Players.LocalPlayer
+    player.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Cutscenes["Death Cutscene"].Camm.CFrame
+end, Color3.fromRGB(255, 0, 0), Color3.fromRGB(255, 255, 255), UDim2.new(0, 0, 0.3, 0))
+
+-- Create Toggle Button
+local toggleButton = Instance.new("TextButton")
+toggleButton.Parent = ScreenGui
+toggleButton.BackgroundColor3 = Color3.fromRGB(0, 0, 255)  -- Blue background
+toggleButton.BackgroundTransparency = 0.9  -- Set transparency to 0.9
+toggleButton.Position = UDim2.new(0.8, 0, 0.05, 0)  -- Position on the right side, above the ButtonContainer
+toggleButton.Size = UDim2.new(0.2, 0, 0.1, 0)
+toggleButton.Text = "Close"  -- Initial text
+toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)  -- White text
+toggleButton.Font = Enum.Font.PatrickHand
+toggleButton.FontSize = Enum.FontSize.Size14
+toggleButton.TextScaled = true
+
+-- Add rounded corners to the toggle button
+local uiCorner = Instance.new("UICorner")
+uiCorner.CornerRadius = UDim.new(0.5, 0)  -- Fully rounded corners
+uiCorner.Parent = toggleButton
+
+-- Initially show the GUI
+ButtonContainer.Visible = true
+
+-- Toggle visibility function
+local isVisible = true
+toggleButton.MouseButton1Click:Connect(function()
+    isVisible = not isVisible
+    ButtonContainer.Visible = isVisible
+    toggleButton.Text = isVisible and "Close" or "Open"  -- Update text based on visibility
+end)
