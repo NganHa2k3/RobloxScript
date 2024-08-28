@@ -1,0 +1,72 @@
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "TeleportGui"
+screenGui.Parent = game.CoreGui
+
+local teleportButton = Instance.new("TextButton")
+teleportButton.Name = "Teleport"
+teleportButton.Size = UDim2.new(0.1, 0, 0.1, 0)
+teleportButton.Position = UDim2.new(0.7, 0, 0.4, 0)
+teleportButton.Text = "Teleport"
+teleportButton.Draggable = true
+teleportButton.Parent = screenGui
+
+local uiCorner = Instance.new("UICorner")
+uiCorner.Parent = teleportButton
+
+local animationId = "rbxassetid://15957361339"  -- Tp Anims --
+
+local function getFallbackPosition()
+    local npc = game:GetService("Workspace").Live:FindFirstChild("Weakest Dummy")
+    if npc and npc:FindFirstChild("HumanoidRootPart") then
+        return npc.HumanoidRootPart.CFrame
+    else
+        print("Fallback NPC not found or does not have a HumanoidRootPart.")
+        return nil
+    end
+end
+
+local function teleportToRandomPlayer()
+    local player = game.Players.LocalPlayer
+    local players = game.Players:GetPlayers()
+    local availablePlayers = {}
+
+    for _, p in ipairs(players) do
+        if p ~= player then
+            table.insert(availablePlayers, p)
+        end
+    end
+
+    local targetPosition
+    if #availablePlayers > 0 then
+        local randomPlayer = availablePlayers[math.random(#availablePlayers)]
+        local randomCharacter = randomPlayer.Character
+        if randomCharacter and randomCharacter:FindFirstChild("HumanoidRootPart") then
+            targetPosition = randomCharacter.HumanoidRootPart.CFrame
+        end
+    else
+        targetPosition = getFallbackPosition()
+    end
+
+    if targetPosition then
+        local character = player.Character
+        if character and character:FindFirstChild("HumanoidRootPart") then
+            character.HumanoidRootPart.CFrame = targetPosition
+
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+            if not humanoid then
+                humanoid = Instance.new("Humanoid", character)
+            end
+
+            local animation = Instance.new("Animation")
+            animation.AnimationId = animationId
+            local animationTrack = humanoid:LoadAnimation(animation)
+            animationTrack:Play()
+        else
+            print("HumanoidRootPart or character not found.")
+        end
+    else
+        print("No valid target position found.")
+    end
+end
+
+teleportButton.MouseButton1Click:Connect(teleportToRandomPlayer)
