@@ -57,13 +57,13 @@ local function onPlayerChatted(message)
     local command = args[1]
     local targetName = args[2]
     
-    if command == "teleport" then
+    if command == "/tp" then
         local target
-        if targetName == "random" then
+        if targetName == "r" then
             local players = Players:GetPlayers()
             table.remove(players, table.find(players, player))
             target = players[math.random(#players)]
-        elseif targetName == "nearest" then
+        elseif targetName == "n" then
             local nearestPlayer = nil
             local shortestDistance = math.huge
             for _, p in ipairs(Players:GetPlayers()) do
@@ -76,7 +76,7 @@ local function onPlayerChatted(message)
                 end
             end
             target = nearestPlayer
-        elseif targetName == "farthest" then
+        elseif targetName == "f" then
             local farthestPlayer = nil
             local longestDistance = 0
             for _, p in ipairs(Players:GetPlayers()) do
@@ -98,19 +98,19 @@ local function onPlayerChatted(message)
         else
             print("Target not found.")
         end
-    elseif command == "reset" then
+    elseif command == "/reset" then
         if player.Character and player.Character:FindFirstChildOfClass("Humanoid") then
             player.Character.Humanoid.Health = 0
             player.Character:BreakJoints()
         end
-    elseif command == "tween" then
+    elseif command == "/t" then
         local speed = tonumber(args[3]) or 50
         local target
-        if args[2] == "nearest" then
+        if args[2] == "n" then
             target = findTarget("nearest", true)
-        elseif args[2] == "farthest" then
+        elseif args[2] == "f" then
             target = findTarget("farthest", true)
-        elseif args[2] == "random" then
+        elseif args[2] == "r" then
             local players = Players:GetPlayers()
             table.remove(players, table.find(players, player))
             target = players[math.random(#players)]
@@ -123,7 +123,7 @@ local function onPlayerChatted(message)
         else
             print("Player not found.")
         end
-    elseif command == "untween" then
+    elseif command == "/unt" then
         if tween then
             tween:Cancel()
             tween = nil
@@ -131,13 +131,13 @@ local function onPlayerChatted(message)
         else
             print("No ongoing tween to cancel.")
         end
-    elseif command == "showname" then
+    elseif command == "/esp" then
         for _, p in ipairs(Players:GetPlayers()) do
             createNameTag(p)
         end
         Players.PlayerAdded:Connect(createNameTag)
         print("Name tags activated.")
-    elseif command == "unshowname" then
+    elseif command == "/unesp" then
         for _, p in ipairs(Players:GetPlayers()) do
             local character = p.Character
             if character then
