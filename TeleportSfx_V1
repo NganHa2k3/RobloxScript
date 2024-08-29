@@ -1,0 +1,176 @@
+-- Create ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "TeleportGui"
+screenGui.Parent = game.CoreGui
+
+-- Create TextButton function
+local function createTextButton(name, position, text, parent)
+    local button = Instance.new("TextButton")
+    button.Name = name
+    button.Size = UDim2.new(0.1, 0, 0.1, 0)
+    button.Position = position
+    button.Text = text
+    button.Parent = parent
+    
+    local uiCorner = Instance.new("UICorner")
+    uiCorner.Parent = button
+    
+    return button
+end
+
+-- Create Sound function
+local function createSound(parent, soundId)
+    local sound = Instance.new("Sound")
+    sound.SoundId = soundId
+    sound.Parent = parent
+    return sound
+end
+
+-- Create Buttons
+local teleportButton = createTextButton("Teleport", UDim2.new(0.7, 0, 0.4, 0), "Teleport", screenGui)
+local modeToggleButton = createTextButton("ModeToggle", UDim2.new(0, 0, 0.3, 0), "Teleport", screenGui)
+local typeToggleButton = createTextButton("TypeToggle", UDim2.new(0, 0, 0.22, 0), "Random", screenGui)
+
+-- Default Sound ID
+local defaultSoundId = "rbxassetid://405593386"
+
+-- Variable to track the current tween
+local currentTween = nil
+
+-- Function to play a sound
+local function playSound(soundId)
+    local sound = createSound(screenGui, soundId)
+    sound:Play()
+end
+
+-- Function to cancel the current tween if it exists
+local function cancelCurrentTween()
+    if currentTween then
+        currentTween:Cancel()
+        currentTween = nil
+    end
+end
+
+-- Function to tween to a player
+local function tweenToPlayer(targetHRP, duration)
+    local localPlayer = game.Players.LocalPlayer
+    local character = localPlayer.Character
+    local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
+
+    if not humanoidRootPart then
+        warn("Local player's character or HumanoidRootPart not found.")
+        return
+    end
+
+    -- Create and play tween
+    local tweenService = game:GetService("TweenService")
+    local tweenInfo = TweenInfo.new(
+        duration,
+        Enum.EasingStyle.Linear,
+        Enum.EasingDirection.InOut
+    )
+    local tweenGoal = { CFrame = targetHRP.CFrame }
+    currentTween = tweenService:Create(humanoidRootPart, tweenInfo, tweenGoal)
+    currentTween:Play()
+end
+
+-- Function to find and teleport to a player based on the mode
+local function teleportToPlayer(mode)
+    local players = game.Players:GetPlayers()
+    local targetPlayer = nil
+    local localPlayer = game.Players.LocalPlayer
+
+    if #players <= 1 then
+        print("No other players found.")
+        return
+    end
+
+    if mode == "Random" then
+        local otherPlayers = {}
+        for _, p in pairs(players) do
+            if p ~= localPlayer then
+                table.insert(otherPlayers, p)
+            end
+        end
+        if #otherPlayers > 0 then
+            targetPlayer = otherPlayers[math.random(#otherPlayers)]
+        end
+
+    elseif mode == "Nearest" then
+        local closestDistance = math.huge
+        for _, p in pairs(players) do
+            if p ~= localPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                local targetHRP = p.Character.HumanoidRootPart
+                local distance = (localPlayer.Character.HumanoidRootPart.Position - targetHRP.Position).magnitude
+                if distance < closestDistance then
+                    closestDistance = distance
+                    targetPlayer = p
+                end
+            end
+        end
+
+    elseif mode == "Farthest" then
+        local farthestDistance = 0
+        for _, p in pairs(players) do
+            if p ~= localPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                local targetHRP = p.Character.HumanoidRootPart
+                local distance = (localPlayer.Character.HumanoidRootPart.Position - targetHRP.Position).magnitude
+                if distance > farthestDistance then
+                    farthestDistance = distance
+                    targetPlayer = p
+                end
+            end
+        end
+
+    elseif mode == "No One" then
+        return  -- Do nothing
+    end
+
+    if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        local targetHRP = targetPlayer.Character.HumanoidRootPart
+        local distance = (localPlayer.Character.HumanoidRootPart.Position - targetHRP.Position).magnitude
+        local speed = 50  -- Adjust this speed as needed (studs per second)
+        local duration = distance / speed
+
+        -- Cancel any ongoing tween if the mode is switched
+        cancelCurrentTween()
+
+        if modeToggleButton.Text == "Teleport" then
+            localPlayer.Character:SetPrimaryPartCFrame(CFrame.new(targetHRP.Position - (targetHRP.CFrame.LookVector * 5)))
+        elseif modeToggleButton.Text == "Tween" then
+            tweenToPlayer(targetHRP, duration)
+        end
+    end
+
+    playSound(defaultSoundId)
+end
+
+-- Connect button click to teleport function
+teleportButton.MouseButton1Click:Connect(function()
+    local typeMode = typeToggleButton.Text
+    teleportToPlayer(typeMode)
+end)
+
+-- Connect mode toggle button functionality
+modeToggleButton.MouseButton1Click:Connect(function()
+    if modeToggleButton.Text == "Teleport" then
+        modeToggleButton.Text = "Tween"
+    else
+        modeToggleButton.Text = "Teleport"
+        -- Cancel any ongoing tween when switching to Teleport mode
+        cancelCurrentTween()
+    end
+end)
+
+-- Connect type toggle button functionality
+typeToggleButton.MouseButton1Click:Connect(function()
+    local modes = {"Random", "Nearest", "Farthest", "No One"}
+    local currentModeIndex = table.find(modes, typeToggleButton.Text)
+    local nextModeIndex = (currentModeIndex % #modes) + 1
+    typeToggleButton.Text = modes[nextModeIndex]
+end)
+
+-- Set transparency for UI elements
+teleportButton.Transparency = 0.8
+modeToggleButton.Transparency = 0.8
+typeToggleButton.Transparency = 0.8
