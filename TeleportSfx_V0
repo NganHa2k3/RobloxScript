@@ -1,0 +1,145 @@
+-- Create ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "TeleportGui"
+screenGui.Parent = game.CoreGui
+
+-- Create TextButton function
+local function createTextButton(name, position, text, parent)
+    local button = Instance.new("TextButton")
+    button.Name = name
+    button.Size = UDim2.new(0.1, 0, 0.1, 0)
+    button.Position = position
+    button.Text = text
+    button.Parent = parent
+    
+    local uiCorner = Instance.new("UICorner")
+    uiCorner.Parent = button
+    
+    return button
+end
+
+-- Create Sound function
+local function createSound(parent, soundId)
+    local sound = Instance.new("Sound")
+    sound.SoundId = soundId
+    sound.Parent = parent
+    return sound
+end
+
+-- Create Buttons
+local teleportButton = createTextButton("Teleport", UDim2.new(0.7, 0, 0.4, 0), "Teleport", screenGui)
+
+-- New Toggle Button (replacing the old emote button)
+local modeToggleButton = createTextButton("ModeToggle", UDim2.new(0, 0, 0.3, 0), "Teleport", screenGui)
+
+-- New Mode Toggle Button (replacing the old toggle button)
+local typeToggleButton = createTextButton("TypeToggle", UDim2.new(0, 0, 0.22, 0), "Random", screenGui)
+
+-- Default Sound ID
+local defaultSoundId = "rbxassetid://405593386"
+
+-- Function to play a sound
+local function playSound(soundId)
+    local sound = createSound(screenGui, soundId)
+    sound:Play()
+end
+
+-- Function to find and teleport to a player based on the mode
+local function teleportToPlayer(mode)
+    local players = game.Players:GetPlayers()
+    local targetPlayer = nil
+    local localPlayer = game.Players.LocalPlayer
+
+    if #players <= 1 then
+        print("No other players found.")
+        return
+    end
+
+    if mode == "Random" then
+        local otherPlayers = {}
+        for _, p in pairs(players) do
+            if p ~= localPlayer then
+                table.insert(otherPlayers, p)
+            end
+        end
+        if #otherPlayers > 0 then
+            targetPlayer = otherPlayers[math.random(#otherPlayers)]
+        end
+
+    elseif mode == "Nearest" then
+        local closestDistance = math.huge
+        for _, p in pairs(players) do
+            if p ~= localPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                local distance = (localPlayer.Character.HumanoidRootPart.Position - p.Character.HumanoidRootPart.Position).magnitude
+                if distance < closestDistance then
+                    closestDistance = distance
+                    targetPlayer = p
+                end
+            end
+        end
+
+    elseif mode == "Farthest" then
+        local farthestDistance = 0
+        for _, p in pairs(players) do
+            if p ~= localPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                local distance = (localPlayer.Character.HumanoidRootPart.Position - p.Character.HumanoidRootPart.Position).magnitude
+                if distance > farthestDistance then
+                    farthestDistance = distance
+                    targetPlayer = p
+                end
+            end
+        end
+
+    elseif mode == "No One" then
+        -- Do nothing
+        return
+    end
+
+    if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        local character = localPlayer.Character
+        if character and character:FindFirstChild("HumanoidRootPart") then
+            local targetPosition = targetPlayer.Character.HumanoidRootPart.Position - (targetPlayer.Character.HumanoidRootPart.CFrame.LookVector * 5)
+            if modeToggleButton.Text == "Teleport" then
+                character:SetPrimaryPartCFrame(CFrame.new(targetPosition, targetPlayer.Character.HumanoidRootPart.Position))
+            elseif modeToggleButton.Text == "Tween" then
+                local startPosition = character.HumanoidRootPart.Position
+                local tweenService = game:GetService("TweenService")
+                local tweenInfo = TweenInfo.new((startPosition - targetPosition).magnitude / 150, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
+                local goal = {Position = targetPosition}
+                local tween = tweenService:Create(character.HumanoidRootPart, tweenInfo, goal)
+                tween:Play()
+                tween.Completed:Wait()
+            end
+        end
+    end
+
+    -- Play the sound
+    playSound(defaultSoundId)
+end
+
+-- Function to handle teleportation based on the current mode
+local function teleportToTarget()
+    local typeMode = typeToggleButton.Text
+    teleportToPlayer(typeMode)
+end
+
+-- Connect button click to teleport function
+teleportButton.MouseButton1Click:Connect(teleportToTarget)
+
+-- Connect mode toggle button functionality
+modeToggleButton.MouseButton1Click:Connect(function()
+    modeToggleButton.Text = (modeToggleButton.Text == "Teleport") and "Tween" or "Teleport"
+end)
+
+-- Connect type toggle button functionality
+typeToggleButton.MouseButton1Click:Connect(function()
+    local modes = {"Random", "Nearest", "Farthest", "No One"}
+    local currentModeIndex = table.find(modes, typeToggleButton.Text)
+    local nextModeIndex = (currentModeIndex % #modes) + 1
+    typeToggleButton.Text = modes[nextModeIndex]
+end)
+
+-- Set transparency for UI elements
+teleportButton.Transparency = 0.8
+modeToggleButton.Transparency = 0.8
+typeToggleButton.Transparency = 0.8
