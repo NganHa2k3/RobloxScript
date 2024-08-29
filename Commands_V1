@@ -71,11 +71,13 @@ local function tweenTo(targetPlayer, speed)
         local tweenTime = distance / (speed or 50)  -- Default speed is 50 if not provided
         
         local tweenInfo = TweenInfo.new(tweenTime, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
-        local tweenGoal = {Position = targetPosition}
-        local tween = TweenService:Create(player.Character.HumanoidRootPart, tweenInfo, tweenGoal)
+        local tweenGoal = { CFrame = CFrame.new(targetPosition) }
         
+        local tween = TweenService:Create(player.Character.HumanoidRootPart, tweenInfo, tweenGoal)
         tween:Play()
-        print("Tweening to " .. targetPlayer.Name .. " at " .. (speed or 50) .. " studs per second.")
+        tween.Completed:Connect(function()
+            print("Tweening to " .. targetPlayer.Name .. " completed at " .. (speed or 50) .. " studs per second.")
+        end)
     else
         print("Target player is invalid or not found.")
     end
