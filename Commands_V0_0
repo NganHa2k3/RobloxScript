@@ -1,0 +1,43 @@
+-- Roblox LocalScript
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local chatService = game:GetService("Chat")
+
+-- Function to teleport to a specific player
+local function teleportTo(targetPlayer)
+    if targetPlayer then
+        player.Character:MoveTo(targetPlayer.Character.HumanoidRootPart.Position)
+    end
+end
+
+-- Function to handle chat messages
+local function onPlayerChatted(message)
+    local words = string.split(message, " ")
+    
+    if words[1] == "teleport" then
+        if #words == 1 then
+            print("Teleport to nothing")
+        elseif #words == 2 and words[2] == "random" then
+            local allPlayers = Players:GetPlayers()
+            local otherPlayers = {}
+            
+            for _, p in pairs(allPlayers) do
+                if p ~= player then
+                    table.insert(otherPlayers, p)
+                end
+            end
+            
+            if #otherPlayers > 0 then
+                local randomPlayer = otherPlayers[math.random(#otherPlayers)]
+                teleportTo(randomPlayer)
+                print("Teleporting to " .. randomPlayer.Name)
+            else
+                print("No other players to teleport to.")
+            end
+        end
+    end
+end
+
+-- Connect the chat message event to the handler function
+player.Chatted:Connect(onPlayerChatted)
