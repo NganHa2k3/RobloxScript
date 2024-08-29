@@ -1,0 +1,103 @@
+-- Roblox LocalScript
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+-- Function to teleport to a specific player
+local function teleportTo(targetPlayer)
+    if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        player.Character:MoveTo(targetPlayer.Character.HumanoidRootPart.Position)
+        print("Teleporting to " .. targetPlayer.Name)
+    else
+        print("Target player is invalid or not found.")
+    end
+end
+
+-- Function to find the nearest player
+local function getNearestPlayer()
+    local nearestPlayer = nil
+    local shortestDistance = math.huge
+    
+    for _, p in pairs(Players:GetPlayers()) do
+        if p ~= player and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+            local distance = (player.Character.HumanoidRootPart.Position - p.Character.HumanoidRootPart.Position).magnitude
+            if distance < shortestDistance then
+                shortestDistance = distance
+                nearestPlayer = p
+            end
+        end
+    end
+    
+    return nearestPlayer
+end
+
+-- Function to find the farthest player
+local function getFarthestPlayer()
+    local farthestPlayer = nil
+    local longestDistance = 0
+    
+    for _, p in pairs(Players:GetPlayers()) do
+        if p ~= player and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+            local distance = (player.Character.HumanoidRootPart.Position - p.Character.HumanoidRootPart.Position).magnitude
+            if distance > longestDistance then
+                longestDistance = distance
+                farthestPlayer = p
+            end
+        end
+    end
+    
+    return farthestPlayer
+end
+
+-- Function to handle chat messages
+local function onPlayerChatted(message)
+    local words = string.split(message, " ")
+    
+    if words[1] == "teleport" then
+        if #words == 1 then
+            print("Teleport to nothing")
+        elseif #words == 2 then
+            if words[2] == "random" then
+                local allPlayers = Players:GetPlayers()
+                local otherPlayers = {}
+                
+                for _, p in pairs(allPlayers) do
+                    if p ~= player then
+                        table.insert(otherPlayers, p)
+                    end
+                end
+                
+                if #otherPlayers > 0 then
+                    local randomPlayer = otherPlayers[math.random(#otherPlayers)]
+                    teleportTo(randomPlayer)
+                else
+                    print("No other players to teleport to.")
+                end
+            elseif words[2] == "nearest" then
+                local nearestPlayer = getNearestPlayer()
+                if nearestPlayer then
+                    teleportTo(nearestPlayer)
+                else
+                    print("No players found.")
+                end
+            elseif words[2] == "farthest" then
+                local farthestPlayer = getFarthestPlayer()
+                if farthestPlayer then
+                    teleportTo(farthestPlayer)
+                else
+                    print("No players found.")
+                end
+            else
+                local targetPlayer = Players:FindFirstChild(words[2])
+                if targetPlayer then
+                    teleportTo(targetPlayer)
+                else
+                    print("Player with username " .. words[2] .. " not found.")
+                end
+            end
+        end
+    end
+end
+
+-- Connect the chat message event to the handler function
+player.Chatted:Connect(onPlayerChatted)
