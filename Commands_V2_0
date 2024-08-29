@@ -1,0 +1,195 @@
+-- Roblox LocalScript
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local player = Players.LocalPlayer
+local tween = nil  -- Store ongoing tween
+
+-- Function to teleport to a player or part
+local function teleportTo(target)
+    local character = player.Character
+    local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
+    if not humanoidRootPart then
+        print("HumanoidRootPart not found.")
+        return
+    end
+
+    if target:IsA("BasePart") then
+        humanoidRootPart.CFrame = target.CFrame + Vector3.new(0, 5, 0)
+        print("Teleported to part " .. target.Name)
+    elseif target:IsA("Player") and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+        humanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame
+        print("Teleported to player " .. target.Name)
+    end
+end
+
+-- Function to find parts or players
+local function findTarget(name, searchInPlayers)
+    if searchInPlayers then
+        return Players:FindFirstChild(name)
+    else
+        return game.Workspace:FindFirstChild(name, true)
+    end
+end
+
+-- Function to tween to a player
+local function tweenTo(targetPlayer, speed)
+    local humanoidRootPart = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    if not humanoidRootPart or not targetPlayer.Character or not targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        print("Invalid target or missing HumanoidRootPart.")
+        return
+    end
+    
+    local distance = (humanoidRootPart.Position - targetPlayer.Character.HumanoidRootPart.Position).magnitude
+    local tweenInfo = TweenInfo.new(distance / (speed or 50), Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
+    local tweenGoal = { CFrame = targetPlayer.Character.HumanoidRootPart.CFrame }
+    
+    if tween then tween:Cancel() end
+    
+    tween = TweenService:Create(humanoidRootPart, tweenInfo, tweenGoal)
+    tween:Play()
+    tween.Completed:Connect(function() tween = nil end)
+end
+
+-- Chat command handler
+local function onPlayerChatted(message)
+    local args = message:split(" ")
+    local command = args[1]
+    local targetName = args[2]
+    
+    if command == "teleport" then
+        local target
+        if targetName == "random" then
+            local players = Players:GetPlayers()
+            table.remove(players, table.find(players, player))
+            target = players[math.random(#players)]
+        elseif targetName == "nearest" then
+            local nearestPlayer = nil
+            local shortestDistance = math.huge
+            for _, p in ipairs(Players:GetPlayers()) do
+                if p ~= player and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                    local distance = (player.Character.HumanoidRootPart.Position - p.Character.HumanoidRootPart.Position).magnitude
+                    if distance < shortestDistance then
+                        shortestDistance = distance
+                        nearestPlayer = p
+                    end
+                end
+            end
+            target = nearestPlayer
+        elseif targetName == "farthest" then
+            local farthestPlayer = nil
+            local longestDistance = 0
+            for _, p in ipairs(Players:GetPlayers()) do
+                if p ~= player and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                    local distance = (player.Character.HumanoidRootPart.Position - p.Character.HumanoidRootPart.Position).magnitude
+                    if distance > longestDistance then
+                        longestDistance = distance
+                        farthestPlayer = p
+                    end
+                end
+            end
+            target = farthestPlayer
+        else
+            target = findTarget(targetName, false)  -- Search in Workspace parts
+        end
+        
+        if target then
+            teleportTo(target)
+        else
+            print("Target not found.")
+        end
+    elseif command == "reset" then
+        if player.Character and player.Character:FindFirstChildOfClass("Humanoid") then
+            player.Character.Humanoid.Health = 0
+            player.Character:BreakJoints()
+        end
+    elseif command == "tween" then
+        local speed = tonumber(args[3]) or 50
+        local target
+        if args[2] == "nearest" then
+            target = findTarget("nearest", true)
+        elseif args[2] == "farthest" then
+            target = findTarget("farthest", true)
+        elseif args[2] == "random" then
+            local players = Players:GetPlayers()
+            table.remove(players, table.find(players, player))
+            target = players[math.random(#players)]
+        else
+            target = findTarget(args[2], true)
+        end
+        
+        if target then
+            tweenTo(target, speed)
+        else
+            print("Player not found.")
+        end
+    elseif command == "untween" then
+        if tween then
+            tween:Cancel()
+            tween = nil
+            print("Tween canceled.")
+        else
+            print("No ongoing tween to cancel.")
+        end
+    elseif command == "showname" then
+        for _, p in ipairs(Players:GetPlayers()) do
+            createNameTag(p)
+        end
+        Players.PlayerAdded:Connect(createNameTag)
+        print("Name tags activated.")
+    elseif command == "unshowname" then
+        for _, p in ipairs(Players:GetPlayers()) do
+            local character = p.Character
+            if character then
+                local head = character:FindFirstChild("Head")
+                if head then
+                    local billboardGui = head:FindFirstChildOfClass("BillboardGui")
+                    if billboardGui then
+                        billboardGui:Destroy()
+                    end
+                end
+            end
+        end
+        Players.PlayerAdded:Connect(function(p)
+            local character = p.Character
+            if character then
+                local head = character:FindFirstChild("Head")
+                if head then
+                    local billboardGui = head:FindFirstChildOfClass("BillboardGui")
+                    if billboardGui then
+                        billboardGui:Destroy()
+                    end
+                end
+            end
+        end)
+        print("Name tags deactivated.")
+    else
+        print("Unknown command.")
+    end
+end
+
+player.Chatted:Connect(onPlayerChatted)
+
+-- Function to create a BillboardGui with player's name above their head
+local function createNameTag(player)
+    local character = player.Character
+    if not character then return end
+    local head = character:FindFirstChild("Head")
+    if not head then return end
+    
+    local billboardGui = Instance.new("BillboardGui")
+    billboardGui.Adornee = head
+    billboardGui.Size = UDim2.new(0, 200, 0, 50)
+    billboardGui.StudsOffset = Vector3.new(0, 3, 0)
+    billboardGui.AlwaysOnTop = true
+    billboardGui.Parent = head
+    
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Parent = billboardGui
+    textLabel.Size = UDim2.new(1, 0, 1, 0)
+    textLabel.BackgroundTransparency = 1
+    textLabel.TextColor3 = Color3.new(1, 1, 1)
+    textLabel.TextStrokeTransparency = 0.5
+    textLabel.Text = player.Name
+    textLabel.TextScaled = true
+end
