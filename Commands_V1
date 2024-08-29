@@ -55,6 +55,7 @@ local function resetCharacter()
     if player.Character and player.Character:FindFirstChildOfClass("Humanoid") then
         local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
         humanoid.Health = 0  -- Set health to 0 to effectively reset the character
+        player.Character:BreakJoints()  -- Ensure the character is properly reset
         print("Character has been reset.")
     else
         print("Humanoid not found in the character.")
@@ -88,9 +89,7 @@ local function onPlayerChatted(message)
     local words = string.split(message, " ")
     
     if words[1] == "teleport" then
-        if #words == 1 then
-            print("Teleport to nothing")
-        elseif #words == 2 then
+        if #words == 2 then
             if words[2] == "random" then
                 local allPlayers = Players:GetPlayers()
                 local otherPlayers = {}
@@ -129,6 +128,8 @@ local function onPlayerChatted(message)
                     print("Player with username " .. words[2] .. " not found.")
                 end
             end
+        else
+            print("Invalid teleport command.")
         end
     elseif words[1] == "reset" then
         resetCharacter()
@@ -173,10 +174,14 @@ local function onPlayerChatted(message)
                 else
                     print("No other players to tween to.")
                 end
+            else
+                print("Invalid tween command.")
             end
         else
             print("Invalid tween command.")
         end
+    else
+        print("Unknown command.")
     end
 end
 
