@@ -15,10 +15,10 @@ end
 local function onPlayerChatted(message)
     local words = string.split(message, " ")
     
-    if words[1] == "teleport" then
+    if words[1] == "/teleport" then
         if #words == 1 then
             print("Teleport to nothing")
-        elseif #words == 2 and words[2] == "random" then
+        elseif #words == 2 and words[2] == "r" then
             local allPlayers = Players:GetPlayers()
             local otherPlayers = {}
             
