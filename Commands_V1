@@ -88,9 +88,9 @@ end
 local function onPlayerChatted(message)
     local words = string.split(message, " ")
     
-    if words[1] == "teleport" then
+    if words[1] == "+t" then
         if #words == 2 then
-            if words[2] == "random" then
+            if words[2] == "r" then
                 local allPlayers = Players:GetPlayers()
                 local otherPlayers = {}
                 
@@ -106,14 +106,14 @@ local function onPlayerChatted(message)
                 else
                     print("No other players to teleport to.")
                 end
-            elseif words[2] == "nearest" then
+            elseif words[2] == "n" then
                 local nearestPlayer = getNearestPlayer()
                 if nearestPlayer then
                     teleportTo(nearestPlayer)
                 else
                     print("No players found.")
                 end
-            elseif words[2] == "farthest" then
+            elseif words[2] == "f" then
                 local farthestPlayer = getFarthestPlayer()
                 if farthestPlayer then
                     teleportTo(farthestPlayer)
@@ -131,9 +131,9 @@ local function onPlayerChatted(message)
         else
             print("Invalid teleport command.")
         end
-    elseif words[1] == "reset" then
+    elseif words[1] == "+r" then
         resetCharacter()
-    elseif words[1] == "tween" then
+    elseif words[1] == "+tw" then
         local speed = tonumber(words[3]) or 50  -- Default speed is 50 if not specified
         if #words == 2 then
             local targetPlayerName = words[2]
@@ -144,21 +144,21 @@ local function onPlayerChatted(message)
                 print("Player with username " .. targetPlayerName .. " not found.")
             end
         elseif #words == 3 then
-            if words[2] == "nearest" then
+            if words[2] == "n" then
                 local nearestPlayer = getNearestPlayer()
                 if nearestPlayer then
                     tweenTo(nearestPlayer, speed)
                 else
                     print("No players found.")
                 end
-            elseif words[2] == "farthest" then
+            elseif words[2] == "f" then
                 local farthestPlayer = getFarthestPlayer()
                 if farthestPlayer then
                     tweenTo(farthestPlayer, speed)
                 else
                     print("No players found.")
                 end
-            elseif words[2] == "random" then
+            elseif words[2] == "r" then
                 local allPlayers = Players:GetPlayers()
                 local otherPlayers = {}
                 
@@ -187,3 +187,47 @@ end
 
 -- Connect the chat message event to the handler function
 player.Chatted:Connect(onPlayerChatted)
+
+
+
+
+local tweenService = game:GetService("TweenService")
+local player = game.Players.LocalPlayer
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = player:WaitForChild("PlayerGui")  -- Parent ScreenGui to PlayerGui
+
+local function showWelcomeMessage()
+    -- Create a new TextButton for the welcome message
+    local welcomeTextButton = Instance.new("TextButton")
+    welcomeTextButton.Parent = screenGui
+    welcomeTextButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    welcomeTextButton.BackgroundTransparency = 0.5
+    welcomeTextButton.BorderColor3 = Color3.fromRGB(255, 255, 255)
+    welcomeTextButton.BorderSizePixel = 2
+    welcomeTextButton.Position = UDim2.new(0.5, -100, 0.5, -50)  -- Center of the screen
+    welcomeTextButton.Size = UDim2.new(0, 200, 0, 100)
+    welcomeTextButton.Text = "All Commands Prefix is + : +t , +tw , +r with n r f !"
+    welcomeTextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    welcomeTextButton.Font = Enum.Font.PatrickHand
+    welcomeTextButton.TextScaled = true
+    welcomeTextButton.TextWrapped = true
+
+    local uiCornerWelcomeTextButton = Instance.new("UICorner")
+    uiCornerWelcomeTextButton.CornerRadius = UDim.new(0.5, 0)
+    uiCornerWelcomeTextButton.Parent = welcomeTextButton
+
+    local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.In)
+    local goal = {TextTransparency = 1}
+    local tween = tweenService:Create(welcomeTextButton, tweenInfo, goal)
+
+    local function onClick()
+        tween:Play()
+        tween.Completed:Connect(function()
+            welcomeTextButton:Destroy()
+        end)
+    end
+
+    welcomeTextButton.MouseButton1Click:Connect(onClick)
+end
+
+showWelcomeMessage()
