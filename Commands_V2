@@ -256,10 +256,44 @@ end
 
 -- Connect the chat message event to the handler function
 player.Chatted:Connect(onPlayerChatted)
+------ Ends of script 1 ------
+
+-- 1
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+-- 2
+local function onPlayerChatted(message)
+    local words = string.split(message, " ")
+    
+    if player.Character and player.Character:FindFirstChildOfClass("Humanoid") then
+        local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+        
+        -- Teleport command
+        if words[1] == "+tp" and words[2] then
+            local partName = words[2]
+            local part = game.Workspace:FindFirstChild(partName)
+            
+            if part and part:IsA("BasePart") then
+                local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
+                
+                if humanoidRootPart then
+                    humanoidRootPart.CFrame = part.CFrame + Vector3.new(0, 5, 0) -- Position above the part
+                else
+                    warn("Player's character is missing HumanoidRootPart")
+                end
+            else
+                warn("Part not found or is not a BasePart")
+            end
+        end
+    end
+end
+
+-- 3
+player.Chatted:Connect(onPlayerChatted)
 
 
-
-
+------ Just a welcome message ------
 local tweenService = game:GetService("TweenService")
 local player = game.Players.LocalPlayer
 local screenGui = Instance.new("ScreenGui")
@@ -275,7 +309,7 @@ local function showWelcomeMessage()
     welcomeTextButton.BorderSizePixel = 2
     welcomeTextButton.Position = UDim2.new(0.5, -100, 0.5, -50)  -- Center of the screen
     welcomeTextButton.Size = UDim2.new(0, 200, 0, 100)
-    welcomeTextButton.Text = "All Commands Prefix is + : +t , +tw , +r , +e , +noe with n r f !"
+    welcomeTextButton.Text = "All Commands Prefix is + : +t , +tw , +r , +e , +noe , +tp [PartName] with n r f !"
     welcomeTextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     welcomeTextButton.Font = Enum.Font.PatrickHand
     welcomeTextButton.TextScaled = true
