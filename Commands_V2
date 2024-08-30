@@ -3,7 +3,66 @@
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local player = Players.LocalPlayer
-local currentTween = nil
+
+-- Variable to store the BillboardGui name tag references
+local nameTags = {}
+
+-- Function to create a BillboardGui with player's name above their head
+local function createNameTag(player)
+    local character = player.Character
+    if not character then return end
+
+    -- Ensure the character has a head
+    local head = character:FindFirstChild("Head")
+    if not head then return end
+
+    -- Create BillboardGui
+    local billboardGui = Instance.new("BillboardGui")
+    billboardGui.Adornee = head
+    billboardGui.Parent = head
+    billboardGui.Size = UDim2.new(0, 200, 0, 50)
+    billboardGui.StudsOffset = Vector3.new(0, 3, 0)
+    billboardGui.AlwaysOnTop = true
+
+    -- Create TextLabel
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Parent = billboardGui
+    textLabel.Size = UDim2.new(1, 0, 1, 0)
+    textLabel.BackgroundTransparency = 1
+    textLabel.TextColor3 = Color3.new(1, 1, 1)
+    textLabel.TextStrokeTransparency = 0.5
+    textLabel.Text = player.Name
+    textLabel.TextScaled = true
+
+    -- Store reference for later removal
+    nameTags[player] = billboardGui
+end
+
+-- Function to remove name tags
+local function removeNameTags()
+    for player, billboardGui in pairs(nameTags) do
+        if player.Character and player.Character:FindFirstChild("Head") then
+            billboardGui:Destroy()
+        end
+    end
+    nameTags = {}
+end
+
+-- Create name tags for all players currently in the game
+for _, player in ipairs(Players:GetPlayers()) do
+    createNameTag(player)
+end
+
+-- Create name tags for players who join the game
+Players.PlayerAdded:Connect(createNameTag)
+
+-- Remove name tags when players leave the game
+Players.PlayerRemoving:Connect(function(player)
+    if nameTags[player] then
+        nameTags[player]:Destroy()
+        nameTags[player] = nil
+    end
+end)
 
 -- Function to teleport to a specific player
 local function teleportTo(targetPlayer)
@@ -19,6 +78,7 @@ end
 local function getNearestPlayer()
     local nearestPlayer = nil
     local shortestDistance = math.huge
+    
     for _, p in pairs(Players:GetPlayers()) do
         if p ~= player and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
             local distance = (player.Character.HumanoidRootPart.Position - p.Character.HumanoidRootPart.Position).magnitude
@@ -28,6 +88,7 @@ local function getNearestPlayer()
             end
         end
     end
+    
     return nearestPlayer
 end
 
@@ -35,6 +96,7 @@ end
 local function getFarthestPlayer()
     local farthestPlayer = nil
     local longestDistance = 0
+    
     for _, p in pairs(Players:GetPlayers()) do
         if p ~= player and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
             local distance = (player.Character.HumanoidRootPart.Position - p.Character.HumanoidRootPart.Position).magnitude
@@ -44,14 +106,16 @@ local function getFarthestPlayer()
             end
         end
     end
+    
     return farthestPlayer
 end
 
 -- Function to reset the player's character
 local function resetCharacter()
     if player.Character and player.Character:FindFirstChildOfClass("Humanoid") then
-        player.Character:FindFirstChildOfClass("Humanoid").Health = 0
-        player.Character:BreakJoints()
+        local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+        humanoid.Health = 0  -- Set health to 0 to effectively reset the character
+        player.Character:BreakJoints()  -- Ensure the character is properly reset
         print("Character has been reset.")
     else
         print("Humanoid not found in the character.")
@@ -63,103 +127,53 @@ local function tweenTo(targetPlayer, speed)
     if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
         local targetPosition = targetPlayer.Character.HumanoidRootPart.Position
         local startPosition = player.Character.HumanoidRootPart.Position
+        
         local distance = (startPosition - targetPosition).magnitude
-        local tweenSpeed = speed or 50
-        local tweenTime = distance / tweenSpeed
+        local tweenTime = distance / (speed or 50)  -- Default speed is 50 if not provided
         
         local tweenInfo = TweenInfo.new(tweenTime, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
         local tweenGoal = { CFrame = CFrame.new(targetPosition) }
         
-        if currentTween then
-            currentTween:Cancel()
-        end
-        
-        currentTween = TweenService:Create(player.Character.HumanoidRootPart, tweenInfo, tweenGoal)
-        currentTween:Play()
-        currentTween.Completed:Connect(function()
-            print("Tweening to " .. targetPlayer.Name .. " completed at " .. tweenSpeed .. " studs per second.")
-            currentTween = nil
+        local tween = TweenService:Create(player.Character.HumanoidRootPart, tweenInfo, tweenGoal)
+        tween:Play()
+        tween.Completed:Connect(function()
+            print("Tweening to " .. targetPlayer.Name .. " completed at " .. (speed or 50) .. " studs per second.")
         end)
     else
         print("Target player is invalid or not found.")
     end
 end
 
--- Function to create a BillboardGui with player's name above their head
-local function createNameTag(player)
-    local character = player.Character
-    if character then
-        local head = character:FindFirstChild("Head")
-        if head then
-            local billboardGui = Instance.new("BillboardGui")
-            billboardGui.Adornee = head
-            billboardGui.Parent = head
-            billboardGui.Size = UDim2.new(0, 200, 0, 50)
-            billboardGui.StudsOffset = Vector3.new(0, 3, 0)
-            billboardGui.AlwaysOnTop = true
-
-            local textLabel = Instance.new("TextLabel")
-            textLabel.Parent = billboardGui
-            textLabel.Size = UDim2.new(1, 0, 1, 0)
-            textLabel.BackgroundTransparency = 1
-            textLabel.TextColor3 = Color3.new(1, 1, 1)
-            textLabel.TextStrokeTransparency = 0.5
-            textLabel.Text = player.Name
-            textLabel.TextScaled = true
-        end
-    end
-end
-
--- Function to remove name tags from all players
-local function removeNameTags()
-    for _, player in ipairs(Players:GetPlayers()) do
-        local character = player.Character
-        if character then
-            local head = character:FindFirstChild("Head")
-            if head then
-                local billboardGui = head:FindFirstChildOfClass("BillboardGui")
-                if billboardGui then
-                    billboardGui:Destroy()
-                end
-            end
-        end
-    end
-end
-
--- Create name tags for all players currently in the game
-for _, player in ipairs(Players:GetPlayers()) do
-    createNameTag(player)
-end
-
--- Create name tags for players who join the game
-Players.PlayerAdded:Connect(createNameTag)
-
 -- Function to handle chat messages
 local function onPlayerChatted(message)
-    local words = string.split(message:lower(), " ")
+    local words = string.split(message, " ")
     
-    if words[1] == "teleport" then
+    if words[1] == "+t" then
         if #words == 2 then
-            if words[2] == "random" then
+            if words[2] == "r" then
+                local allPlayers = Players:GetPlayers()
                 local otherPlayers = {}
-                for _, p in pairs(Players:GetPlayers()) do
+                
+                for _, p in pairs(allPlayers) do
                     if p ~= player then
                         table.insert(otherPlayers, p)
                     end
                 end
+                
                 if #otherPlayers > 0 then
-                    teleportTo(otherPlayers[math.random(#otherPlayers)])
+                    local randomPlayer = otherPlayers[math.random(#otherPlayers)]
+                    teleportTo(randomPlayer)
                 else
                     print("No other players to teleport to.")
                 end
-            elseif words[2] == "nearest" then
+            elseif words[2] == "n" then
                 local nearestPlayer = getNearestPlayer()
                 if nearestPlayer then
                     teleportTo(nearestPlayer)
                 else
                     print("No players found.")
                 end
-            elseif words[2] == "farthest" then
+            elseif words[2] == "f" then
                 local farthestPlayer = getFarthestPlayer()
                 if farthestPlayer then
                     teleportTo(farthestPlayer)
@@ -177,41 +191,46 @@ local function onPlayerChatted(message)
         else
             print("Invalid teleport command.")
         end
-    elseif words[1] == "reset" then
+    elseif words[1] == "+r" then
         resetCharacter()
-    elseif words[1] == "tween" then
-        local speed = tonumber(words[3]) or 50
+    elseif words[1] == "+tw" then
+        local speed = tonumber(words[3]) or 50  -- Default speed is 50 if not specified
         if #words == 2 then
-            local targetPlayer = Players:FindFirstChild(words[2])
+            local targetPlayerName = words[2]
+            local targetPlayer = Players:FindFirstChild(targetPlayerName)
             if targetPlayer then
                 tweenTo(targetPlayer, speed)
             else
-                print("Player with username " .. words[2] .. " not found.")
+                print("Player with username " .. targetPlayerName .. " not found.")
             end
         elseif #words == 3 then
-            if words[2] == "nearest" then
+            if words[2] == "n" then
                 local nearestPlayer = getNearestPlayer()
                 if nearestPlayer then
                     tweenTo(nearestPlayer, speed)
                 else
                     print("No players found.")
                 end
-            elseif words[2] == "farthest" then
+            elseif words[2] == "f" then
                 local farthestPlayer = getFarthestPlayer()
                 if farthestPlayer then
                     tweenTo(farthestPlayer, speed)
                 else
                     print("No players found.")
                 end
-            elseif words[2] == "random" then
+            elseif words[2] == "r" then
+                local allPlayers = Players:GetPlayers()
                 local otherPlayers = {}
-                for _, p in pairs(Players:GetPlayers()) do
+                
+                for _, p in pairs(allPlayers) do
                     if p ~= player then
                         table.insert(otherPlayers, p)
                     end
                 end
+                
                 if #otherPlayers > 0 then
-                    tweenTo(otherPlayers[math.random(#otherPlayers)], speed)
+                    local randomPlayer = otherPlayers[math.random(#otherPlayers)]
+                    tweenTo(randomPlayer, speed)
                 else
                     print("No other players to tween to.")
                 end
@@ -221,23 +240,20 @@ local function onPlayerChatted(message)
         else
             print("Invalid tween command.")
         end
-    elseif words[1] == "untween" then
-        if currentTween then
-            currentTween:Cancel()
-            currentTween = nil
-            print("Ongoing tween has been cancelled.")
-        else
-            print("No tween to cancel.")
-        end
-    elseif words[1] == "showname" then
+    elseif words[1] == "+e" then
+        -- Enable name tags
         for _, p in ipairs(Players:GetPlayers()) do
-            createNameTag(p)
+            if not nameTags[p] then
+                createNameTag(p)
+            end
         end
         Players.PlayerAdded:Connect(createNameTag)
-        print("Name tags are now visible.")
-    elseif words[1] == "unshowname" then
+        print("Name tags enabled.")
+    elseif words[1] == "+noe" then
+        -- Disable name tags
         removeNameTags()
-        print("Name tags have been removed.")
+        Players.PlayerAdded:Disconnect(createNameTag)
+        print("Name tags disabled.")
     else
         print("Unknown command.")
     end
