@@ -363,6 +363,39 @@ local message = "Hello everyone! This is a server message."
 chatMessageEvent:FireAllClients(message)
     elseif words[1] == "+loadstring1" then
         loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/RobloxScript_0/main/Executor_V1'))()
+    elseif words[1] == "+partnamedetector" then
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Part%20Name%20Detector'))()
+    elseif words[1] == "+partname" then
+local DISTANCE = 40 -- Detect Distance
+
+local function detectNearbyParts()
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    if not character or not character:FindFirstChild("HumanoidRootPart") then
+        return
+    end
+    
+    local hrp = character.HumanoidRootPart
+    local partsInRange = {}
+    
+    for _, part in pairs(workspace:FindPartsInRegion3(workspace.CurrentCamera.CFrame:PointToWorldSpace(hrp.Position), Vector3.new(DISTANCE, DISTANCE, DISTANCE), nil)) do
+        if part:IsA("BasePart") then
+            table.insert(partsInRange, part.Name)
+        end
+    end
+    
+    if #partsInRange > 0 then
+        local message = "Nearby parts: " .. table.concat(partsInRange, ", ")
+        game:GetService("Chat"):Chat(player.Character.Head, message, Enum.ChatColor.White)
+    else
+        game:GetService("Chat"):Chat(player.Character.Head, "No parts nearby within " .. DISTANCE .. " studs.", Enum.ChatColor.White)
+    end
+end
+
+detectNearbyParts()
+
+end
+print("partname successfully executed")
     elseif words[1] == "+spawnbase" then
         local Part9 = Instance.new("Part")
         Part9.Size = Vector3.new(20000, -2, 20000)
@@ -476,7 +509,7 @@ local function showWelcomeMessage()
     welcomeTextButton.BorderSizePixel = 2
     welcomeTextButton.Position = UDim2.new(0.5, -100, 0.5, -50)  -- Center of the screen
     welcomeTextButton.Size = UDim2.new(0, 200, 0, 100)
-    welcomeTextButton.Text = "All Commands Prefix is + : +t , +tw , +r , +e and +noe , +m and +nom , +loadstring1 , +s1 and +nos1 , +j1 and +noj1 , +r1 , +sit , +test1 , +spawnbase , +removebase , with n r f !"
+    welcomeTextButton.Text = "All Commands Prefix is + : +t , +tw , +r , +e and +noe , +m and +nom , +loadstring1 , +s1 and +nos1 , +j1 and +noj1 , +r1 , +sit , +test1 , +spawnbase , +removebase , +partnamedetector , +partname , with n r f !"
     welcomeTextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     welcomeTextButton.Font = Enum.Font.PatrickHand
     welcomeTextButton.TextScaled = true
