@@ -1,5 +1,3 @@
--- Roblox LocalScript
-
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local player = Players.LocalPlayer
@@ -366,7 +364,7 @@ chatMessageEvent:FireAllClients(message)
     elseif words[1] == "+partnamedetector" then
         loadstring(game:HttpGet('https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Part%20Name%20Detector'))()
     elseif words[1] == "+partname" then
-local DISTANCE = 40 -- Detect Distance
+local DISTANCE = 40
 
 local function detectNearbyParts()
     local player = game.Players.LocalPlayer
