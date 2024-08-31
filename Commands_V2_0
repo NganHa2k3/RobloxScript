@@ -317,21 +317,76 @@ local function onPlayerChatted(message)
         end
     elseif words[1] == "+r" then
         resetCharacter()
+    elseif words[1] == "+s1" then
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 200
+    elseif words[1] == "+nos1" then
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16
+    elseif words[1] == "+j1" then
+        game.Players.LocalPlayer.Character.Humanoid.JumpPower = 300
+    elseif words[1] == "+noj1" then
+        game.Players.LocalPlayer.Character.Humanoid.JumpPower = 50
+    elseif words[1] == "+sit" then
+        game.Players.LocalPlayer.Character.Humanoid.Sit = true
+    elseif words[1] == "+r1" then
+        local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+local rotationSpeed = 1 
+
+local rotating = true
+
+local function startRotation()
+    while rotating do
+        local currentCFrame = humanoidRootPart.CFrame
+        
+        humanoidRootPart.CFrame = currentCFrame * CFrame.Angles(0, rotationSpeed * wait(), 0)
+    end
+end
+
+local function stopRotation()
+    rotating = false
+end
+
+startRotation()
+
+wait(5)
+stopRotation()
+    elseif words[1] == "+test1" then
+        local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local chatMessageEvent = ReplicatedStorage:WaitForChild("ChatMessageEvent")
+
+-- Message to be sent
+local message = "Hello everyone! This is a server message."
+
+-- Fire the RemoteEvent to all clients
+chatMessageEvent:FireAllClients(message)
     elseif words[1] == "+loadstring1" then
         loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/RobloxScript_0/main/Executor_V1'))()
     elseif words[1] == "+spawnbase" then
         local Part9 = Instance.new("Part")
         Part9.Size = Vector3.new(20000, -2, 20000)
         Part9.Material = "Grass"
-        Part9.Transparency = 0.5
+        Part9.Position = Vector3.new(0, -10, 0)
+        Part9.Color3 = Color3.fromRGB(0, 255, 0)
+        Part9.Transparency = 0
+        Part9.CanCollide = true
+        Part9.Anchored = true
+        Part9.Name = "Basel"
         Part9.Parent = game.Workspace
 
         print("Part Spawned")
     elseif words[1] == "+removebase" then
-        local Part9 = game.Workspace
-        Part9:Destroy()
+local partName = "Basel"
 
-        print("Part Destroyed")
+local part = game.Workspace:FindFirstChild(partName)
+
+if part then
+    part:Destroy()
+    print(partName .. " has been removed from Workspace.")
+else
+    print(partName .. " does not exist in Workspace.")
+end
     elseif words[1] == "+tw" then
         local speed = tonumber(words[3]) or 50  -- Default speed is 50 if not specified
         if #words == 2 then
@@ -421,7 +476,7 @@ local function showWelcomeMessage()
     welcomeTextButton.BorderSizePixel = 2
     welcomeTextButton.Position = UDim2.new(0.5, -100, 0.5, -50)  -- Center of the screen
     welcomeTextButton.Size = UDim2.new(0, 200, 0, 100)
-    welcomeTextButton.Text = "All Commands Prefix is + : +t , +tw , +r , +e and +noe , +m and +nom , +loadstring1 with n r f !"
+    welcomeTextButton.Text = "All Commands Prefix is + : +t , +tw , +r , +e and +noe , +m and +nom , +loadstring1 , +s1 and +nos1 , +j1 and +noj1 , +r1 , +sit , +test1 , +spawnbase , +removebase , with n r f !"
     welcomeTextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     welcomeTextButton.Font = Enum.Font.PatrickHand
     welcomeTextButton.TextScaled = true
