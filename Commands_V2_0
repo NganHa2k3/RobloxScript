@@ -368,7 +368,7 @@ chatMessageEvent:FireAllClients(message)
         Part9.Size = Vector3.new(20000, -2, 20000)
         Part9.Material = "Grass"
         Part9.Position = Vector3.new(0, -10, 0)
-        Part9.Color3 = Color3.fromRGB(0, 255, 0)
+        Part9.Color = Color3.fromRGB(0, 255, 0)
         Part9.Transparency = 0
         Part9.CanCollide = true
         Part9.Anchored = true
@@ -451,7 +451,7 @@ end
         playerAddedConnection:Disconnect()
         print("Name tags disabled.")
     else
-        print("Unknown command.")
+        warn("Unknown Commands !")
     end
 end
 
