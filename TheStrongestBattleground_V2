@@ -1,4 +1,4 @@
--- Create ScreenGui
+-- Create ScreenGui --- Script by Acient
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "TeleportGui"
 screenGui.Parent = game.CoreGui
@@ -28,10 +28,19 @@ end
 
 -- Create Buttons
 local teleportButton = createTextButton("Teleport", UDim2.new(0.7, 0, 0.4, 0), "Teleport", screenGui)
-local emoteButton = createTextButton("Emote", UDim2.new(0, 0, 0.3, 0), "Emote", screenGui)
-local anim1Button = createTextButton("Anim1", UDim2.new(0, 0, 0.4, 0), "Anim 1", screenGui)
-local anim2Button = createTextButton("Anim2", UDim2.new(0, 0, 0.52, 0), "Anim 2", screenGui)
-local anim3Button = createTextButton("Anim3", UDim2.new(0, 0, 0.64, 0), "Anim 3", screenGui)
+local emoteButton = createTextButton("Emote", UDim2.new(0, 0, 0.3, 0), "Your Emote", screenGui)
+local anim1Button = createTextButton("Anim1", UDim2.new(0, 0, 0.4, 0), "Psyco Ult", screenGui)
+local anim2Button = createTextButton("Anim2", UDim2.new(0, 0, 0.52, 0), "Bunny Ear", screenGui)
+local anim3Button = createTextButton("Anim3", UDim2.new(0, 0, 0.64, 0), "Pixel Dance", screenGui)
+local anim4Button = createTextButton("Anim4", UDim2.new(0, 0, 0.76, 0), "Atomic Ult", screenGui)
+local anim5Button = createTextButton("Anim5", UDim2.new(0.12, 0, 0.3, 0), "Breakdance", screenGui)
+local anim6Button = createTextButton("Anim6", UDim2.new(0.12, 0, 0.4, 0), "Nika Sun God", screenGui)
+local anim7Button = createTextButton("Anim7", UDim2.new(0.12, 0, 0.52, 0), "Heaven Feel", screenGui)
+local anim8Button = createTextButton("Anim8", UDim2.new(0.12, 0, 0.64, 0), "Genos Awaken", screenGui)
+local anim9Button = createTextButton("Anim9", UDim2.new(0.12, 0, 0.76, 0), "Atomic Awaken", screenGui)
+local anim10Button = createTextButton("Anim10", UDim2.new(0.24, 0, 0.3, 0), "Unknown", screenGui)
+local anim11Button = createTextButton("Anim11", UDim2.new(0.24, 0, 0.4, 0), "Unknown", screenGui)
+local anim12Button = createTextButton("Anim12", UDim2.new(0.24, 0, 0.52, 0), "Unknown", screenGui)
 
 -- Create Toggle Button
 local toggleButton = createTextButton("Toggle", UDim2.new(0, 0, 0.22, 0), "NPC", screenGui)
@@ -41,8 +50,17 @@ local sounds = {
     ["Teleport"] = createSound(screenGui, "rbxassetid://405593386"),
     ["Emote"] = createSound(screenGui, "rbxassetid://12345678"),
     ["Anim1"] = createSound(screenGui, "rbxassetid://12345678"),
-    ["Anim2"] = createSound(screenGui, "rbxassetid://12345678"),
-    ["Anim3"] = createSound(screenGui, "rbxassetid://12345678")
+    ["Anim2"] = createSound(screenGui, "rbxassetid://9044612350"),
+    ["Anim3"] = createSound(screenGui, "rbxassetid://12345678"),
+    ["Anim4"] = createSound(screenGui, "rbxassetid://12345678"),
+    ["Anim5"] = createSound(screenGui, "rbxassetid://8964762256"),
+    ["Anim6"] = createSound(screenGui, "rbxassetid://12345678"),
+    ["Anim7"] = createSound(screenGui, "rbxassetid://1837301393"),
+    ["Anim8"] = createSound(screenGui, "rbxassetid://13059564956"),
+    ["Anim9"] = createSound(screenGui, "rbxassetid://15806232934"),
+    ["Anim10"] = createSound(screenGui, "rbxassetid://12345678"),
+    ["Anim11"] = createSound(screenGui, "rbxassetid://12345678"),
+    ["Anim12"] = createSound(screenGui, "rbxassetid://12345678")
 }
 
 -- Variable to keep track of the current playing sound
@@ -69,13 +87,31 @@ end
 anim1Button.Visible = false
 anim2Button.Visible = false
 anim3Button.Visible = false
+anim4Button.Visible = false
+anim5Button.Visible = false
+anim6Button.Visible = false
+anim7Button.Visible = false
+anim8Button.Visible = false
+anim9Button.Visible = false
+anim10Button.Visible = false
+anim11Button.Visible = false
+anim12Button.Visible = false
 
 -- Animation IDs
 local animationIds = {
     ["Teleport"] = "rbxassetid://15957361339",
     ["Anim1"] = "rbxassetid://17275798442",
     ["Anim2"] = "rbxassetid://17861841334",
-    ["Anim3"] = "rbxassetid://17863041811"
+    ["Anim3"] = "rbxassetid://17863041811",
+    ["Anim4"] = "rbxassetid://16062712948",
+    ["Anim5"] = "rbxassetid://15090032390",
+    ["Anim6"] = "rbxassetid://17097409396",
+    ["Anim7"] = "rbxassetid://15503060948",
+    ["Anim8"] = "rbxassetid://12772543293",
+    ["Anim9"] = "rbxassetid://15391323441",
+    ["Anim10"] = "rbxassetid://12345678",
+    ["Anim11"] = "rbxassetid://12345678",
+    ["Anim12"] = "rbxassetid://12345678"
 }
 
 -- Function to play animation and stop all others
@@ -150,6 +186,15 @@ emoteButton.MouseButton1Click:Connect(function()
     anim1Button.Visible = not anim1Button.Visible
     anim2Button.Visible = not anim2Button.Visible
     anim3Button.Visible = not anim3Button.Visible
+    anim4Button.Visible = not anim4Button.Visible
+    anim5Button.Visible = not anim5Button.Visible
+    anim6Button.Visible = not anim6Button.Visible
+    anim7Button.Visible = not anim7Button.Visible
+    anim8Button.Visible = not anim8Button.Visible
+    anim9Button.Visible = not anim9Button.Visible
+    anim10Button.Visible = not anim10Button.Visible
+    anim11Button.Visible = not anim11Button.Visible
+    anim12Button.Visible = not anim12Button.Visible
     
     playSound("Emote")
 end)
@@ -169,6 +214,51 @@ anim3Button.MouseButton1Click:Connect(function()
     playSound("Anim3")
 end)
 
+anim4Button.MouseButton1Click:Connect(function()
+    playAnimation(animationIds["Anim4"])
+    playSound("Anim4")
+end)
+
+anim5Button.MouseButton1Click:Connect(function()
+    playAnimation(animationIds["Anim5"])
+    playSound("Anim5")
+end)
+
+anim6Button.MouseButton1Click:Connect(function()
+    playAnimation(animationIds["Anim6"])
+    playSound("Anim6")
+end)
+
+anim7Button.MouseButton1Click:Connect(function()
+    playAnimation(animationIds["Anim7"])
+    playSound("Anim7")
+end)
+
+anim8Button.MouseButton1Click:Connect(function()
+    playAnimation(animationIds["Anim8"])
+    playSound("Anim8")
+end)
+
+anim9Button.MouseButton1Click:Connect(function()
+    playAnimation(animationIds["Anim9"])
+    playSound("Anim9")
+end)
+
+anim10Button.MouseButton1Click:Connect(function()
+    playAnimation(animationIds["Anim10"])
+    playSound("Anim10")
+end)
+
+anim11Button.MouseButton1Click:Connect(function()
+    playAnimation(animationIds["Anim11"])
+    playSound("Anim11")
+end)
+
+anim12Button.MouseButton1Click:Connect(function()
+    playAnimation(animationIds["Anim12"])
+    playSound("Anim12")
+end)
+
 -- Toggle Button functionality
 toggleButton.MouseButton1Click:Connect(function()
     if toggleButton.Text == "NPC" then
@@ -179,9 +269,23 @@ toggleButton.MouseButton1Click:Connect(function()
 end)
 
 -- Set button transparency
-emoteButton.Transparency = 0.8
-teleportButton.Transparency = 0.8
-anim1Button.Transparency = 0.8
-anim2Button.Transparency = 0.8
-anim3Button.Transparency = 0.8
-toggleButton.Transparency = 0.8
+emoteButton.Transparency = 0.5
+teleportButton.Transparency = 0.5
+anim1Button.Transparency = 0.5
+anim2Button.Transparency = 0.5
+anim3Button.Transparency = 0.5
+anim4Button.Transparency = 0.5
+anim5Button.Transparency = 0.5
+anim6Button.Transparency = 0.5
+anim7Button.Transparency = 0.5
+anim8Button.Transparency = 0.5
+anim9Button.Transparency = 0.5
+anim10Button.Transparency = 0.5
+anim11Button.Transparency = 0.5
+anim12Button.Transparency = 0.5
+toggleButton.Transparency = 0.5
+
+----- Button Color -----
+emoteButton.TextColor3 = Color3.fromRGB(255, 0, 255)
+teleportButton.TextColor3 = Color3.fromRGB(0, 0, 200)
+toggleButton.TextColor3 = Color3.fromRGB(255, 0, 0)
