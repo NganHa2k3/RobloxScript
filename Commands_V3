@@ -272,89 +272,95 @@ local function onPlayerChatted(message)
         if screenGui then
             screenGui:Destroy()
         end
-    elseif words[1] == "+t" then
-        if #words == 2 then
-            if words[2] == "r" then
-                local allPlayers = Players:GetPlayers()
-                local otherPlayers = {}
-                
-                for _, p in pairs(allPlayers) do
-                    if p ~= player then
-                        table.insert(otherPlayers, p)
-                    end
+  elseif words[1] == "+t" then
+    if #words == 2 then
+        if words[2] == "r" then
+            local allPlayers = Players:GetPlayers()
+            local otherPlayers = {}
+            
+            for _, p in pairs(allPlayers) do
+                if p ~= player then
+                    table.insert(otherPlayers, p)
                 end
-                
-                if #otherPlayers > 0 then
-                    local randomPlayer = otherPlayers[math.random(#otherPlayers)]
-                    teleportTo(randomPlayer)
-                else
-                    print("No other players to teleport to.")
-                end
-            elseif words[2] == "n" then
-                local nearestPlayer = getNearestPlayer()
-                if nearestPlayer then
-                    teleportTo(nearestPlayer)
-                else
-                    print("No players found.")
-                end
-            elseif words[2] == "f" then
-                local farthestPlayer = getFarthestPlayer()
-                if farthestPlayer then
-                    teleportTo(farthestPlayer)
-                else
-                    print("No players found.")
-                end
+            end
+            
+            if #otherPlayers > 0 then
+                local randomPlayer = otherPlayers[math.random(#otherPlayers)]
+                teleportTo(randomPlayer)
             else
-                local targetPlayer = Players:FindFirstChild(words[2])
-                if targetPlayer then
-                    teleportTo(targetPlayer)
-                else
-                    print("Player with username " .. words[2] .. " not found.")
-                end
+                print("No other players to teleport to.")
+            end
+        elseif words[2] == "n" then
+            local nearestPlayer = getNearestPlayer()
+            if nearestPlayer then
+                teleportTo(nearestPlayer)
+            else
+                print("No players found.")
+            end
+        elseif words[2] == "f" then
+            local farthestPlayer = getFarthestPlayer()
+            if farthestPlayer then
+                teleportTo(farthestPlayer)
+            else
+                print("No players found.")
             end
         else
-            print("Invalid teleport command.")
-        end
-    elseif words[1] == "+r" then
-        resetCharacter()
-    elseif words[1] == "+cmds" then
-        print("All Commands Prefix is + : +t , +tw , +r , +e and +noe , +m and +nom , +loadstring1 , +loadstring2 , +s1 and +nos1 , +j1 and +noj1 , +r1 and +nor1 , +sit , +test1 , +spawnbase , +removebase , +partnamedetector , with n r f !")
-    elseif words[1] == "+s1" then
-        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 200
-    elseif words[1] == "+nos1" then
-        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16
-    elseif words[1] == "+j1" then
-        game.Players.LocalPlayer.Character.Humanoid.JumpPower = 300
-    elseif words[1] == "+noj1" then
-        game.Players.LocalPlayer.Character.Humanoid.JumpPower = 50
-    elseif words[1] == "+sit" then
-        game.Players.LocalPlayer.Character.Humanoid.Sit = true
-    elseif words[1] == "+br1" then
-        local players = game.Players:GetPlayers()
-
-local otherPlayers = {}
-for _, p in pairs(players) do
-if p ~= player then
-table.insert(otherPlayers, p)
-end
-end
-
-local randomPlayer = otherPlayers[math.random(#otherPlayers)]
-
-randomPlayer.Character.HumanoidRootPart.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
-    elseif words[1] == "+br" and #words == 2 then
-    local targetPlayerName = words[2]
-    local targetPlayer = Players:FindFirstChild(targetPlayerName)
-    if targetPlayer and targetPlayer.Character then
-        local targetHumanoidRootPart = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-        if targetHumanoidRootPart then
-            local localPlayerHRP = player.Character:FindFirstChild("HumanoidRootPart")
-            if localPlayerHRP then
-                targetHumanoidRootPart.CFrame = localPlayerHRP.CFrame
+            local targetPlayer = Players:FindFirstChild(words[2])
+            if targetPlayer then
+                teleportTo(targetPlayer)
+            else
+                print("Player with username " .. words[2] .. " not found.")
             end
         end
+    else
+        print("Invalid teleport command.")
     end
-end
+elseif words[1] == "+r" then
+    resetCharacter()
+elseif words[1] == "+cmds" then
+    print("All Commands Prefix is + : +t , +tw , +r , +e and +noe , +m and +nom , +loadstring1 , +loadstring2 , +s1 and +nos1 , +j1 and +noj1 , +r1 and +nor1 , +sit , +test1 , +spawnbase , +removebase , +partnamedetector , with n r f !")
+elseif words[1] == "+s1" then
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 200
+elseif words[1] == "+nos1" then
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16
+elseif words[1] == "+j1" then
+    game.Players.LocalPlayer.Character.Humanoid.JumpPower = 300
+elseif words[1] == "+noj1" then
+    game.Players.LocalPlayer.Character.Humanoid.JumpPower = 50
+elseif words[1] == "+sit" then
+    game.Players.LocalPlayer.Character.Humanoid.Sit = true
+elseif words[1] == "+br1" then
+    local players = game.Players:GetPlayers()
+    local otherPlayers = {}
+    
+    for _, p in pairs(players) do
+        if p ~= player then
+            table.insert(otherPlayers, p)
+        end
+    end
+    
+    if #otherPlayers > 0 then
+        local randomPlayer = otherPlayers[math.random(#otherPlayers)]
+        randomPlayer.Character.HumanoidRootPart.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+    else
+        print("No other players to teleport to.")
+    end
+elseif words[1] == "+br" then
+    if #words == 2 then
+        local targetPlayerName = words[2]
+        local targetPlayer = Players:FindFirstChild(targetPlayerName)
+        if targetPlayer and targetPlayer.Character then
+            local targetHumanoidRootPart = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+            if targetHumanoidRootPart then
+                local localPlayerHRP = player.Character:FindFirstChild("HumanoidRootPart")
+                if localPlayerHRP then
+                    targetHumanoidRootPart.CFrame = localPlayerHRP.CFrame
+                end
+            end
+        end
+    else
+        print("Invalid command format for +br.")
+    end
     elseif words[1] == "+r1" then
         local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
