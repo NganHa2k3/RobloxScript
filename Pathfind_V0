@@ -1,0 +1,100 @@
+-- Services
+local Players = game:GetService("Players")
+local Debris = game:GetService("Debris")
+local player = Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
+
+-- Create GUI
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local TextBox = Instance.new("TextBox")
+local UICorner = Instance.new("UICorner")
+
+ScreenGui.Parent = player:WaitForChild("PlayerGui")
+
+Frame.Parent = ScreenGui
+Frame.BackgroundColor3 = Color3.new(1, 1, 1)
+Frame.BackgroundTransparency = 0.9
+Frame.BorderColor3 = Color3.new(0, 0, 1)
+Frame.BorderSizePixel = 2
+Frame.Position = UDim2.new(0.7, 0, 0.491666675, 0)
+Frame.Size = UDim2.new(0.3, 0, 0.1, 0)
+Frame.Active = true
+Frame.Draggable = true
+
+TextBox.Parent = Frame
+TextBox.BackgroundColor3 = Color3.new(1, 1, 1)
+TextBox.BackgroundTransparency = 0.9
+TextBox.Position = UDim2.new(0.1, 0, 0.2, 0)
+TextBox.Size = UDim2.new(0.8, 0, 0.6, 0)
+TextBox.Font = Enum.Font.PatrickHand
+TextBox.TextSize = 14
+TextBox.Text = "Enter player name..."
+TextBox.TextScaled = true
+TextBox.TextWrapped = true
+
+UICorner.Parent = TextBox
+
+local function spawnBall(targetPlayer)
+    local ball = Instance.new("Part")
+    ball.Shape = Enum.PartType.Ball
+    ball.Size = Vector3.new(1, 1, 1)
+    ball.Position = targetPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, -3.5, 0)
+    ball.Anchored = false
+    ball.CanCollide = true
+    ball.Material = "Neon"
+    ball.Parent = workspace
+
+    local function onTouch(otherPart)
+        local otherCharacter = otherPart.Parent
+        if otherCharacter and otherCharacter:IsA("Model") and otherCharacter:FindFirstChild("Humanoid") and otherCharacter == player.Character then
+            ball:Destroy()
+        end
+    end
+
+    ball.Touched:Connect(onTouch)
+    Debris:AddItem(ball, 10)  -- Clean up after 10 seconds if not touched
+end
+
+local function moveToBall(ball)
+    local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+    local destination = ball.Position
+
+    if humanoid then
+        humanoid:MoveTo(destination)
+    end
+end
+
+local function processPlayer(playerName)
+    local targetPlayer = Players:FindFirstChild(playerName)
+    
+    if not targetPlayer or not targetPlayer.Character or not targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        print("Player not found or has no character.")
+        return
+    end
+
+    while true do
+        spawnBall(targetPlayer)
+        wait(1.5)
+        local balls = workspace:FindPartsInRegion3(workspace.CurrentCamera:ScreenPointToRay(0, 0).Origin, Vector3.new(1000, 1000, 1000), nil)
+        
+        for _, ball in ipairs(balls) do
+            if ball:IsA("Ball") then
+                moveToBall(ball)
+                break
+            end
+        end
+        
+        wait(1.5) -- Wait before checking for next ball or moving again
+    end
+end
+
+-- Connect the TextBox change event to start the process
+TextBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        local playerName = TextBox.Text
+        if playerName and playerName ~= "" then
+            processPlayer(playerName)
+        end
+    end
+end)
