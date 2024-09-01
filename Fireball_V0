@@ -1,0 +1,117 @@
+local Players = game:GetService("Players")
+local Debris = game:GetService("Debris")
+
+-- Create GUI
+local player = Players.LocalPlayer
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local TextButton = Instance.new("TextButton")
+
+ScreenGui.Parent = player:WaitForChild("PlayerGui")
+
+Frame.Parent = ScreenGui
+Frame.BackgroundColor3 = Color3.new(1, 1, 1)
+Frame.BackgroundTransparency = 0.9
+Frame.BorderColor3 = Color3.new(0, 0, 1)
+Frame.BorderSizePixel = 2
+Frame.Position = UDim2.new(0.7, 0, 0.491666675, 0)
+Frame.Size = UDim2.new(0.1, 0, 0.1, 0)
+Frame.Active = true
+Frame.Draggable = true
+
+TextButton.Parent = Frame
+TextButton.BackgroundColor3 = Color3.new(1, 1, 1)
+TextButton.BackgroundTransparency = 0.9
+TextButton.Position = UDim2.new(0.103524067, 0, 0.200333327, 0)
+TextButton.TextColor3 = Color3.new(0, 0, 1)
+TextButton.Size = UDim2.new(0.8, 0, 0.6, 0)
+TextButton.Font = Enum.Font.PatrickHand
+TextButton.TextSize = 14
+TextButton.Text = "Spawn Ball"
+TextButton.TextScaled = true
+TextButton.TextWrapped = true
+
+-- Function to find the nearest player
+local function getNearestPlayer(part, distanceThreshold)
+    local closestPlayer = nil
+    local closestDistance = distanceThreshold
+    
+    for _, p in ipairs(Players:GetPlayers()) do
+        if p.Character and p.Character:FindFirstChild("HumanoidRootPart") and p ~= player then
+            local distance = (part.Position - p.Character.HumanoidRootPart.Position).magnitude
+            if distance < closestDistance then
+                closestDistance = distance
+                closestPlayer = p
+            end
+        end
+    end
+    
+    return closestPlayer
+end
+
+-- Function to handle ball touch
+local function onBallTouched(ball, otherPart)
+    local otherCharacter = otherPart.Parent
+    if otherCharacter and otherCharacter:IsA("Model") and otherCharacter:FindFirstChild("Humanoid") and otherCharacter ~= player.Character then
+        -- Teleport the local player to the touched player immediately
+        player.Character:SetPrimaryPartCFrame(otherCharacter.HumanoidRootPart.CFrame)
+
+        -- Wait 0.2 seconds before removing the ball
+        wait(0.2)
+        ball:Destroy()
+    end
+end
+
+-- Function to spawn and move ball
+local function spawnAndMoveBall()
+    local ball = Instance.new("Part")
+    ball.Shape = Enum.PartType.Ball
+    ball.Size = Vector3.new(1, 1, 1) -- Adjust size as needed
+    ball.Position = player.Character.HumanoidRootPart.Position + player.Character.HumanoidRootPart.CFrame.LookVector * 5
+    ball.Anchored = false
+    ball.CanCollide = false
+    ball.Material = "Neon"
+    ball.Parent = workspace
+
+    local bodyVelocity = Instance.new("BodyVelocity")
+    bodyVelocity.Velocity = player.Character.HumanoidRootPart.CFrame.LookVector * 50
+    bodyVelocity.P = 1000
+    bodyVelocity.MaxForce = Vector3.new(4000, 4000, 4000)
+    bodyVelocity.Parent = ball
+
+    local particleEmitter = Instance.new("ParticleEmitter")
+    -- Replace with your particle texture ID or remove if not needed
+    -- particleEmitter.Texture = "rbxassetid://YOUR_PARTICLE_TEXTURE_ID"
+    particleEmitter.Lifetime = NumberRange.new(1, 2)
+    particleEmitter.Rate = 10
+    particleEmitter.Size = NumberSequence.new(1)
+    particleEmitter.Parent = ball
+
+    -- Connect the Touched event to the handler function
+    ball.Touched:Connect(function(part)
+        onBallTouched(ball, part)
+    end)
+
+    -- Move the ball forward until it finds a player
+    local function update()
+        while true do
+            -- Find and teleport ball to nearest player if within 5 studs
+            local nearestPlayer = getNearestPlayer(ball, 5)
+            if nearestPlayer and nearestPlayer.Character and nearestPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                ball.Position = nearestPlayer.Character.HumanoidRootPart.Position
+                -- Stop moving forward once it reaches the player
+                bodyVelocity.Velocity = Vector3.new(0, 0, 0)
+                break
+            end
+            wait(0.1)
+        end
+    end
+
+    spawn(update)
+
+    -- Automatically remove the ball after 5 seconds if it hasn't been removed by touch
+    Debris:AddItem(ball, 5)
+end
+
+-- Connect button click to spawn ball function
+TextButton.MouseButton1Click:Connect(spawnAndMoveBall)
