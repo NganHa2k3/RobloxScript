@@ -1,6 +1,5 @@
 local ScreenGui = Instance.new("ScreenGui")
 local Frame = Instance.new("Frame")
-local ToggleButton = Instance.new("TextButton")
 local SpeedTextBox = Instance.new("TextBox")
 
 -- Configure the ScreenGui
@@ -22,25 +21,6 @@ local frameCorner = Instance.new("UICorner")
 frameCorner.CornerRadius = UDim.new(0.2, 0)
 frameCorner.Parent = Frame
 
--- Configure the ToggleButton
-ToggleButton.Parent = Frame
-ToggleButton.BackgroundColor3 = Color3.new(1,1,1)
-ToggleButton.BackgroundTransparency = 0.5
-ToggleButton.Position = UDim2.new(0.103524067, 0, 0.200333327, 0)
-ToggleButton.TextColor3 = Color3.new(0,0,0)
-ToggleButton.Size = UDim2.new(0.8,0.9,0.6)
-ToggleButton.Font = Enum.Font.SourceSansLight
-ToggleButton.FontSize = Enum.FontSize.Size14
-ToggleButton.Text = "Start Teleport"
-ToggleButton.TextScaled = true
-ToggleButton.TextSize = 8
-ToggleButton.TextWrapped = true
-
--- Configure UI Corner for ToggleButton
-local buttonCorner = Instance.new("UICorner")
-buttonCorner.CornerRadius = UDim.new(0.2, 0)
-buttonCorner.Parent = ToggleButton
-
 -- Configure the Speed TextBox
 SpeedTextBox.Parent = Frame
 SpeedTextBox.BackgroundColor3 = Color3.new(1,1,1)
@@ -60,12 +40,8 @@ local speedBoxCorner = Instance.new("UICorner")
 speedBoxCorner.CornerRadius = UDim.new(0.2, 0)
 speedBoxCorner.Parent = SpeedTextBox
 
--- State variables
-local isTeleporting = false
-local teleportCoroutine
-
--- Function to start teleporting
-local function startTeleporting()
+-- Function to teleport
+local function teleportToArkenstone()
     local Enlightal = game:GetService("Workspace")["The Arkenstone"].Handle
     if not Enlightal then
         warn("The Arkenstone handle not found.")
@@ -75,41 +51,22 @@ local function startTeleporting()
     local Player = game.Players.LocalPlayer
     local Char = Player.Character
     local Hum = Char:FindFirstChild("HumanoidRootPart")
-    local teleportSpeed = tonumber(SpeedTextBox.Text) or 0.5
+
+    local teleportSpeed = tonumber(SpeedTextBox.Text) or 0.5  -- Default speed if textbox is empty or invalid
     if teleportSpeed <= 0 then
-        teleportSpeed = 0.5
+        teleportSpeed = 0.5  -- Ensure a minimum speed
     end
 
-    while isTeleporting do
-        local originalCFrame = Hum.CFrame
-        Hum.CFrame = Enlightal.CFrame
-        task.wait(teleportSpeed)
-        Hum.CFrame = originalCFrame
-        task.wait(teleportSpeed)
-    end
+    local originalCFrame = Hum.CFrame
+    Hum.CFrame = Enlightal.CFrame
+    task.wait(teleportSpeed)
+    Hum.CFrame = originalCFrame
 end
 
--- Function to handle ToggleButton click
-ToggleButton.MouseButton1Click:Connect(function()
-    if isTeleporting then
-        isTeleporting = false
-        ToggleButton.Text = "Start Teleport"
-        Frame.BackgroundColor3 = Color3.new(0,0,0)
-    else
-        isTeleporting = true
-        ToggleButton.Text = "Stop Teleport"
-        Frame.BackgroundColor3 = Color3.new(0,1,0)
-        if not teleportCoroutine then
-            teleportCoroutine = coroutine.create(startTeleporting)
-            coroutine.resume(teleportCoroutine)
-        end
+-- Continuously check for the object and teleport
+while true do
+    if game:GetService("Workspace"):FindFirstChild("The Arkenstone") and game:GetService("Workspace")["The Arkenstone"]:FindFirstChild("Handle") then
+        teleportToArkenstone()
     end
-end)
-
--- Function to handle the textbox lose focus event
-SpeedTextBox.FocusLost:Connect(function()
-    local teleportSpeed = tonumber(SpeedTextBox.Text) or 0.5
-    if teleportSpeed <= 0 then
-        SpeedTextBox.Text = "0.5"
-    end
-end)
+    task.wait(0.5)  -- Check every second
+end
