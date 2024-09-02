@@ -333,6 +333,8 @@ elseif words[1] == "+serverbrowser" then
     loadstring(game:HttpGet("https://www.scriptblox.com/raw/Server-Browser_80", true))()
 elseif words[1] == "+jobid" then
     loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/RobloxScript/item/JobId'))()
+elseif words[1] == "+thechosenone" then
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/RobloxScript/Gameplay/TCO_V0'))()
 elseif words[1] == "+br1" then
     local players = game.Players:GetPlayers()
     local otherPlayers = {}
