@@ -1,0 +1,65 @@
+local Players = game:GetService("Players")
+local TeleportService = game:GetService("TeleportService")
+-- GuiService is not used for clipboard operations, removing it
+
+-- Create a ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "JobIdScreenGui"
+screenGui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
+
+-- Create TextBox for displaying JobId
+local jobIdDisplay = Instance.new("TextBox")
+jobIdDisplay.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+jobIdDisplay.BackgroundTransparency = 0.8
+jobIdDisplay.BorderColor3 = Color3.fromRGB(255, 0, 0)
+jobIdDisplay.BorderSizePixel = 2
+jobIdDisplay.TextColor3 = Color3.fromRGB(255, 255, 255)
+jobIdDisplay.Font = Enum.Font.PatrickHand
+jobIdDisplay.TextScaled = true
+jobIdDisplay.Size = UDim2.new(0.1, 0, 0.1, 0)  -- Size similar to SoundId TextBox
+jobIdDisplay.Position = UDim2.new(0.3, 0, 0.1, 0)  -- Positioned below center
+jobIdDisplay.Text = "JobId: " .. tostring(game.JobId)
+jobIdDisplay.ClearTextOnFocus = false  -- Do not clear text on focus
+jobIdDisplay.Parent = screenGui
+
+-- Create UI Corner for JobId Display TextBox
+local jobIdBoxCorner = Instance.new("UICorner")
+jobIdBoxCorner.CornerRadius = UDim.new(0.2, 0)
+jobIdBoxCorner.Parent = jobIdDisplay
+
+-- Create TextBox for JobId input to teleport
+local teleportBox = Instance.new("TextBox")
+teleportBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+teleportBox.BackgroundTransparency = 0.8
+teleportBox.BorderColor3 = Color3.fromRGB(0, 255, 0)
+teleportBox.BorderSizePixel = 2
+teleportBox.TextColor3 = Color3.fromRGB(255, 255, 0)
+teleportBox.Font = Enum.Font.PatrickHand
+teleportBox.TextScaled = true
+teleportBox.Size = UDim2.new(0.1, 0, 0.1, 0)  -- Same size as JobId Display
+teleportBox.Position = UDim2.new(0.3, 0, 0.22, 0)  -- Positioned below JobId Display
+teleportBox.PlaceholderText = "Enter JobId here..."
+teleportBox.ClearTextOnFocus = true
+teleportBox.Parent = screenGui
+
+-- Create UI Corner for Teleport TextBox
+local teleportBoxCorner = Instance.new("UICorner")
+teleportBoxCorner.CornerRadius = UDim.new(0.2, 0)
+teleportBoxCorner.Parent = teleportBox
+
+-- Function to handle teleportation
+local function onTeleportBoxFocusLost()
+    local jobIdText = teleportBox.Text
+    local jobId = tonumber(jobIdText)
+    
+    if jobId then
+        -- Use TeleportService to teleport to the specified JobId
+        local placeId = game.PlaceId
+        TeleportService:TeleportToPlaceInstance(placeId, jobId, Players.LocalPlayer)
+    else
+        warn("Invalid JobId: " .. tostring(jobIdText))
+    end
+end
+
+-- Connect events
+teleportBox.FocusLost:Connect(onTeleportBoxFocusLost)
