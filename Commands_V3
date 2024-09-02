@@ -318,7 +318,7 @@ local function onPlayerChatted(message)
 elseif words[1] == "+r" then
     resetCharacter()
 elseif words[1] == "+cmds" then
-    print("All Commands Prefix is + : +t , +tw , +r , +e and +noe , +m and +nom , +loadstring1 , +loadstring2 , +s1 and +nos1 , +j1 and +noj1 , +r1 and +nor1 , +sit , +test1 , +spawnbase , +removebase , +partnamedetector , with n r f !")
+    print("All Commands Prefix is + : +t , +tw , +r , +e and +noe , +m and +nom , +loadstring1 , +loadstring2 , +s1 and +nos1 , +j1 and +noj1 , +r1 and +nor1 , +sit , +test1 , +spawnbase , +removebase , +partnamedetector , +serverbrowser , +jobid , with n r f !")
 elseif words[1] == "+s1" then
     game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 200
 elseif words[1] == "+nos1" then
@@ -329,6 +329,10 @@ elseif words[1] == "+noj1" then
     game.Players.LocalPlayer.Character.Humanoid.JumpPower = 50
 elseif words[1] == "+sit" then
     game.Players.LocalPlayer.Character.Humanoid.Sit = true
+elseif words[1] == "+serverbrowser" then
+    loadstring(game:HttpGet("https://www.scriptblox.com/raw/Server-Browser_80", true))()
+elseif words[1] == "+jobid" then
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/RobloxScript/item/JobId'))()
 elseif words[1] == "+br1" then
     local players = game.Players:GetPlayers()
     local otherPlayers = {}
@@ -523,8 +527,8 @@ local function showWelcomeMessage()
     welcomeTextButton.BorderSizePixel = 2
     welcomeTextButton.Position = UDim2.new(0.5, -100, 0.5, -50)  -- Center of the screen
     welcomeTextButton.Size = UDim2.new(0, 200, 0, 100)
-    welcomeTextButton.Text = "All Commands Prefix is + : +cmds , +t [name] , +tw [name] , +r , +e and +noe , +m and +nom , +loadstring1 , +loadstring2 , +s1 and +nos1 , +j1 and +noj1 , +r1 and +nor1 , +sit , +test1 , +spawnbase , +removebase , +partnamedetector , +br1 , +br [name] , with n r f !"
-    welcomeTextButton.TextColor3 = Color3.fromRGB(255, 255, 0)
+    welcomeTextButton.Text = "All Commands Prefix is + : +cmds , +t [name] , +tw [name] , +r , +e and +noe , +m and +nom , +loadstring1 , +loadstring2 , +s1 and +nos1 , +j1 and +noj1 , +r1 and +nor1 , +sit , +test1 , +spawnbase , +removebase , +partnamedetector , +serverbrowser , +jobid , +br1 , +br [name] , with n r f !"
+    welcomeTextButton.TextColor3 = Color3.fromRGB(255, 0, 0)
     welcomeTextButton.Font = Enum.Font.PatrickHand
     welcomeTextButton.TextScaled = true
     welcomeTextButton.TextWrapped = true
