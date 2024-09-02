@@ -1,0 +1,15 @@
+print("Auto Collect For Free UGC")
+
+while true do
+local args = {
+    [1] = 2,
+    [2] = {
+        [1] = 1,
+        [2] = 1,
+        [3] = 17
+    }
+}
+
+game:GetService("ReplicatedStorage").Project.RemoteEvent.ControlMessageEvent:FireServer(unpack(args))
+wait(0.01)
+end
