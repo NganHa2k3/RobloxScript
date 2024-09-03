@@ -1,0 +1,23 @@
+-- LocalScript (e.g., placed in StarterPlayerScripts)
+
+local Players = game:GetService("Players")
+local TeleportService = game:GetService("TeleportService")
+
+local function serverHop()
+    local player = Players.LocalPlayer
+    local placeId = game.PlaceId
+    
+    -- Generate a unique teleport request to ensure we join a different server
+    local teleportData = {
+        TeleportOptions = {
+            ReservedServerAccessCode = nil,
+            ServerId = nil
+        }
+    }
+    
+    TeleportService:Teleport(placeId, player, teleportData)
+end
+
+-- Wait a moment to ensure the game is properly loaded before teleporting
+wait(5)
+serverHop()
