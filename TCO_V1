@@ -1,9 +1,21 @@
+-- Function to remove existing GUI
+local function removeExistingGUI()
+    for _, child in ipairs(game.CoreGui:GetChildren()) do
+        if child:IsA("ScreenGui") and child.Name == "TCO" then
+            child:Destroy()
+        end
+    end
+end
+
+removeExistingGUI()
+
 local ScreenGui = Instance.new("ScreenGui")
 local Frame = Instance.new("Frame")
 local SpeedTextBox = Instance.new("TextBox")
 local IntervalTextBox = Instance.new("TextBox")
 
 -- Configure the ScreenGui
+ScreenGui.Name = "TCO"
 ScreenGui.Parent = game.CoreGui
 
 -- Configure the Frame
