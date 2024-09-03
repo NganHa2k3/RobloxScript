@@ -3,6 +3,20 @@
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local player = Players.LocalPlayer
+local camera = game.Workspace.CurrentCamera
+
+-- Function to spectate a player by username
+local function spectatePlayerByUsername(username)
+    local targetPlayer = Players:FindFirstChild(username)
+    
+    if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        camera.CameraSubject = targetPlayer.Character.HumanoidRootPart
+        camera.CameraType = Enum.CameraType.Attach
+        print("Now spectating " .. targetPlayer.Name)
+    else
+        print("Player " .. username .. " not found or does not have a valid character.")
+    end
+end
 
 -- Variable to store the BillboardGui name tag references
 local nameTags = {}
@@ -373,6 +387,13 @@ elseif words[1] == "+br" then
     else
         print("Invalid command format for +br.")
     end
+    elseif words[1] == "+view" then
+        if #words == 2 then
+            local targetview = words[2]
+            spectatePlayerByUsername(targetview)
+    elseif words[1] == "+unview" then
+        local player = game.Players.LocalPlayer
+        spectatePlayerByUsername(player)
     elseif words[1] == "+r1" then
         local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
