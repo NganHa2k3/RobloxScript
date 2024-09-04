@@ -336,7 +336,7 @@ elseif words[1] == "+rspy" then
 
     warn("RemoteSpy For Mobile Loaded")
 elseif words[1] == "+feadmin" then
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/Hello/main/Animation_GUI'))()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/Hello/main/Animated_GUI'))()
 elseif words[1] == "+serverbrowser" then
     loadstring(game:HttpGet("https://www.scriptblox.com/raw/Server-Browser_80", true))()
 elseif words[1] == "+jobid" then
