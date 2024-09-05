@@ -10,9 +10,44 @@ local character = player.Character or player.CharacterAdded:Wait()
 
 local currentBall = nil -- Variable to keep track of the current ball
 local tween = nil       -- Variable to keep track of the current tween
+local scriptDisabled = false -- Flag to check if the script is disabled
+
+-- Create the GUI elements
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local TextButton = Instance.new("TextButton")
+
+-- Set up the GUI
+ScreenGui.Parent = player:WaitForChild("PlayerGui")
+
+Frame.Parent = ScreenGui
+Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Frame.BackgroundTransparency = 0.9
+Frame.BorderColor3 = Color3.fromRGB(0, 0, 255)
+Frame.BorderSizePixel = 2
+Frame.Position = UDim2.new(0.7, 0, 0.491666675, 0)
+Frame.Size = UDim2.new(0.1, 0, 0.1, 0)
+Frame.Active = true
+Frame.Draggable = true
+
+TextButton.Parent = Frame
+TextButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextButton.BackgroundTransparency = 0.9
+TextButton.Position = UDim2.new(0.1, 0, 0.2, 0)
+TextButton.TextColor3 = Color3.fromRGB(0, 0, 255)
+TextButton.Size = UDim2.new(0.8, 0, 0.6, 0)
+TextButton.Font = Enum.Font.PatrickHand
+TextButton.Text = "Disable Ball Spawning"
+TextButton.TextScaled = true
+TextButton.TextSize = 14
+TextButton.TextWrapped = true
 
 -- Function to create a ball
 local function createBall(position)
+    if scriptDisabled then
+        return
+    end
+
     -- Remove the previous ball if it exists
     if currentBall then
         currentBall:Destroy()
@@ -114,8 +149,10 @@ end
 
 -- Function to handle mouse click
 local function onMouseClick()
-    local clickPosition = mouse.Hit.Position
-    createBall(clickPosition)
+    if not scriptDisabled then
+        local clickPosition = mouse.Hit.Position
+        createBall(clickPosition)
+    end
 end
 
 -- Connect mouse click event to the function
@@ -150,3 +187,10 @@ player.CharacterAdded:Connect(onCharacterAdded)
 if player.Character then
     onCharacterAdded(player.Character)
 end
+
+-- Set up button to disable script
+TextButton.MouseButton1Click:Connect(function()
+    scriptDisabled = true
+    -- Optionally destroy GUI after disabling script
+    ScreenGui:Destroy()
+end)
