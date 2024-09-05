@@ -1,0 +1,106 @@
+-- LocalScript placed in StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+local mouse = player:GetMouse()
+local character = player.Character or player.CharacterAdded:Wait()
+
+-- Function to create a 4x4x4 cube
+local function createCube(position)
+    local cubeSize = 4
+    local halfSize = cubeSize / 2
+    
+    -- Check if there is already a cube at the position
+    local function isPositionOccupied(pos)
+        local region = Region3.new(
+            pos - Vector3.new(halfSize, halfSize, halfSize),
+            pos + Vector3.new(halfSize, halfSize, halfSize)
+        )
+        local parts = Workspace:FindPartsInRegion3(region, nil, math.huge)
+        for _, part in ipairs(parts) do
+            if part:IsA("Part") and part.Size == Vector3.new(cubeSize, cubeSize, cubeSize) then
+                return true
+            end
+        end
+        return false
+    end
+
+    -- Adjust position if occupied
+    local function findFreePosition(basePosition)
+        local offset = 0
+        local step = cubeSize + 1 -- Increment steps to avoid overlapping
+        while isPositionOccupied(basePosition) do
+            offset = offset + step
+            basePosition = basePosition + Vector3.new(step, 0, 0)
+            if isPositionOccupied(basePosition) then
+                basePosition = basePosition + Vector3.new(-step, step, 0)
+            end
+            if isPositionOccupied(basePosition) then
+                basePosition = basePosition + Vector3.new(0, -step, step)
+            end
+        end
+        return basePosition
+    end
+
+    local adjustedPosition = findFreePosition(position)
+
+    local cube = Instance.new("Part")
+    cube.Size = Vector3.new(cubeSize, cubeSize, cubeSize)
+    cube.Position = adjustedPosition
+    cube.Anchored = true
+    cube.BrickColor = BrickColor.new("Bright blue") -- Change color as desired
+    cube.Parent = Workspace
+
+    -- Create tween for shrinking the cube
+    local tweenInfo = TweenInfo.new(
+        1, -- Time to complete the tween
+        Enum.EasingStyle.Quad, -- Easing style
+        Enum.EasingDirection.In, -- Easing direction
+        0, -- Times to repeat
+        false, -- Should it reverse
+        0 -- Delay before starting
+    )
+
+    local goal = {Size = Vector3.new(0, 0, 0)} -- Goal size for shrinking
+    local tween = TweenService:Create(cube, tweenInfo, goal)
+
+    -- Start tween and remove the cube after 20 seconds
+    tween:Play()
+    delay(19, function() -- Start tween animation 1 second before cube disappears
+        tween:Play()
+    end)
+    
+    delay(20, function() -- Total time before cube is destroyed
+        if cube and cube.Parent then
+            cube:Destroy()
+        end
+    end)
+end
+
+-- Function to handle mouse click
+local function onMouseClick()
+    local clickPosition = mouse.Hit.Position
+    createCube(clickPosition)
+end
+
+-- Connect mouse click event to the function
+mouse.Button1Down:Connect(onMouseClick)
+
+-- Function to handle player death
+local function onCharacterAdded(newCharacter)
+    character = newCharacter
+    local humanoid = character:WaitForChild("Humanoid")
+
+    humanoid.Died:Connect(function()
+        -- Clean up and stop the script when the player dies
+        script:Destroy()
+    end)
+end
+
+player.CharacterAdded:Connect(onCharacterAdded)
+if player.Character then
+    onCharacterAdded(player.Character)
+end
