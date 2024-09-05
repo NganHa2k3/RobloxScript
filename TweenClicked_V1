@@ -1,0 +1,152 @@
+-- LocalScript placed in StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+local mouse = player:GetMouse()
+local character = player.Character or player.CharacterAdded:Wait()
+
+local currentBall = nil -- Variable to keep track of the current ball
+local tween = nil       -- Variable to keep track of the current tween
+
+-- Function to create a ball
+local function createBall(position)
+    -- Remove the previous ball if it exists
+    if currentBall then
+        currentBall:Destroy()
+    end
+
+    local ballSize = 1
+
+    -- Check if there is already a ball at the position
+    local function isPositionOccupied(pos)
+        local region = Region3.new(
+            pos - Vector3.new(ballSize / 2, ballSize / 2, ballSize / 2),
+            pos + Vector3.new(ballSize / 2, ballSize / 2, ballSize / 2)
+        )
+        local parts = Workspace:FindPartsInRegion3(region, nil, math.huge)
+        for _, part in ipairs(parts) do
+            if part:IsA("Part") and part.Shape == Enum.PartType.Ball and part.Size == Vector3.new(ballSize, ballSize, ballSize) then
+                return true
+            end
+        end
+        return false
+    end
+
+    -- Adjust position if occupied
+    local function findFreePosition(basePosition)
+        local offset = 0
+        local step = ballSize + 1 -- Increment steps to avoid overlapping
+        while isPositionOccupied(basePosition) do
+            offset = offset + step
+            basePosition = basePosition + Vector3.new(step, 0, 0)
+            if isPositionOccupied(basePosition) then
+                basePosition = basePosition + Vector3.new(-step, step, 0)
+            end
+            if isPositionOccupied(basePosition) then
+                basePosition = basePosition + Vector3.new(0, -step, step)
+            end
+        end
+        return basePosition
+    end
+
+    local adjustedPosition = findFreePosition(position)
+
+    local ball = Instance.new("Part")
+    ball.Size = Vector3.new(ballSize, ballSize, ballSize)
+    ball.Shape = Enum.PartType.Ball
+    ball.Position = adjustedPosition
+    ball.Anchored = true
+    ball.BrickColor = BrickColor.new("Bright red") -- Change color as desired
+    ball.Parent = Workspace
+
+    -- Create sound instance
+    local sound = Instance.new("Sound")
+    sound.SoundId = "rbxassetid://YOUR_SOUND_ID" -- Replace YOUR_SOUND_ID with the asset ID of your sound
+    sound.Parent = ball
+    sound.Volume = 1 -- Adjust volume as needed
+
+    -- Create tween to move the character to the ball
+    local function tweenToBall()
+        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+        if not humanoidRootPart then
+            warn("Character's HumanoidRootPart not found.")
+            return
+        end
+
+        -- Calculate distance and duration
+        local distance = (humanoidRootPart.Position - ball.Position).magnitude
+        local speed = 250  -- Adjust this speed as needed (studs per second)
+        local duration = distance / speed
+
+        -- Create tween info and tween goal
+        local tweenInfo = TweenInfo.new(
+            duration,  -- Time in seconds for the tween, based on distance
+            Enum.EasingStyle.Linear,  -- Easing style
+            Enum.EasingDirection.InOut  -- Easing direction
+        )
+        local tweenGoal = { CFrame = CFrame.new(ball.Position) }
+        
+        -- Create and play tween
+        tween = TweenService:Create(humanoidRootPart, tweenInfo, tweenGoal)
+        tween:Play()
+
+        -- Stop tween and remove ball on touch
+        local function onTouch(hit)
+            if hit.Parent == character then
+                tween:Cancel()
+                ball:Destroy()
+                currentBall = nil
+            end
+        end
+
+        ball.Touched:Connect(onTouch)
+    end
+
+    -- Start the tween
+    tweenToBall()
+
+    -- Store the current ball
+    currentBall = ball
+end
+
+-- Function to handle mouse click
+local function onMouseClick()
+    local clickPosition = mouse.Hit.Position
+    createBall(clickPosition)
+end
+
+-- Connect mouse click event to the function
+mouse.Button1Down:Connect(onMouseClick)
+
+-- Function to handle player death and respawn
+local function onCharacterAdded(newCharacter)
+    character = newCharacter
+
+    -- Clean up previous ball and stop any ongoing tween when the player respawns
+    if currentBall then
+        currentBall:Destroy()
+        currentBall = nil
+    end
+
+    local humanoid = character:WaitForChild("Humanoid")
+
+    humanoid.Died:Connect(function()
+        -- Clean up and stop the script when the player dies
+        if currentBall then
+            currentBall:Destroy()
+        end
+        if tween then
+            tween:Cancel()
+        end
+        -- Optionally destroy the script if you want it to stop running
+        script:Destroy()
+    end)
+end
+
+player.CharacterAdded:Connect(onCharacterAdded)
+if player.Character then
+    onCharacterAdded(player.Character)
+end
