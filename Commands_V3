@@ -318,7 +318,7 @@ local function onPlayerChatted(message)
 elseif words[1] == "+r" then
     resetCharacter()
 elseif words[1] == "+cmds" then
-    print("All Commands Prefix is + : +t , +tw , +tw2 , +r , +bcurve , +cube , +e and +noe , +m and +nom , +loadstring1 , +loadstring2 , +s1 and +nos1 , +j1 and +noj1 , +r1 and +nor1 , +sit , +test1 , +spawnbase , +removebase , +partnamedetector , +serverbrowser , +jobid , +thechosenone and +thechosenone1 , +svhop , +br1 , +br [name] , +luobu , +bundles , +rspy , +feadmin , +car , +Hoho , with n r f !")
+    print("All Commands Prefix is + : +t , +tw , +tw2 , +r , +bcurve , +cube , +e and +noe , +m and +nom , +loadstring1 , +loadstring2 , +s1 and +nos1 , +j1 and +noj1 , +r1 and +nor1 , +sit , +test1 , +spawnbase , +removebase , +spawnhouse , +spawnladder , +partnamedetector , +serverbrowser , +jobid , +thechosenone and +thechosenone1 , +svhop , +br1 , +br [name] , +luobu , +bundles , +rspy , +feadmin , +car , +Hoho , with n r f !")
 elseif words[1] == "+s1" then
     game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 200
 elseif words[1] == "+nos1" then
@@ -343,6 +343,10 @@ elseif words[1] == "+bcurve" then
     loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/RobloxScript/item/CurveProjectile_V0'))()
 elseif words[1] == "+cube" then
     loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/RobloxScript/item/CubeSpawnAnimation_V1'))()
+elseif words[1] == "+spawnhouse" then
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/Hello/main/SpawnHouse'))()
+elseif words[1] == "+spawnladder" then
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/Hello/main/SpawnLadder'))()
 elseif words[1] == "+car" then
     loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/Hello/main/FunCarFly'))()
 elseif words[1] == "+Hoho" then
