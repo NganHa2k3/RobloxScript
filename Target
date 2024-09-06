@@ -1,0 +1,70 @@
+local Players = game:GetService("Players")
+
+-- Function to create a BillboardGui with colored text "<×>" above the player's head
+local function createNameTag(player)
+    local character = player.Character
+    if not character then return end
+
+    -- Ensure the character has a head
+    local head = character:FindFirstChild("Head")
+    if not head then return end
+
+    -- Create BillboardGui
+    local billboardGui = Instance.new("BillboardGui")
+    billboardGui.Adornee = head
+    billboardGui.Parent = head
+    billboardGui.Size = UDim2.new(0, 200, 0, 50)
+    billboardGui.StudsOffset = Vector3.new(0, 3, 0)
+    billboardGui.AlwaysOnTop = true
+
+    -- Create a Frame to contain the TextLabels
+    local frame = Instance.new("Frame")
+    frame.Parent = billboardGui
+    frame.Size = UDim2.new(1, 0, 1, 0)
+    frame.BackgroundTransparency = 1
+
+    -- Define text size
+    local textSize = 20  -- Change this value to adjust text size
+
+    -- Create TextLabels for each part of the text
+    local leftBracket = Instance.new("TextLabel")
+    leftBracket.Parent = frame
+    leftBracket.Size = UDim2.new(0.3, 0, 1, 0)
+    leftBracket.Position = UDim2.new(0, 0, 0, 0)
+    leftBracket.BackgroundTransparency = 1
+    leftBracket.TextColor3 = Color3.new(0, 0, 1) -- Blue color
+    leftBracket.Text = "<"
+    leftBracket.TextScaled = false  -- Set to false to use TextSize
+    leftBracket.TextSize = textSize
+    leftBracket.TextStrokeTransparency = 0.5
+
+    local xLabel = Instance.new("TextLabel")
+    xLabel.Parent = frame
+    xLabel.Size = UDim2.new(0.4, 0, 1, 0)
+    xLabel.Position = UDim2.new(0.3, 0, 0, 0)
+    xLabel.BackgroundTransparency = 1
+    xLabel.TextColor3 = Color3.new(1, 0, 0) -- Red color
+    xLabel.Text = "x"
+    xLabel.TextScaled = false  -- Set to false to use TextSize
+    xLabel.TextSize = textSize
+    xLabel.TextStrokeTransparency = 0.5
+
+    local rightBracket = Instance.new("TextLabel")
+    rightBracket.Parent = frame
+    rightBracket.Size = UDim2.new(0.3, 0, 1, 0)
+    rightBracket.Position = UDim2.new(0.7, 0, 0, 0)
+    rightBracket.BackgroundTransparency = 1
+    rightBracket.TextColor3 = Color3.new(0, 0, 1) -- Blue color
+    rightBracket.Text = ">"
+    rightBracket.TextScaled = false  -- Set to false to use TextSize
+    rightBracket.TextSize = textSize
+    rightBracket.TextStrokeTransparency = 0.5
+end
+
+-- Create name tags for all players currently in the game
+for _, player in ipairs(Players:GetPlayers()) do
+    createNameTag(player)
+end
+
+-- Create name tags for players who join the game
+Players.PlayerAdded:Connect(createNameTag)
