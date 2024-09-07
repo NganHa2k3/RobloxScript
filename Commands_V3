@@ -318,14 +318,7 @@ local function onPlayerChatted(message)
 elseif words[1] == "+r" then
     resetCharacter()
 elseif words[1] == "+cmds" then
-    local args = {
-    [1] = "All Commands Prefix is + : +t , +tw , +tw2 , +r , +bcurve , +cube , +e and +noe , +m and +nom , +loadstring1 , +loadstring2 , +s1 and +nos1 , +j1 and +noj1 , +r1 and +nor1 , +sit , +test1 , +spawnbase , +removebase , +spawnhouse , +spawnladder , +partnamedetector , +serverbrowser , +jobid , +thechosenone and +thechosenone1 , +svhop , +br1 , +br [name] , +luobu , +bundles , +rspy , +feadmin , +car , +Hoho , with n r f !",
-    [2] = "All"
-}
-
-game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(unpack(args))
-
-    print("All Commands Prefix is + : +t , +tw , +tw2 , +r , +bcurve , +cube , +e and +noe , +ee , +m and +nom , +loadstring1 , +loadstring2 , +s1 and +nos1 , +j1 and +noj1 , +r1 and +nor1 , +sit , +test1 , +spawnbase , +removebase , +spawnhouse , +spawnladder , +partnamedetector , +serverbrowser , +jobid , +thechosenone and +thechosenone1 , +svhop , +br1 , +br [name] , +luobu , +bundles , +rspy , +feadmin , +car , +Hoho , +Arkenstone , +EArkenstone , with n r f !")
+    print("All Commands Prefix is + : +t , +tw , +tw2 , +r , +bcurve , +cube , +e and +noe , +ee , +m and +nom , +loadstring1 , +loadstring2 , +s1 and +nos1 , +j1 and +noj1 , +r1 and +nor1 , +sit , +test1 , +spawnbase , +removebase , +spawnhouse , +spawnladder , +partnamedetector , +serverbrowser , +jobid , +thechosenone and +thechosenone1 , +svhop , +br1 , +br [name] , +luobu , +bundles , +rspy , +feadmin , +car , +Hoho , +Arkenstone , +EArkenstone , +mm21 , with n r f !")
 elseif words[1] == "+s1" then
     game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 200
 elseif words[1] == "+nos1" then
@@ -440,7 +433,7 @@ stopRotation()
 
     elseif words[1] == "+loadstring2" then
         loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
-    elseif words[1] == "+cmds" then
+    elseif words[1] == "+help" then
         warn("All Commands Prefix is + : +cmds , +t [name] , +tw [name] , +r , +e and +noe , +m and +nom , +loadstring1 , +loadstring2 , +s1 and +nos1 , +j1 and +noj1 , +r1 and +nor1 , +sit , +test1 , +spawnbase , +removebase , +partnamedetector , +br1 , +br [name] , with n r f !")
     elseif words[1] == "+test1" then
         local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -528,6 +521,8 @@ end
         end
     elseif words[1] == "+ee" then
         loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/RobloxScript/item/Target'))()
+    elseif words[1] == "+mm21" then
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/DetectTool/main/MM2_V0'))()
     elseif words[1] == "+e" then
         -- Enable name tags
         for _, p in ipairs(Players:GetPlayers()) do
@@ -570,8 +565,8 @@ local function showWelcomeMessage()
     welcomeTextButton.BorderSizePixel = 2
     welcomeTextButton.Position = UDim2.new(0.5, -100, 0.5, -50)  -- Center of the screen
     welcomeTextButton.Size = UDim2.new(0, 200, 0, 100)
-    welcomeTextButton.Text = "All Commands Prefix is + : +cmds , +t [name] , +tw [name] , +r , +e and +noe , +m and +nom , +loadstring1 , +loadstring2 , +s1 and +nos1 , +j1 and +noj1 , +r1 and +nor1 , +sit , +test1 , +spawnbase , +removebase , +partnamedetector , +serverbrowser , +jobid , +br1 , +br [name] , with n r f !"
-    welcomeTextButton.TextColor3 = Color3.fromRGB(255, 0, 0)
+    welcomeTextButton.Text = "All Commands Prefix is + : +t , +tw , +tw2 , +r , +bcurve , +cube , +e and +noe , +ee , +m and +nom , +loadstring1 , +loadstring2 , +s1 and +nos1 , +j1 and +noj1 , +r1 and +nor1 , +sit , +test1 , +spawnbase , +removebase , +spawnhouse , +spawnladder , +partnamedetector , +serverbrowser , +jobid , +thechosenone and +thechosenone1 , +svhop , +br1 , +br [name] , +luobu , +bundles , +rspy , +feadmin , +car , +Hoho , +Arkenstone , +EArkenstone , +mm21 , with n r f !"
+    welcomeTextButton.TextColor3 = Color3.fromRGB(255, 0, 255)
     welcomeTextButton.Font = Enum.Font.PatrickHand
     welcomeTextButton.TextScaled = true
     welcomeTextButton.TextWrapped = true
@@ -599,7 +594,22 @@ showWelcomeMessage()
 ------ More Message -----
 
 local args = {
-    [1] = "All Commands Prefix is + : +t , +tw , +tw2 , +r , +bcurve , +cube , +e and +noe , +m and +nom , +loadstring1 , +loadstring2 , +s1 and +nos1 , +j1 and +noj1 , +r1 and +nor1 , +sit , +test1 , +spawnbase , +removebase , +spawnhouse , +spawnladder , +partnamedetector , +serverbrowser , +jobid , +thechosenone and +thechosenone1 , +svhop , +br1 , +br [name] , +luobu , +bundles , +rspy , +feadmin , +car , +Hoho , with n r f !",
+    [1] = "All Commands Prefix is + : +t , +tw , +tw2 , +r , +bcurve , +cube , +e and +noe , +m and +nom , +loadstring1 , +loadstring2 , +s1 and +nos1 , +j1 and +noj1",
+    [2] = "All"
+}
+
+game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(unpack(args))
+wait(2)
+local args = {
+    [1] = "+r1 and +nor1 , +sit , +test1 , +spawnbase , +removebase , +spawnhouse , +spawnladder , +partnamedetector , +serverbrowser , +jobid , +thechosenone and +thechosenone1",
+    [2] = "All"
+}
+
+game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(unpack(args))
+wait(2)
+
+local args = {
+    [1] = "+svhop , +br1 , +br [name] , +luobu , +bundles , +rspy , +feadmin , +car , +Hoho , with n r f !",
     [2] = "All"
 }
 
