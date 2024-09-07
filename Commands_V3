@@ -598,22 +598,7 @@ showWelcomeMessage()
 ------ More Message -----
 
 local args = {
-    [1] = "All Commands Prefix is + : +t , +tw , +tw2 , +r , +bcurve , +cube , +e and +noe , +m and +nom , +loadstring1 , +loadstring2 , +s1 and +nos1 , +j1 and +noj1",
-    [2] = "All"
-}
-
-game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(unpack(args))
-wait(2)
-local args = {
-    [1] = "+r1 and +nor1 , +sit , +test1 , +spawnbase , +removebase , +spawnhouse , +spawnladder , +partnamedetector , +serverbrowser , +jobid , +thechosenone and +thechosenone1",
-    [2] = "All"
-}
-
-game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(unpack(args))
-wait(2)
-
-local args = {
-    [1] = "+svhop , +br1 , +br [name] , +luobu , +bundles , +rspy , +feadmin , +car , +Hoho , with n r f !",
+    [1] = "Hello, my name is "noiz" this message show whenever i joined a game !",
     [2] = "All"
 }
 
