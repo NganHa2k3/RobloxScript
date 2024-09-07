@@ -1,0 +1,101 @@
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local TextButton = Instance.new("TextButton")
+local SpeedTextBox = Instance.new("TextBox")
+
+-- Configure the ScreenGui
+ScreenGui.Parent = game.CoreGui
+
+-- Configure the Frame
+Frame.Parent = ScreenGui
+Frame.BackgroundColor3 = Color3.new(0,0,0)
+Frame.BackgroundTransparency = 0.5
+Frame.BorderColor3 = Color3.new(0,0,1)
+Frame.BorderSizePixel = 2
+Frame.Position = UDim2.new(0.7, 0, 0.491666675, 0)
+Frame.Size = UDim2.new(0.1, 0, 0.1, 0)
+Frame.Active = true
+Frame.Draggable = true
+
+-- Configure UI Corner for Frame
+local frameCorner = Instance.new("UICorner")
+frameCorner.CornerRadius = UDim.new(0.2, 0)
+frameCorner.Parent = Frame
+
+-- Configure the TextButton
+TextButton.Parent = Frame
+TextButton.BackgroundColor3 = Color3.new(1,1,1)
+TextButton.BackgroundTransparency = 0.5
+TextButton.Position = UDim2.new(0.103524067, 0, 0.200333327, 0)
+TextButton.TextColor3 = Color3.new(0,0,0)
+TextButton.Size = UDim2.new(0.8,0.9,0.6)
+TextButton.Font = Enum.Font.SourceSansLight
+TextButton.FontSize = Enum.FontSize.Size14
+TextButton.Text = "Get Enlighten"
+TextButton.TextScaled = true
+TextButton.TextSize = 8
+TextButton.TextWrapped = true
+
+-- Configure UI Corner for TextButton
+local buttonCorner = Instance.new("UICorner")
+buttonCorner.CornerRadius = UDim.new(0.2, 0)
+buttonCorner.Parent = TextButton
+
+-- Configure the Speed TextBox
+SpeedTextBox.Parent = Frame
+SpeedTextBox.BackgroundColor3 = Color3.new(1,1,1)
+SpeedTextBox.BackgroundTransparency = 0.5
+SpeedTextBox.Position = UDim2.new(0.103524067, 0, 0.0, 0)
+SpeedTextBox.TextColor3 = Color3.new(0,0,0)
+SpeedTextBox.Size = UDim2.new(0.8,0,0.2,0)
+SpeedTextBox.Font = Enum.Font.SourceSansLight
+SpeedTextBox.FontSize = Enum.FontSize.Size14
+SpeedTextBox.PlaceholderText = "Enter teleport speed (seconds)"
+SpeedTextBox.TextScaled = true
+SpeedTextBox.TextSize = 8
+SpeedTextBox.TextWrapped = true
+
+-- Configure UI Corner for SpeedTextBox
+local speedBoxCorner = Instance.new("UICorner")
+speedBoxCorner.CornerRadius = UDim.new(0.2, 0)
+speedBoxCorner.Parent = SpeedTextBox
+
+-- Function to handle button click
+TextButton.MouseButton1Click:Connect(function()
+    local Enlightal = game:GetService("Workspace")["The Arkenstone"].Handle
+    if not Enlightal then
+        warn("The Arkenstone handle not found.")
+        return
+    end
+
+    TextButton.Text = "Loading"
+    Frame.Active = false
+    Frame.BackgroundColor3 = Color3.new(1,0,0)
+
+    local Player = game.Players.LocalPlayer
+    local Char = Player.Character
+    local Hum = Char:FindFirstChild("HumanoidRootPart")
+
+    local teleportSpeed = tonumber(SpeedTextBox.Text) or 0.5  -- Default speed if textbox is empty or invalid
+    if teleportSpeed <= 0 then
+        teleportSpeed = 0.5  -- Ensure a minimum speed
+    end
+
+    local originalCFrame = Hum.CFrame
+    Hum.CFrame = game:GetService("Workspace")["The Arkenstone"].Handle.CFrame
+    task.wait(teleportSpeed)
+    Hum.CFrame = originalCFrame
+
+    -- Cleanup
+    Frame.Active = true
+    Frame.BackgroundColor3 = Color3.new(0,0,0)
+    TextButton.Text = "Get Enlighten"
+end)
+
+-- Function to handle the textbox lose focus event
+SpeedTextBox.FocusLost:Connect(function()
+    local teleportSpeed = tonumber(SpeedTextBox.Text) or 0.5
+    if teleportSpeed <= 0 then
+        SpeedTextBox.Text = "0.5"  -- Ensure valid input
+    end
+end)
