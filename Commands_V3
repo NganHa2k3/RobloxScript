@@ -454,14 +454,7 @@ stopRotation()
     elseif words[1] == "+help" then
         warn("All Commands Prefix is + : +cmds , +t [name] , +tw [name] , +r , +e and +noe , +m and +nom , +loadstring1 , +loadstring2 , +s1 and +nos1 , +j1 and +noj1 , +r1 and +nor1 , +sit , +test1 , +spawnbase , +removebase , +partnamedetector , +br1 , +br [name] , with n r f !")
     elseif words[1] == "+test1" then
-        local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local chatMessageEvent = ReplicatedStorage:WaitForChild("ChatMessageEvent")
-
--- Message to be sent
-local message = "Hello everyone! This is a server message."
-
--- Fire the RemoteEvent to all clients
-chatMessageEvent:FireAllClients(message)
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/Hello/mess/ResetMess'))()
     elseif words[1] == "+loadstring1" then
         loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/RobloxScript_0/main/Executor_V1'))()
     elseif words[1] == "+partnamedetector" then
