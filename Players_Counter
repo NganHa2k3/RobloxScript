@@ -1,4 +1,5 @@
 -- Function to update player count notification
+
 local function updatePlayerCountNotification()
     local playerCount = #game.Players:GetPlayers()
     
@@ -18,9 +19,12 @@ game.Players.PlayerRemoving:Connect(updatePlayerCountNotification)
 -- Initial call to set player count notification when the game starts
 updatePlayerCountNotification()
 
-task.wait(5)
+
+wait(2)
+
 
 -- Function to update the low health player count notification
+
 local function updateLowHealthPlayerCountNotification()
     local lowHealthCount = 0
     
