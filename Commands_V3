@@ -336,7 +336,13 @@ elseif words[1] == "+bundles" then
 elseif words[1] == "+rspy" then
     loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-RemoteSpy-For-Mobile-6609"))()
 
-    warn("RemoteSpy For Mobile Loaded")
+    local CoreGui = game:GetService("StarterGui")
+
+CoreGui:SetCore("SendNotification", {
+    Title = "Remote Spy for Mobile",
+    Text = "Not my script, fast and easier to use",
+    Duration = 2,
+})
 elseif words[1] == "+feadmin" then
     loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/Hello/main/Animated_GUI'))()
 elseif words[1] == "+tw2" then
@@ -371,6 +377,14 @@ elseif words[1] == "+thechosenone1" then
     loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/RobloxScript/Gameplay/TCO_V1'))()
 elseif words[1] == "+luobu" then
     loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/RobloxScript/item/LUA'))()
+
+    local CoreGui = game:GetService("StarterGui")
+
+CoreGui:SetCore("SendNotification", {
+    Title = "Script Activated",
+    Text = "It's working !",
+    Duration = 2,
+})
 elseif words[1] == "+br1" then
     local players = game.Players:GetPlayers()
     local otherPlayers = {}
@@ -465,6 +479,14 @@ chatMessageEvent:FireAllClients(message)
         Part9.Parent = game.Workspace
 
         print("Part Spawned")
+        
+        local CoreGui = game:GetService("StarterGui")
+
+CoreGui:SetCore("SendNotification", {
+    Title = "Baseplate",
+    Text = "Successfully Spawned !",
+    Duration = 2,
+})
     elseif words[1] == "+removebase" then
 local partName = "Basel"
 
@@ -473,6 +495,14 @@ local part = game.Workspace:FindFirstChild(partName)
 if part then
     part:Destroy()
     print(partName .. " has been removed from Workspace.")
+    
+    local CoreGui = game:GetService("StarterGui")
+
+CoreGui:SetCore("SendNotification", {
+    Title = "Baseplate",
+    Text = "Successfully Removed !",
+    Duration = 2,
+})
 else
     print(partName .. " does not exist in Workspace.")
 end
@@ -525,6 +555,14 @@ end
         end
     elseif words[1] == "+ee" then
         loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/RobloxScript/item/Target'))()
+        
+        local CoreGui = game:GetService("StarterGui")
+
+CoreGui:SetCore("SendNotification", {
+    Title = "ESP",
+    Text = "Know where is everyone",
+    Duration = 2,
+})
     elseif words[1] == "+mm21" then
         loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/DetectTool/main/MM2_V0'))()
     elseif words[1] == "+e" then
@@ -594,3 +632,14 @@ local function showWelcomeMessage()
 end
 
 showWelcomeMessage()
+
+
+-- Text Notification --
+
+local CoreGui = game:GetService("StarterGui")
+
+CoreGui:SetCore("SendNotification", {
+    Title = "Commands Script",
+    Text = "Type +cmds or +help to find out how to use this script !",
+    Duration = 5,
+})
