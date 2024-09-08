@@ -1,101 +1,83 @@
-local Players = game:GetService("Players")
-local MAX_NOTIFICATIONS = 10  -- Maximum number of random players to notify
+-- The name of the tool to look for
+local toolName = "The Arkenstone" -- Replace with the name of your tool
 
--- Function to send a notification to a specific player
-local function sendNotification(player, message)
-    local CoreGui = player:FindFirstChild("PlayerGui") and player.PlayerGui
-    if CoreGui then
-        CoreGui:SetCore("SendNotification", {
-            Title = "Tool Check",
-            Text = message,
-            Duration = 5,
-            Icon = "rbxassetid://YOUR_IMAGE_ID"  -- Replace YOUR_IMAGE_ID with the actual image ID
-        })
-    end
-end
-
--- Find players with a specific tool in their backpack
-local function findPlayersWithTool(toolName)
+-- Function to find a random player with the specific tool and show notification
+local function notifyRandomPlayerWithTool()
     local playersWithTool = {}
-    for _, player in ipairs(Players:GetPlayers()) do
-        local backpack = player:FindFirstChild("Backpack")
-        if backpack then
-            for _, item in ipairs(backpack:GetChildren()) do
-                if item:IsA("Tool") and item.Name == toolName then
-                    table.insert(playersWithTool, player.Name .. " has " .. toolName .. "!")
-                    break
-                end
-            end
+    
+    -- Collect players who have the specific tool
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        local backpack = player.Backpack
+        local tool = backpack:FindFirstChild(toolName)
+        if tool then
+            table.insert(playersWithTool, player)
         end
     end
-    return playersWithTool
-end
+    
+    -- Notify with a random player's username
+    if #playersWithTool > 0 then
+        local randomPlayer = playersWithTool[math.random(1, #playersWithTool)]
+        local username = randomPlayer.Name
 
--- Select a random subset of players from the list
-local function getRandomSubset(playersWithTool, maxSize)
-    local randomSubset = {}
-    local count = math.min(maxSize, #playersWithTool)
-    local indices = {}
-    for i = 1, #playersWithTool do
-        table.insert(indices, i)
-    end
-    while count > 0 do
-        local randIndex = math.random(#indices)
-        table.insert(randomSubset, playersWithTool[indices[randIndex]])
-        table.remove(indices, randIndex)
-        count = count - 1
-    end
-    return randomSubset
-end
-
-local toolName = "The Arkenstone"
-local playersWithTool = findPlayersWithTool(toolName)
-local randomPlayers = getRandomSubset(playersWithTool, MAX_NOTIFICATIONS)
-
--- Send notification to all players with a randomly selected subset
-for _, player in ipairs(Players:GetPlayers()) do
-    local message = table.concat(randomPlayers, "\n")
-    sendNotification(player, message)
-end
-
-task.wait(5)
-
-local Players = game:GetService("Players")
-
--- Function to send a notification to a specific player
-local function sendNotification(player, count)
-    local CoreGui = player:FindFirstChild("PlayerGui") and player.PlayerGui
-    if CoreGui then
+        local CoreGui = game:GetService("StarterGui")
         CoreGui:SetCore("SendNotification", {
-            Title = "Tool Holder Count",
-            Text = count .. " players are holding 'The Arkenstone'!",
-            Duration = 5,
-            Icon = "rbxassetid://YOUR_IMAGE_ID"  -- Replace YOUR_IMAGE_ID with the actual image ID
+            Title = "Tool Checker",
+            Text = "Arkenstone are inside this player: " .. username,
+            Duration = 2,
+        })
+    else
+        local CoreGui = game:GetService("StarterGui")
+        CoreGui:SetCore("SendNotification", {
+            Title = "Tool Checker",
+            Text = "No players with the tool found.",
+            Duration = 2,
         })
     end
 end
 
--- Count the number of players holding a specific tool
-local function countPlayersHoldingTool(toolName)
-    local count = 0
-    for _, player in ipairs(Players:GetPlayers()) do
-        local backpack = player:FindFirstChild("Backpack")
-        if backpack then
-            for _, item in ipairs(backpack:GetChildren()) do
-                if item:IsA("Tool") and item.Name == toolName and item.Parent == player.Character then
-                    count = count + 1
-                    break
-                end
-            end
+-- Call the function to notify
+notifyRandomPlayerWithTool()
+
+
+task.wait(2)
+
+
+-- The name of the tool to look for
+local toolName = "The Arkenstone" -- Replace with the name of your tool
+
+-- Function to find a random player currently holding the specific tool and show notification
+local function notifyRandomPlayerHoldingTool()
+    local playersWithTool = {}
+    
+    -- Collect players who are currently holding the specific tool
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        local backpack = player.Backpack
+        local tool = backpack:FindFirstChild(toolName)
+        if tool then
+            table.insert(playersWithTool, player)
         end
     end
-    return count
+    
+    -- Notify with a random player's username who is holding the tool
+    if #playersWithTool > 0 then
+        local randomPlayer = playersWithTool[math.random(1, #playersWithTool)]
+        local username = randomPlayer.Name
+
+        local CoreGui = game:GetService("StarterGui")
+        CoreGui:SetCore("SendNotification", {
+            Title = "Tool Checker",
+            Text = "Arkenstone holding by player: " .. username,
+            Duration = 2,
+        })
+    else
+        local CoreGui = game:GetService("StarterGui")
+        CoreGui:SetCore("SendNotification", {
+            Title = "Tool Checker",
+            Text = "No players currently holding the tool.",
+            Duration = 2,
+        })
+    end
 end
 
-local toolName = "The Arkenstone"
-local toolHolderCount = countPlayersHoldingTool(toolName)
-
--- Send notification to all players
-for _, player in ipairs(Players:GetPlayers()) do
-    sendNotification(player, toolHolderCount)
-end
+-- Call the function to notify
+notifyRandomPlayerHoldingTool()
