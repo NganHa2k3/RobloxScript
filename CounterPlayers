@@ -1,0 +1,61 @@
+local Players = game:GetService("Players")
+
+-- Function to send a notification to a specific player
+local function sendNotification(player, numberOfPlayers)
+    local CoreGui = player:FindFirstChild("PlayerGui") and player.PlayerGui
+    if CoreGui then
+        CoreGui:SetCore("SendNotification", {
+            Title = "I've counted all players",
+            Text = numberOfPlayers .. " has been counted!",
+            Duration = 5,
+            Icon = "rbxassetid://YOUR_IMAGE_ID"  -- Replace YOUR_IMAGE_ID with the actual image ID
+        })
+    end
+end
+
+-- Count the number of players
+local numberOfPlayers = #Players:GetPlayers()
+
+-- Send notification to all players
+for _, player in ipairs(Players:GetPlayers()) do
+    sendNotification(player, numberOfPlayers)
+end
+
+task.wait(5)
+
+local Players = game:GetService("Players")
+
+-- Function to send a notification to a specific player
+local function sendNotification(player, numberOfLowHealthPlayers)
+    local CoreGui = player:FindFirstChild("PlayerGui") and player.PlayerGui
+    if CoreGui then
+        CoreGui:SetCore("SendNotification", {
+            Title = "Low Health Counter",
+            Text = numberOfLowHealthPlayers .. " players have been found!",
+            Duration = 5,
+            Icon = "rbxassetid://YOUR_IMAGE_ID"  -- Replace YOUR_IMAGE_ID with the actual image ID
+        })
+    end
+end
+
+-- Count the number of players with less than 100 health
+local function countLowHealthPlayers()
+    local count = 0
+    for _, player in ipairs(Players:GetPlayers()) do
+        local character = player.Character
+        if character and character:FindFirstChild("Humanoid") then
+            local humanoid = character.Humanoid
+            if humanoid.Health < 100 then
+                count = count + 1
+            end
+        end
+    end
+    return count
+end
+
+local numberOfLowHealthPlayers = countLowHealthPlayers()
+
+-- Send notification to all players
+for _, player in ipairs(Players:GetPlayers()) do
+    sendNotification(player, numberOfLowHealthPlayers)
+end
