@@ -162,3 +162,13 @@ local function showWelcomeMessage()
 end
 
 showWelcomeMessage()
+
+-- Notification Badge Reward --
+
+local CoreGui = game:GetService("StarterGui")
+
+CoreGui:SetCore("SendNotification", {
+    Title = "Unlocked Tools",
+    Text = "You got a music box !",
+    Duration = 2,
+})
