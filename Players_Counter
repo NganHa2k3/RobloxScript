@@ -1,61 +1,55 @@
-local Players = game:GetService("Players")
-
--- Function to send a notification to a specific player
-local function sendNotification(player, numberOfPlayers)
-    local CoreGui = player:FindFirstChild("PlayerGui") and player.PlayerGui
-    if CoreGui then
-        CoreGui:SetCore("SendNotification", {
-            Title = "I've counted all players",
-            Text = numberOfPlayers .. " has been counted!",
-            Duration = 5,
-            Icon = "rbxassetid://YOUR_IMAGE_ID"  -- Replace YOUR_IMAGE_ID with the actual image ID
-        })
-    end
+-- Function to update player count notification
+local function updatePlayerCountNotification()
+    local playerCount = #game.Players:GetPlayers()
+    
+    -- Display notification
+    local CoreGui = game:GetService("StarterGui")
+    CoreGui:SetCore("SendNotification", {
+        Title = "I've Counting All Players",
+        Text = "Currently Exist In Server's: " .. playerCount "!",
+        Duration = 2,
+    })
 end
 
--- Count the number of players
-local numberOfPlayers = #Players:GetPlayers()
+-- Connect function to PlayerAdded and PlayerRemoving events
+game.Players.PlayerAdded:Connect(updatePlayerCountNotification)
+game.Players.PlayerRemoving:Connect(updatePlayerCountNotification)
 
--- Send notification to all players
-for _, player in ipairs(Players:GetPlayers()) do
-    sendNotification(player, numberOfPlayers)
-end
+-- Initial call to set player count notification when the game starts
+updatePlayerCountNotification()
 
 task.wait(5)
 
-local Players = game:GetService("Players")
-
--- Function to send a notification to a specific player
-local function sendNotification(player, numberOfLowHealthPlayers)
-    local CoreGui = player:FindFirstChild("PlayerGui") and player.PlayerGui
-    if CoreGui then
-        CoreGui:SetCore("SendNotification", {
-            Title = "Low Health Counter",
-            Text = numberOfLowHealthPlayers .. " players have been found!",
-            Duration = 5,
-            Icon = "rbxassetid://YOUR_IMAGE_ID"  -- Replace YOUR_IMAGE_ID with the actual image ID
-        })
-    end
-end
-
--- Count the number of players with less than 100 health
-local function countLowHealthPlayers()
-    local count = 0
-    for _, player in ipairs(Players:GetPlayers()) do
+-- Function to update the low health player count notification
+local function updateLowHealthPlayerCountNotification()
+    local lowHealthCount = 0
+    
+    -- Count players with health less than 100
+    for _, player in ipairs(game.Players:GetPlayers()) do
         local character = player.Character
-        if character and character:FindFirstChild("Humanoid") then
-            local humanoid = character.Humanoid
-            if humanoid.Health < 100 then
-                count = count + 1
+        if character then
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+            if humanoid and humanoid.Health < 100 then
+                lowHealthCount = lowHealthCount + 1
             end
         end
     end
-    return count
+    
+    -- Display notification
+    local CoreGui = game:GetService("StarterGui")
+    CoreGui:SetCore("SendNotification", {
+        Title = "Low Health Counter",
+        Text = "Current Exist Players Low Health's: " .. lowHealthCount,
+        Duration = 2,
+    })
 end
 
-local numberOfLowHealthPlayers = countLowHealthPlayers()
+-- Connect function to PlayerAdded and PlayerRemoving events
+game.Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(updateLowHealthPlayerCountNotification)
+end)
 
--- Send notification to all players
-for _, player in ipairs(Players:GetPlayers()) do
-    sendNotification(player, numberOfLowHealthPlayers)
-end
+game.Players.PlayerRemoving:Connect(updateLowHealthPlayerCountNotification)
+
+-- Initial call to set low health player count notification when the game starts
+updateLowHealthPlayerCountNotification()
