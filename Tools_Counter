@@ -1,0 +1,59 @@
+local Players = game:GetService("Players")
+local MAX_NOTIFICATIONS = 10  -- Maximum number of random players to notify
+
+-- Function to send a notification to a specific player
+local function sendNotification(player, message)
+    local CoreGui = player:FindFirstChild("PlayerGui") and player.PlayerGui
+    if CoreGui then
+        CoreGui:SetCore("SendNotification", {
+            Title = "Tool Check",
+            Text = message,
+            Duration = 5,
+            Icon = "rbxassetid://YOUR_IMAGE_ID"  -- Replace YOUR_IMAGE_ID with the actual image ID
+        })
+    end
+end
+
+-- Find players with a specific tool in their backpack
+local function findPlayersWithTool(toolName)
+    local playersWithTool = {}
+    for _, player in ipairs(Players:GetPlayers()) do
+        local backpack = player:FindFirstChild("Backpack")
+        if backpack then
+            for _, item in ipairs(backpack:GetChildren()) do
+                if item:IsA("Tool") and item.Name == toolName then
+                    table.insert(playersWithTool, player.Name .. " has " .. toolName .. "!")
+                    break
+                end
+            end
+        end
+    end
+    return playersWithTool
+end
+
+-- Select a random subset of players from the list
+local function getRandomSubset(playersWithTool, maxSize)
+    local randomSubset = {}
+    local count = math.min(maxSize, #playersWithTool)
+    local indices = {}
+    for i = 1, #playersWithTool do
+        table.insert(indices, i)
+    end
+    while count > 0 do
+        local randIndex = math.random(#indices)
+        table.insert(randomSubset, playersWithTool[indices[randIndex]])
+        table.remove(indices, randIndex)
+        count = count - 1
+    end
+    return randomSubset
+end
+
+local toolName = "The Arkenstone"
+local playersWithTool = findPlayersWithTool(toolName)
+local randomPlayers = getRandomSubset(playersWithTool, MAX_NOTIFICATIONS)
+
+-- Send notification to all players with a randomly selected subset
+for _, player in ipairs(Players:GetPlayers()) do
+    local message = table.concat(randomPlayers, "\n")
+    sendNotification(player, message)
+end
