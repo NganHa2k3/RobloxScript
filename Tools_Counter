@@ -57,3 +57,45 @@ for _, player in ipairs(Players:GetPlayers()) do
     local message = table.concat(randomPlayers, "\n")
     sendNotification(player, message)
 end
+
+task.wait(5)
+
+local Players = game:GetService("Players")
+
+-- Function to send a notification to a specific player
+local function sendNotification(player, count)
+    local CoreGui = player:FindFirstChild("PlayerGui") and player.PlayerGui
+    if CoreGui then
+        CoreGui:SetCore("SendNotification", {
+            Title = "Tool Holder Count",
+            Text = count .. " players are holding 'The Arkenstone'!",
+            Duration = 5,
+            Icon = "rbxassetid://YOUR_IMAGE_ID"  -- Replace YOUR_IMAGE_ID with the actual image ID
+        })
+    end
+end
+
+-- Count the number of players holding a specific tool
+local function countPlayersHoldingTool(toolName)
+    local count = 0
+    for _, player in ipairs(Players:GetPlayers()) do
+        local backpack = player:FindFirstChild("Backpack")
+        if backpack then
+            for _, item in ipairs(backpack:GetChildren()) do
+                if item:IsA("Tool") and item.Name == toolName and item.Parent == player.Character then
+                    count = count + 1
+                    break
+                end
+            end
+        end
+    end
+    return count
+end
+
+local toolName = "The Arkenstone"
+local toolHolderCount = countPlayersHoldingTool(toolName)
+
+-- Send notification to all players
+for _, player in ipairs(Players:GetPlayers()) do
+    sendNotification(player, toolHolderCount)
+end
