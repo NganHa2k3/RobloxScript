@@ -7,7 +7,7 @@ local function updatePlayerCountNotification()
     local CoreGui = game:GetService("StarterGui")
     CoreGui:SetCore("SendNotification", {
         Title = "I've Counting All Players",
-        Text = "Currently Exist In Server's: " .. playerCount "!",
+        Text = "Currently Exist In Server's: " .. playerCount .. "!",
         Duration = 2,
     })
 end
