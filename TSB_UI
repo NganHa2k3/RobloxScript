@@ -433,13 +433,13 @@ end)
 -- Animation and Sound IDs
 local animationIds = {
     ["Anims1"] = "rbxassetid://15391323441",
-    ["Anims2"] = "rbxassetid://17863041811",
+    ["Anims2"] = "rbxassetid://12772543293",
     ["Anims3"] = "rbxassetid://15090032390",
     ["Anims4"] = "rbxassetid://17097409396",
     ["Anims5"] = "rbxassetid://15503060948",
     ["Anims6"] = "rbxassetid://12345678",
     ["Anims7"] = "rbxassetid://12345678",
-    ["Anims8"] = "rbxassetid://12772543293",
+    ["Anims8"] = "rbxassetid://12345678",
     ["Anims9"] = "rbxassetid://12345678",
     ["Anims10"] = "rbxassetid://12345678",
     ["Anims11"] = "rbxassetid://12345678",
@@ -448,13 +448,13 @@ local animationIds = {
 
 local soundIds = {
     ["Anims1"] = "rbxassetid://15806232934",
-    ["Anims2"] = "rbxassetid://12345678",
+    ["Anims2"] = "rbxassetid://13059564956",
     ["Anims3"] = "rbxassetid://8964762256",
     ["Anims4"] = "rbxassetid://12345678",
     ["Anims5"] = "rbxassetid://1837301393",
     ["Anims6"] = "rbxassetid://12345678",
     ["Anims7"] = "rbxassetid://12345678",
-    ["Anims8"] = "rbxassetid://13059564956",
+    ["Anims8"] = "rbxassetid://12345678",
     ["Anims9"] = "rbxassetid://12345678",
     ["Anims10"] = "rbxassetid://12345678",
     ["Anims11"] = "rbxassetid://12345678",
@@ -547,3 +547,204 @@ Anima1.MouseButton1Click:Connect(function()
     playAnimation("Anims1")
     playSound("Anims1")
 end)
+
+local Anima2 = Instance.new("TextButton")
+Anima2.Parent = ScrollingAnims
+Anima2.BackgroundColor3 = Color3.new(0, 0, 0)
+Anima2.BackgroundTransparency = 0.5
+Anima2.Size = UDim2.new(0.8, 0, 0.05, 0)  -- Adjusted size for better visibility
+Anima2.TextScaled = true
+Anima2.Position = UDim2.new(0.1, 0, 0.08, 0)  -- Positioned inside the ScrollingFrame
+Anima2.TextColor3 = Color3.new(1, 1, 1)
+Anima2.Font = Enum.Font.PatrickHand
+Anima2.Text = "Destruction Cyborg: Awakening"
+
+Anima2.MouseButton1Click:Connect(function()
+    playAnimation("Anims2")
+    playSound("Anims2")
+end)
+
+-- End of Animation Box --
+
+
+
+
+-- Teleport Button --
+
+-- Create the teleportButton
+local teleportButton = Instance.new("TextButton")
+teleportButton.Name = "teleportButton"
+teleportButton.Parent = ScreenGui
+teleportButton.BackgroundColor3 = Color3.new(0, 0, 0)
+teleportButton.BackgroundTransparency = 0.5
+teleportButton.Size = UDim2.new(0.1, 0, 0.1, 0)
+teleportButton.TextScaled = true
+teleportButton.Position = UDim2.new(0.7, 0, 0.4, 0)
+teleportButton.TextColor3 = Color3.new(1, 1, 1)
+teleportButton.Font = Enum.Font.PatrickHand
+teleportButton.Text = "Teleport"
+teleportButton.Visible = false
+
+local teleportButtonCorner = Instance.new("UICorner")
+teleportButtonCorner.Parent = teleportButton
+teleportButtonCorner.CornerRadius = UDim.new(0, 10)
+
+-- Create the toggleTeleport button
+local toggleTeleport = Instance.new("TextButton")
+toggleTeleport.Name = "toggleTeleport"
+toggleTeleport.Parent = ScrollingFrame
+toggleTeleport.BackgroundColor3 = Color3.new(0, 0, 0)
+toggleTeleport.BackgroundTransparency = 0.5
+toggleTeleport.Size = UDim2.new(0.03, 0, 0.9, 0)
+toggleTeleport.TextScaled = true
+toggleTeleport.Position = UDim2.new(0.11, 0, 0, 0)
+toggleTeleport.TextColor3 = Color3.new(1, 1, 1)
+toggleTeleport.Font = Enum.Font.PatrickHand
+toggleTeleport.Text = "OFF"
+
+local teleportCorner = Instance.new("UICorner")
+teleportCorner.Parent = toggleTeleport
+teleportCorner.CornerRadius = UDim.new(0, 10)
+
+-- Script to toggle visibility and text
+local isTeleportButtonVisible = false
+
+toggleTeleport.MouseButton1Click:Connect(function()
+    isTeleportButtonVisible = not isTeleportButtonVisible
+    teleportButton.Visible = isTeleportButtonVisible
+    toggleTeleport.Text = isTeleportButtonVisible and "ON" or "OFF"
+end)
+
+-- Teleport Mode --
+local toggleMode = Instance.new("TextButton")
+toggleMode.Name = "toggleMode"
+toggleMode.Parent = ScrollingFrame
+toggleMode.BackgroundColor3 = Color3.new(0, 0, 0)
+toggleMode.BackgroundTransparency = 0.5
+toggleMode.Size = UDim2.new(0.03, 0, 0.9, 0)
+toggleMode.TextScaled = true
+toggleMode.Position = UDim2.new(0.17, 0, 0, 0)
+toggleMode.TextColor3 = Color3.fromRGB(0, 0, 200)
+toggleMode.Font = Enum.Font.PatrickHand
+toggleMode.Text = "Player"
+
+local toggleButtonCorner = Instance.new("UICorner")
+toggleButtonCorner.Parent = toggleMode
+toggleButtonCorner.CornerRadius = UDim.new(0, 10)
+
+-- Function to toggle text
+local function toggleText()
+    if toggleMode.Text == "Player" then
+        toggleMode.Text = "NPC"
+    else
+        toggleMode.Text = "Player"
+    end
+end
+
+-- Connect the function to the button click event
+toggleMode.MouseButton1Click:Connect(toggleText)
+
+-- Animation and Sound IDs for Teleport only
+local animationIds = {
+    ["Teleport"] = "rbxassetid://15957361339"
+}
+
+local soundIds = {
+    ["Teleport"] = "rbxassetid://405593386"
+}
+
+-- Function to play an animation by name
+local function playAnimation(name)
+    local animationId = animationIds[name]
+    if not animationId then
+        warn("Animation ID for '" .. name .. "' not found")
+        return
+    end
+
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+
+    if humanoid then
+        -- Stop all currently playing animations
+        stopAllAnimations(humanoid)
+        
+        -- Load and play the new animation
+        local animation = Instance.new("Animation")
+        animation.AnimationId = animationId
+        local animationTrack = humanoid:LoadAnimation(animation)
+        animationTrack:Play()
+        return animationTrack
+    else
+        warn("Humanoid not found in character")
+    end
+end
+
+-- Function to play a sound by name
+local function playSound(name)
+    local soundId = soundIds[name]
+    if not soundId then
+        warn("Sound ID for '" .. name .. "' not found")
+        return
+    end
+
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    -- Stop all currently playing sounds
+    stopAllSounds(character)
+
+    -- Create and play the new sound
+    local sound = Instance.new("Sound")
+    sound.SoundId = soundId
+    sound.Parent = character
+    sound:Play()
+
+    -- Clean up after sound finishes
+    sound.Ended:Connect(function()
+        sound:Destroy()
+    end)
+end
+
+-- Function to find a random player
+local function teleportToRandomPlayer()
+    local players = game.Players:GetPlayers()
+    local otherPlayers = {}
+    for _, p in pairs(players) do
+        if p ~= game.Players.LocalPlayer then
+            table.insert(otherPlayers, p)
+        end
+    end
+    
+    if #otherPlayers > 0 then
+        local randomPlayer = otherPlayers[math.random(#otherPlayers)]
+        game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(randomPlayer.Character.HumanoidRootPart.CFrame)
+    else
+        print("No other players found.")
+    end
+end
+
+-- Function to teleport based on the toggle state and play animation
+local function teleportToTarget()
+    local targetPosition
+
+    if toggleMode.Text == "Player" then
+        toggleMode.TextColor3 = Color3.fromRGB(0, 0, 200)
+        teleportToRandomPlayer()
+    elseif toggleMode.Text == "NPC" then
+        toggleMode.TextColor3 = Color3.fromRGB(200, 0, 0)
+        local npc = game:GetService("Workspace").Live:FindFirstChild("Weakest Dummy")
+        if npc and npc:FindFirstChild("HumanoidRootPart") then
+            targetPosition = npc.HumanoidRootPart.CFrame
+            game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(targetPosition)
+        end
+    end
+
+    playSound("Teleport")
+    local animationTrack = playAnimation("Teleport")
+    if animationTrack then
+        animationTrack.Stopped:Wait()
+    end
+end
+
+teleportButton.MouseButton1Click:Connect(teleportToTarget)
