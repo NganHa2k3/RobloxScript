@@ -6,6 +6,7 @@ local ToggleButton = Instance.new("TextButton")
 local ScrollingEmote = Instance.new("ScrollingFrame")
 local ScrollingAnims = Instance.new("ScrollingFrame")
 local ScrollingArea = Instance.new("ScrollingFrame")
+local ScrollingChat = Instance.new("ScrollingFrame")
 
 -- Create and configure TweenService
 local TweenService = game:GetService("TweenService")
@@ -125,6 +126,23 @@ end)
 
 -- 4 --
 
+local button5 = Instance.new("TextButton")
+button5.Parent = ScrollingFrame
+button5.BackgroundColor3 = Color3.new(0, 0, 0)
+button5.BackgroundTransparency = 0.5
+button5.Size = UDim2.new(0.03, 0, 0.9, 0)  -- Adjusted size for better visibility
+button5.TextScaled = true
+button5.Position = UDim2.new(0.33, 0, 0, 0)  -- Positioned inside the ScrollingFrame
+button5.TextColor3 = Color3.new(1, 1, 1)
+button5.Font = Enum.Font.PatrickHand
+button5.Text = "Chat Spam"
+
+local Button5Corner = Instance.new("UICorner")
+Button5Corner.Parent = button5
+Button5Corner.CornerRadius = UDim.new(0, 10)
+
+-- 5 --
+
 -- Scrolling Box --
 
 ScrollingEmote.Parent = ScreenGui
@@ -216,6 +234,36 @@ button3.MouseButton1Click:Connect(function()
 end)
 
 -- 3 --
+
+ScrollingChat.Parent = ScreenGui
+ScrollingChat.Size = UDim2.new(0.1, 0, 0.2, 0)  -- Adjusted to a more visible size
+ScrollingChat.Position = UDim2.new(-1, 0, 0.2, 0)  -- Positioned in the center of the screen
+ScrollingChat.BackgroundColor3 = Color3.new(0, 0, 0)
+ScrollingChat.BackgroundTransparency = 0.5
+ScrollingChat.CanvasSize = UDim2.new(0, 0, 2, 0)  -- Wider canvas size to enable scrolling
+ScrollingChat.ScrollBarThickness = 0.1
+
+local ChatCorner = Instance.new("UICorner")
+ChatCorner.Parent = ScrollingChat
+ChatCorner.CornerRadius = UDim.new(0, 10)
+
+local goalPosition9 = UDim2.new(0.3, 0, 0.2, 0)  -- Move ScrollingChat down
+local goalPosition10 = UDim2.new(-1, 0, 0.2, 0)  -- Original position
+
+local tween9 = TweenService:Create(ScrollingChat, tweenInfo, {Position = goalPosition9})
+local tween10 = TweenService:Create(ScrollingChat, tweenInfo, {Position = goalPosition10})
+
+local isToggled1 = false
+button5.MouseButton1Click:Connect(function()
+    if isToggled1 then
+        tween10:Play()
+    else
+        tween9:Play()
+    end
+    isToggled1 = not isToggled1
+end)
+
+-- 4 --
 
 -- End --
 
@@ -919,6 +967,223 @@ location4.MouseButton1Click:Connect(function()
     local player = game.Players.LocalPlayer
     player.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").SpawnPartv.CFrame + Vector3.new(0, 2, 0)
 end)
+
+-- Chat Spam Box --
+
+local chat1 = Instance.new("TextButton")
+chat1.Parent = ScrollingChat
+chat1.BackgroundColor3 = Color3.new(0, 0, 0)
+chat1.BackgroundTransparency = 0.5
+chat1.Size = UDim2.new(0.8, 0, 0.05, 0)  -- Adjusted size for better visibility
+chat1.TextScaled = true
+chat1.Position = UDim2.new(0.1, 0, 0.01, 0)  -- Positioned inside the ScrollingChat
+chat1.TextColor3 = Color3.new(1, 1, 1)
+chat1.Font = Enum.Font.PatrickHand
+chat1.Text = "Spam EZ"
+
+chat1.MouseButton1Click:Connect(function()
+    local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local localPlayer = Players.LocalPlayer
+
+-- Ensure LocalPlayer and their HumanoidRootPart are available
+if not localPlayer or not localPlayer.Character or not localPlayer.Character:FindFirstChild("HumanoidRootPart") then
+    print("LocalPlayer or their HumanoidRootPart is not available.")
+    return
+end
+
+-- Find the nearest player
+local function getNearestPlayer()
+    local nearestPlayer = nil
+    local shortestDistance = math.huge
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= localPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local distance = (localPlayer.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).magnitude
+            if distance < shortestDistance then
+                shortestDistance = distance
+                nearestPlayer = player
+            end
+        end
+    end
+    return nearestPlayer
+end
+
+-- Function to send a chat message
+local function sendChatMessage(player)
+    local chatEvent = ReplicatedStorage:FindFirstChild("DefaultChatSystemChatEvents")
+    if chatEvent and chatEvent:FindFirstChild("SayMessageRequest") then
+        local message = player.Name .. ", EZ !"
+        local args = { message, "All" } -- Message first, then channel
+        chatEvent.SayMessageRequest:FireServer(unpack(args))
+    else
+        local CoreGui = game:GetService("StarterGui")
+
+CoreGui:SetCore("SendNotification", {
+    Title = "Error: Can't Find Target",
+    Text = " This game does not have ChatEvents or SayMessageRequest to do spam !",
+    Duration = 2,
+})
+    end
+end
+
+-- Execute once when the script runs
+local nearestPlayer = getNearestPlayer()
+if nearestPlayer then
+    sendChatMessage(nearestPlayer)
+else
+    local CoreGui = game:GetService("StarterGui")
+
+CoreGui:SetCore("SendNotification", {
+    Title = "Error: Can't Find Target",
+    Text = " Need to has a Players in server to used this chat spam !",
+    Duration = 2,
+})
+end
+end)
+
+local chat2 = Instance.new("TextButton")
+chat2.Parent = ScrollingChat
+chat2.BackgroundColor3 = Color3.new(0, 0, 0)
+chat2.BackgroundTransparency = 0.5
+chat2.Size = UDim2.new(0.8, 0, 0.05, 0)  -- Adjusted size for better visibility
+chat2.TextScaled = true
+chat2.Position = UDim2.new(0.1, 0, 0.08, 0)  -- Positioned below chat1
+chat2.TextColor3 = Color3.new(1, 1, 1)
+chat2.Font = Enum.Font.PatrickHand
+chat2.Text = "Say GGs"
+
+chat2.MouseButton1Click:Connect(function()
+    local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local localPlayer = Players.LocalPlayer
+
+-- Ensure LocalPlayer and their HumanoidRootPart are available
+if not localPlayer or not localPlayer.Character or not localPlayer.Character:FindFirstChild("HumanoidRootPart") then
+    print("LocalPlayer or their HumanoidRootPart is not available.")
+    return
+end
+
+-- Find the nearest player
+local function getNearestPlayer()
+    local nearestPlayer = nil
+    local shortestDistance = math.huge
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= localPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local distance = (localPlayer.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).magnitude
+            if distance < shortestDistance then
+                shortestDistance = distance
+                nearestPlayer = player
+            end
+        end
+    end
+    return nearestPlayer
+end
+
+-- Function to send a chat message
+local function sendChatMessage(player)
+    local chatEvent = ReplicatedStorage:FindFirstChild("DefaultChatSystemChatEvents")
+    if chatEvent and chatEvent:FindFirstChild("SayMessageRequest") then
+        local message = player.Name .. ", GGs !"
+        local args = { message, "All" } -- Message first, then channel
+        chatEvent.SayMessageRequest:FireServer(unpack(args))
+    else
+        local CoreGui = game:GetService("StarterGui")
+
+CoreGui:SetCore("SendNotification", {
+    Title = "Error: Can't Find Target",
+    Text = " This game does not have ChatEvents or SayMessageRequest to do spam !",
+    Duration = 2,
+})
+    end
+end
+
+-- Execute once when the script runs
+local nearestPlayer = getNearestPlayer()
+if nearestPlayer then
+    sendChatMessage(nearestPlayer)
+else
+    local CoreGui = game:GetService("StarterGui")
+
+CoreGui:SetCore("SendNotification", {
+    Title = "Error: Can't Find Target",
+    Text = " Need to has a Players in server to used this chat spam !",
+    Duration = 2,
+})
+end
+end)
+
+local chat3 = Instance.new("TextButton")
+chat3.Parent = ScrollingChat
+chat3.BackgroundColor3 = Color3.new(0, 0, 0)
+chat3.BackgroundTransparency = 0.5
+chat3.Size = UDim2.new(0.8, 0, 0.05, 0)  -- Adjusted size for better visibility
+chat3.TextScaled = true
+chat3.Position = UDim2.new(0.1, 0, 0.15, 0)  -- Positioned below chat2
+chat3.TextColor3 = Color3.new(1, 1, 1)
+chat3.Font = Enum.Font.PatrickHand
+chat3.Text = "Say Others Are Cheater Too"
+
+chat3.MouseButton1Click:Connect(function()
+    local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local localPlayer = Players.LocalPlayer
+
+-- Ensure LocalPlayer and their HumanoidRootPart are available
+if not localPlayer or not localPlayer.Character or not localPlayer.Character:FindFirstChild("HumanoidRootPart") then
+    print("LocalPlayer or their HumanoidRootPart is not available.")
+    return
+end
+
+-- Find the nearest player
+local function getNearestPlayer()
+    local nearestPlayer = nil
+    local shortestDistance = math.huge
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= localPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local distance = (localPlayer.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).magnitude
+            if distance < shortestDistance then
+                shortestDistance = distance
+                nearestPlayer = player
+            end
+        end
+    end
+    return nearestPlayer
+end
+
+-- Function to send a chat message
+local function sendChatMessage(player)
+    local chatEvent = ReplicatedStorage:FindFirstChild("DefaultChatSystemChatEvents")
+    if chatEvent and chatEvent:FindFirstChild("SayMessageRequest") then
+        local message = player.Name .. ", You're Cheater Too !"
+        local args = { message, "All" } -- Message first, then channel
+        chatEvent.SayMessageRequest:FireServer(unpack(args))
+    else
+        local CoreGui = game:GetService("StarterGui")
+
+CoreGui:SetCore("SendNotification", {
+    Title = "Error: Can't Find Target",
+    Text = " This game does not have ChatEvents or SayMessageRequest to do spam !",
+    Duration = 2,
+})
+    end
+end
+
+-- Execute once when the script runs
+local nearestPlayer = getNearestPlayer()
+if nearestPlayer then
+    sendChatMessage(nearestPlayer)
+else
+    local CoreGui = game:GetService("StarterGui")
+
+CoreGui:SetCore("SendNotification", {
+    Title = "Error: Can't Find Target",
+    Text = " Need to has a Players in server to used this chat spam !",
+    Duration = 2,
+})
+end
+end)
+
+-- End of Chat Spam Box --
 
 -- Credit --
 
