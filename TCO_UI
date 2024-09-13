@@ -6,6 +6,9 @@ local ScrollingFrame = Instance.new("ScrollingFrame")
 local ScrollingS = Instance.new("ScrollingFrame")
 local ScrollingB = Instance.new("ScrollingFrame")
 
+local TextBox = Instance.new("TextBox")
+local ExecuteBox = Instance.new("TextBox")
+
 -- ScreenGui Parent --
 
 ScreenGui.Parent = game.CoreGui
@@ -660,7 +663,7 @@ button6.TextScaled = true
 button6.Position = UDim2.new(0.205, 0, 0, 0)  -- Positioned inside the ScrollingFrame
 button6.TextColor3 = Color3.new(1, 1, 1)
 button6.Font = Enum.Font.PatrickHand
-button6 .Text = "Drop Tools: Fake"
+button6.Text = "Drop Tools: Fake"
 
 button6.MouseButton1Click:Connect(function()
     -- Get the local player and their character
@@ -712,3 +715,219 @@ CoreGui:SetCore("SendNotification", {
     Duration = 2,
 })
 end)
+
+local secretButton1 = Instance.new("TextButton")
+secretButton1.Parent = ScrollingFrame  -- Ensure ScrollingFrame is defined
+secretButton1.BackgroundColor3 = Color3.new(0, 0, 0)
+secretButton1.BackgroundTransparency = 0.5
+secretButton1.Size = UDim2.new(0.03, 0, 0.9, 0)
+secretButton1.Position = UDim2.new(0.325, 0, 0, 0)
+secretButton1.TextScaled = true
+secretButton1.TextColor3 = Color3.new(1, 1, 0)
+secretButton1.Font = Enum.Font.PatrickHand
+secretButton1.Text = "Secrect: Heavenly Strike"
+secretButton1.Visible = false  -- Make the button initially invisible
+
+secretButton1.MouseButton1Click:Connect(function()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/Ability/main/Heavenly_Strike'))()
+end)
+
+ExecuteBox.Parent = ScreenGui  -- Make sure ScreenGui is defined in your script
+ExecuteBox.Size = UDim2.new(0.3, 0, 0.1, 0)
+ExecuteBox.Position = UDim2.new(1.2, 0, 0.4, 0)
+ExecuteBox.BackgroundColor3 = Color3.new(0, 0, 0)
+ExecuteBox.BackgroundTransparency = 0.5
+ExecuteBox.ClearTextOnFocus = false
+ExecuteBox.TextColor3 = Color3.fromRGB(255, 255, 0)
+ExecuteBox.Text = "[Input You Script Here]"
+ExecuteBox.Font = Enum.Font.PatrickHand
+ExecuteBox.TextScaled = true
+ExecuteBox.PlaceholderText = "[Ensure Your Code Is Correct]"
+
+local secretButton = Instance.new("TextButton")
+secretButton.Parent = ScrollingFrame  -- Ensure ScrollingFrame is defined
+secretButton.BackgroundColor3 = Color3.new(0, 0, 0)
+secretButton.BackgroundTransparency = 0.5
+secretButton.Size = UDim2.new(0.03, 0, 0.9, 0)
+secretButton.Position = UDim2.new(0.285, 0, 0, 0)
+secretButton.TextScaled = true
+secretButton.TextColor3 = Color3.new(0, 1, 0)
+secretButton.Font = Enum.Font.PatrickHand
+secretButton.Text = "Secrect: Executor"
+secretButton.Visible = false  -- Make the button initially invisible
+
+local TweenService = game:GetService("TweenService")
+local tweenSpeed = 1
+local tweenInfo = TweenInfo.new(tweenSpeed, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
+
+local goalPosition9 = UDim2.new(0.5, 0, 0.4, 0)  -- New position
+local goalPosition10 = UDim2.new(1.2, 0, 0.4, 0)  -- Original position
+
+local tween9 = TweenService:Create(ExecuteBox, tweenInfo, {Position = goalPosition9})
+local tween10 = TweenService:Create(ExecuteBox, tweenInfo, {Position = goalPosition10})
+
+local isToggledss = false
+secretButton.MouseButton1Click:Connect(function()
+    if isToggledss then
+        tween10:Play()
+    else
+        tween9:Play()
+    end
+    isToggledss = not isToggledss
+end)
+
+TextBox.Parent = ScreenGui  -- Make sure ScreenGui is defined in your script
+TextBox.Size = UDim2.new(0.3, 0, 0.1, 0)
+TextBox.Position = UDim2.new(1.2, 0, 0.15, 0)
+TextBox.BackgroundColor3 = Color3.new(0, 0, 0)
+TextBox.BackgroundTransparency = 0.5
+TextBox.ClearTextOnFocus = true
+TextBox.TextColor3 = Color3.fromRGB(0, 0, 200)
+TextBox.Text = "Enter a Code In Here"
+TextBox.Font = Enum.Font.PatrickHand
+TextBox.TextScaled = true
+TextBox.PlaceholderText = "[Enter Your Code Inside Here]"
+
+local specificTexts = {
+    "execute",
+    "heaven",
+    "cmds"
+}
+
+local function onLostFocus()
+    local input = TextBox.Text:lower()
+
+    for _, text in ipairs(specificTexts) do
+        if input == text:lower() then
+            local CoreGui = game:GetService("StarterGui")
+
+CoreGui:SetCore("SendNotification", {
+    Title = "Small Notification",
+    Text = "Correct Code:" .. text,
+    Duration = 2,
+})
+                if text == "cmds" then
+                    loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/RobloxScript/item/Commands_V3'))()
+                elseif text == "execute" then
+                    secretButton.Visible = true
+                    
+                    local CoreGui = game:GetService("StarterGui")
+
+CoreGui:SetCore("SendNotification", {
+    Title = "Script Executor",
+    Text = " Unlocked Secrect Button !",
+    Duration = 2,
+})
+                elseif text == "heaven" then
+                    secretButton1.Visible = true
+                    
+                    local CoreGui = game:GetService("StarterGui")
+
+CoreGui:SetCore("SendNotification", {
+    Title = "Heavenly Strike",
+    Text = " Unlocked Secrect Button !",
+    Duration = 2,
+})
+                end
+            return
+        end
+    end
+
+    TextBox.Text = "[Error Code]"
+    TextBox.TextColor3 = Color3.fromRGB(255, 0, 0)
+    
+    wait(2)
+    TextBox.Text = "Enter Code Again !"
+    TextBox.TextColor3 = Color3.fromRGB(0, 0, 200)
+end
+
+TextBox.FocusLost:Connect(onLostFocus)
+
+local button7 = Instance.new("TextButton")
+button7.Parent = ScrollingFrame  -- Ensure ScrollingFrame is defined
+button7.BackgroundColor3 = Color3.new(0, 0, 0)
+button7.BackgroundTransparency = 0.5
+button7.Size = UDim2.new(0.03, 0, 0.9, 0)
+button7.Position = UDim2.new(0.245, 0, 0, 0)
+button7.TextScaled = true
+button7.TextColor3 = Color3.new(1, 1, 1)
+button7.Font = Enum.Font.PatrickHand
+button7.Text = "Secret Code"
+
+local TweenService = game:GetService("TweenService")
+local tweenSpeed = 1
+local tweenInfo = TweenInfo.new(tweenSpeed, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
+
+local goalPosition7 = UDim2.new(0.5, 0, 0.15, 0)
+local goalPosition8 = UDim2.new(1.2, 0, 0.15, 0)
+
+local tween7 = TweenService:Create(TextBox, tweenInfo, {Position = goalPosition7})
+local tween8 = TweenService:Create(TextBox, tweenInfo, {Position = goalPosition8})
+
+local isToggledss = false
+button7.MouseButton1Click:Connect(function()
+    if isToggledss then
+        tween8:Play()
+    else
+        tween7:Play()
+    end
+    isToggledss = not isToggledss
+end)
+
+-- Execute Box Function --
+
+-- Function to execute the code inside ExecuteBox
+
+local function onLostFocus()
+    local code = ExecuteBox.Text
+    
+    -- Check if the code is not empty
+    
+    if code and code ~= "" then
+    
+        -- Compile the code
+        
+        local func, errorMessage = loadstring(code)
+        if func then
+        
+            -- Run the code
+            
+            local success, runError = pcall(func)
+            if not success then
+                local CoreGui = game:GetService("StarterGui")
+
+CoreGui:SetCore("SendNotification", {
+    Title = "Runtime Error",
+    Text = "Error:" .. runError,
+    Duration = 2,
+})
+            end
+        else
+        
+            -- Print error message if code fails to load
+            
+            local CoreGui = game:GetService("StarterGui")
+
+CoreGui:SetCore("SendNotification", {
+    Title = "Execute Script Failed",
+    Text = "Failed:" .. errorMessage,
+    Duration = 2,
+})
+        end
+    end
+end
+
+-- Connect the function to the LostFocus event
+
+ExecuteBox.FocusLost:Connect(onLostFocus)
+
+
+-- WC message --
+
+local CoreGui = game:GetService("StarterGui")
+
+CoreGui:SetCore("SendNotification", {
+    Title = "Welcome to NganHa2k3 Script",
+    Text = "The Chosen One Script, make for fun",
+    Duration = 2,
+})
