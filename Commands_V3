@@ -331,6 +331,8 @@ elseif words[1] == "+sit" then
     game.Players.LocalPlayer.Character.Humanoid.Sit = true
 elseif words[1] == "+fun" then
     loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/Hello/main/fun'))()
+elseif words[1] == "+heavenlystrike" then
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/Ability/main/Heavenly_Strike'))()
 elseif words[1] == "+bundles" then
     loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Free-Bundles-R15-3356"))()
 elseif words[1] == "+rspy" then
