@@ -729,7 +729,7 @@ secretButton1.Text = "Secrect: Heavenly Strike"
 secretButton1.Visible = false  -- Make the button initially invisible
 
 secretButton1.MouseButton1Click:Connect(function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/Ability/main/Heavenly_Strike'))()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/Ability/backup/Heavenly_Strike_Sfx'))()
 end)
 
 ExecuteBox.Parent = ScreenGui  -- Make sure ScreenGui is defined in your script
