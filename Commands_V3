@@ -318,7 +318,7 @@ local function onPlayerChatted(message)
 elseif words[1] == "+r" then
     resetCharacter()
 elseif words[1] == "+cmds" then
-    print("All Commands Prefix is + : +t , +tw , +tw2 , +r , +bcurve , +cube , +e and +noe , +ee , +m and +nom , +loadstring1 , +loadstring2 , +s1 and +nos1 , +j1 and +noj1 , +r1 and +nor1 , +sit , +test1 , +spawnbase , +removebase , +spawnhouse , +spawnladder , +partnamedetector , +serverbrowser , +jobid , +thechosenone and +thechosenone1 , +svhop , +br1 , +br [name] , +luobu , +bundles , +rspy , +feadmin , +car , +Hoho , +Arkenstone , +EArkenstone , +TArkenstone , +mm21 , +fun , with n r f !")
+    print("All Commands Prefix is + : +t , +tw , +tw2 , +r , +bcurve , +cube , +e and +noe , +ee , +m and +nom , +loadstring1 , +loadstring2 , +s1 and +nos1 , +j1 and +noj1 , +r1 and +nor1 , +sit , +test1 , +spawnbase , +removebase , +spawnhouse , +spawnladder , +partnamedetector , +serverbrowser , +jobid , +thechosenone and +thechosenone1 , +svhop , +br1 , +br [name] , +luobu , +bundles , +rspy , +feadmin , +car , +Hoho , +Arkenstone , +EArkenstone , +TArkenstone , +mm21 , +fun , +heavenlystrike , +heavenlystrike_loops , +heavenlystrike_stop , with n r f !")
 elseif words[1] == "+s1" then
     game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 200
 elseif words[1] == "+nos1" then
@@ -332,7 +332,11 @@ elseif words[1] == "+sit" then
 elseif words[1] == "+fun" then
     loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/Hello/main/fun'))()
 elseif words[1] == "+heavenlystrike" then
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/Ability/main/Heavenly_Strike'))()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/Ability/backup/Heavenly_Strike_Sfx'))()
+elseif words[1] == "+heavenlystrike_loops" then
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/Ability/main/Loops_Heavenly_Strike_Sfx'))()
+elseif words[1] == "+heavenlystrike_stop" then
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/Ability/main/Stop_Heavenly_Strike_Loops'))()
 elseif words[1] == "+bundles" then
     loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Free-Bundles-R15-3356"))()
 elseif words[1] == "+rspy" then
