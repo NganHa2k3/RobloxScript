@@ -82,21 +82,40 @@ if nearestPlayer then
 end
 end
 
+local lastHealth = nil
+local hasTriggered = false
+
 local function monitorDamage()
     local player = game.Players.LocalPlayer
     local playerCharacter = player.Character or player.CharacterAdded:Wait()
     local humanoid = playerCharacter:WaitForChild("Humanoid")
 
-    -- Function to handle health changes
-    
-    local function onHealthChanged()
-        if humanoid.Health < humanoid.MaxHealth then
-            DodgeNP()
+    local function onHealthChanged(health)
+        if lastHealth == nil then
+            lastHealth = health
+            return
         end
+
+        if health < lastHealth then
+            if not hasTriggered then
+                DodgeNP()
+                
+                local StarterGui = game:GetService("StarterGui")
+                StarterGui:SetCore("SendNotification", {
+                    Title = "Haki Observation",
+                    Text = "Successfully Dodging!",
+                    Duration = 1,
+                })
+
+                hasTriggered = true
+            end
+        elseif health > lastHealth then
+            hasTriggered = false
+        end
+
+        lastHealth = health
     end
 
-    -- Connect the function to the HealthChanged event
-    
     humanoid.HealthChanged:Connect(onHealthChanged)
 end
 
@@ -231,7 +250,7 @@ button6.MouseButton1Click:Connect(function()
         
         while isOff do
             monitorDamage()
-            wait(0.1)
+            wait(0.5)
         end
     end
 end)
