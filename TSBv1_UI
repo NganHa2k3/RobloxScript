@@ -44,6 +44,64 @@ local ToggleButtonCorner = Instance.new("UICorner")
 ToggleButtonCorner.Parent = ToggleButton
 ToggleButtonCorner.CornerRadius = UDim.new(0, 10)
 
+-- Function Box --
+
+local function DodgeNP()
+    local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+local nearestPlayer = nil
+local shortestDistance = math.huge
+local currentPosition = humanoidRootPart.Position
+
+for _, otherPlayer in ipairs(Players:GetPlayers()) do
+    if otherPlayer ~= player and otherPlayer.Character then
+        local otherPlayerRootPart = otherPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if otherPlayerRootPart then
+            local distance = (currentPosition - otherPlayerRootPart.Position).magnitude
+            if distance < shortestDistance then
+                shortestDistance = distance
+                nearestPlayer = otherPlayer
+            end
+        end
+    end
+end
+
+if nearestPlayer then
+    local nearestPlayerRootPart = nearestPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if nearestPlayerRootPart then
+        local playerPosition = nearestPlayerRootPart.Position
+        local playerForward = nearestPlayerRootPart.CFrame.LookVector
+        local teleportPosition = playerPosition - playerForward * 10
+        teleportPosition = Vector3.new(teleportPosition.X, teleportPosition.Y - 40, teleportPosition.Z)
+
+        humanoidRootPart.CFrame = CFrame.new(teleportPosition)
+    end
+end
+end
+
+local function monitorDamage()
+    local player = game.Players.LocalPlayer
+    local playerCharacter = player.Character or player.CharacterAdded:Wait()
+    local humanoid = playerCharacter:WaitForChild("Humanoid")
+
+    -- Function to handle health changes
+    
+    local function onHealthChanged()
+        if humanoid.Health < humanoid.MaxHealth then
+            DodgeNP()
+        end
+    end
+
+    -- Connect the function to the HealthChanged event
+    
+    humanoid.HealthChanged:Connect(onHealthChanged)
+end
+
+-- Close of Function Box --
+
 -- Button --
 
 local button1 = Instance.new("TextButton")
@@ -143,14 +201,6 @@ Button5Corner.CornerRadius = UDim.new(0, 10)
 
 -- 5 --
 
-local Players = game:GetService("Players")
-local CoreGui = game:GetService("StarterGui")
-
-local onOff = false
-local healthChangedConnection = nil
-local lastNotificationTime = 0
-local notificationInterval = 5  -- Interval in seconds
-
 local button6 = Instance.new("TextButton")
 button6.Parent = ScrollingFrame
 button6.BackgroundColor3 = Color3.new(0, 0, 0)
@@ -166,122 +216,23 @@ local button6Corner = Instance.new("UICorner")
 button6Corner.Parent = button6
 button6Corner.CornerRadius = UDim.new(0, 10)
 
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
-local DodgeAnimId = "15957361339"
-local DodgeSoundId = "405593386"
-
-local function findNearestPlayer()
-    local nearestPlayer = nil
-    local shortestDistance = math.huge
-
-    for _, player in pairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-            local targetPosition = player.Character.HumanoidRootPart.Position
-            local distance = (HumanoidRootPart.Position - targetPosition).magnitude
-
-            if distance < shortestDistance then
-                shortestDistance = distance
-                nearestPlayer = player
-            end
-        end
-    end
-
-    return nearestPlayer
-end
-
-local function teleportToNearestPlayer()
-    local nearestPlayer = findNearestPlayer()
-
-    if nearestPlayer and nearestPlayer.Character and nearestPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        local targetPosition = nearestPlayer.Character.HumanoidRootPart.Position
-        local offset = nearestPlayer.Character.HumanoidRootPart.CFrame.LookVector * -60
-        local newPosition = targetPosition + offset
-
-        HumanoidRootPart.CFrame = CFrame.new(newPosition)
-
-        local humanoid = Character:FindFirstChildOfClass("Humanoid")
-        if humanoid then
-            local animation = Instance.new("Animation")
-            animation.DodgeAnimId = "rbxassetid://" .. DodgeAnimId
-            local animationTrack = humanoid:LoadAnimation(animation)
-            animationTrack:Play()
-        end
-
-        local sound = Instance.new("Sound")
-        sound.DodgeSoundId = "rbxassetid://" .. DodgeSoundId
-        sound.Parent = Character
-        sound:Play()
-
-        sound.Ended:Connect(function()
-            sound:Destroy()
-        end)
-    else
-        warn("No valid nearest player found.")
-    end
-end
-
-local function onHealthChanged(humanoid)
-    local previousHealth = humanoid.Health
-
-    if healthChangedConnection then
-        healthChangedConnection:Disconnect()
-    end
-
-    healthChangedConnection = humanoid.HealthChanged:Connect(function(newHealth)
-        if onOff then
-            local currentTime = tick()
-            if newHealth < previousHealth and (currentTime - lastNotificationTime) >= notificationInterval then
-                teleportToNearestPlayer()
-                
-                CoreGui:SetCore("SendNotification", {
-                    Title = "Haki Activated",
-                    Text = "Soru, teleport behind enemies !",
-                    Duration = 2,
-                })
-                lastNotificationTime = currentTime
-            elseif newHealth > previousHealth then
-                print("Health regenerating")
-            end
-            previousHealth = newHealth
-        end
-    end)
-end
-
-local function setupHealthDetection()
-    local player = Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-    local humanoid = character:FindFirstChildOfClass("Humanoid")
-    
-    if humanoid then
-        onHealthChanged(humanoid)
-    end
-
-    player.CharacterAdded:Connect(function(char)
-        local humanoid = char:WaitForChild("Humanoid")
-        onHealthChanged(humanoid)
-    end)
-end
-
-local function disableHealthDetection()
-    if healthChangedConnection then
-        healthChangedConnection:Disconnect()
-        healthChangedConnection = nil
-    end
-end
+local isOff = false
 
 button6.MouseButton1Click:Connect(function()
-    onOff = not onOff
-    if onOff then
-        button6.Text = "Auto Dodge: ON"
-        button6.TextColor3 = Color3.new(1, 0, 0)
-        setupHealthDetection()
-    else
+    if isOff then
         button6.Text = "Auto Dodge: OFF"
         button6.TextColor3 = Color3.new(1, 1, 1)
-        disableHealthDetection()
+        isOff = false
+    
+    else
+        button6.Text = "Auto Dodge: ON"
+        button6.TextColor3 = Color3.new(0, 1, 0)
+        isOff = true
+        
+        while isOff do
+            monitorDamage()
+            wait(0.1)
+        end
     end
 end)
 
