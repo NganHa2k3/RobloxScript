@@ -1,8 +1,4 @@
 -- Create UI elements
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 
 local ScreenGui = Instance.new("ScreenGui")
 local ScrollingFrame = Instance.new("ScrollingFrame")
@@ -85,22 +81,6 @@ if nearestPlayer then
         humanoidRootPart.CFrame = CFrame.new(teleportPosition)
     end
 end
-end
-
-local range = 5
-
-local function detectNearbyPlayers(range)
-    local nearbyPlayers = {}
-    for _, otherPlayer in ipairs(Players:GetPlayers()) do
-        if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
-            local otherHumanoidRootPart = otherPlayer.Character.HumanoidRootPart
-            local distance = (humanoidRootPart.Position - otherHumanoidRootPart.Position).magnitude
-            if distance <= range then
-                table.insert(nearbyPlayers, otherPlayer)
-            end
-        end
-    end
-    return nearbyPlayers
 end
 
 -- Close of Function Box --
@@ -219,41 +199,57 @@ local button6Corner = Instance.new("UICorner")
 button6Corner.Parent = button6
 button6Corner.CornerRadius = UDim.new(0, 10)
 
-local RunService = game:GetService("RunService")
-local isAutoDodgeActive = false
-local autoDodgeConnection
+local isOff = false
 
 button6.MouseButton1Click:Connect(function()
-    if isAutoDodgeActive then
-        -- Turn off Auto Dodge
+    if isOff then
         button6.Text = "Auto Dodge: OFF"
         button6.TextColor3 = Color3.new(1, 1, 1)
-        isAutoDodgeActive = false
-        
-        if autoDodgeConnection then
-            autoDodgeConnection:Disconnect()
-            autoDodgeConnection = nil
-        end
+        isOff = false
     else
-        -- Turn on Auto Dodge
         button6.Text = "Auto Dodge: ON"
         button6.TextColor3 = Color3.new(0, 1, 0)
-        isAutoDodgeActive = true
+        isOff = true
         
-        autoDodgeConnection = RunService.Heartbeat:Connect(function()
-            if isAutoDodgeActive then
-                local nearbyPlayers = detectNearbyPlayers(range)
-                if #nearbyPlayers > 0 then
-                    print("Nearby players detected")
-                    for _, p in ipairs(nearbyPlayers) do
-                        DodgeNP()
-                    end
-                end
+        while isOff do
+            -- LocalScript (place it in StarterPlayerScripts or StarterCharacterScripts)
+
+local Players = game:GetService("Players")
+local localPlayer = Players.LocalPlayer
+local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+-- Function to check nearby players
+local function checkNearbyPlayers()
+    local foundPlayers = false
+    
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= localPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local playerPosition = player.Character.HumanoidRootPart.Position
+            local distance = (humanoidRootPart.Position - playerPosition).magnitude
+            
+            if distance <= 5 then
+                foundPlayers = true
+                break
             end
-        end)
+        end
+    end
+    
+    if foundPlayers then
+        DodgeNP()
+        
+        print("Dodge Successful")
+    else
+        print("Dodge Ready !")
+    end
+end
+
+-- Run the check when the script is executed
+checkNearbyPlayers()
+        wait(1)
+        end
     end
 end)
-
 
 -- 6 --
 
