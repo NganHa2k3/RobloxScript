@@ -237,7 +237,7 @@ button6.MouseButton1Click:Connect(function()
     if #nearbyPlayers > 0 then
         print("Nearby players detected:")
         for _, p in ipairs(nearbyPlayers) do
-            print(p.Name)
+            DodgeNP()
         end
     end
             wait(0.5)
