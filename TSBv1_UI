@@ -1,4 +1,9 @@
 -- Create UI elements
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
 local ScreenGui = Instance.new("ScreenGui")
 local ScrollingFrame = Instance.new("ScrollingFrame")
 local ToggleButton = Instance.new("TextButton")
@@ -82,41 +87,20 @@ if nearestPlayer then
 end
 end
 
-local lastHealth = nil
-local hasTriggered = false
+local range = 5
 
-local function monitorDamage()
-    local player = game.Players.LocalPlayer
-    local playerCharacter = player.Character or player.CharacterAdded:Wait()
-    local humanoid = playerCharacter:WaitForChild("Humanoid")
-
-    local function onHealthChanged(health)
-        if lastHealth == nil then
-            lastHealth = health
-            return
-        end
-
-        if health < lastHealth then
-            if not hasTriggered then
-                DodgeNP()
-                
-                local StarterGui = game:GetService("StarterGui")
-                StarterGui:SetCore("SendNotification", {
-                    Title = "Haki Observation",
-                    Text = "Successfully Dodging!",
-                    Duration = 1,
-                })
-
-                hasTriggered = true
+local function detectNearbyPlayers(range)
+    local nearbyPlayers = {}
+    for _, otherPlayer in ipairs(Players:GetPlayers()) do
+        if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            local otherHumanoidRootPart = otherPlayer.Character.HumanoidRootPart
+            local distance = (humanoidRootPart.Position - otherHumanoidRootPart.Position).magnitude
+            if distance <= range then
+                table.insert(nearbyPlayers, otherPlayer)
             end
-        elseif health > lastHealth then
-            hasTriggered = false
         end
-
-        lastHealth = health
     end
-
-    humanoid.HealthChanged:Connect(onHealthChanged)
+    return nearbyPlayers
 end
 
 -- Close of Function Box --
@@ -249,7 +233,13 @@ button6.MouseButton1Click:Connect(function()
         isOff = true
         
         while isOff do
-            monitorDamage()
+            local nearbyPlayers = detectNearbyPlayers(range)
+    if #nearbyPlayers > 0 then
+        print("Nearby players detected:")
+        for _, p in ipairs(nearbyPlayers) do
+            print(p.Name)
+        end
+    end
             wait(0.5)
         end
     end
