@@ -219,31 +219,41 @@ local button6Corner = Instance.new("UICorner")
 button6Corner.Parent = button6
 button6Corner.CornerRadius = UDim.new(0, 10)
 
-local isOff = false
+local RunService = game:GetService("RunService")
+local isAutoDodgeActive = false
+local autoDodgeConnection
 
 button6.MouseButton1Click:Connect(function()
-    if isOff then
+    if isAutoDodgeActive then
+        -- Turn off Auto Dodge
         button6.Text = "Auto Dodge: OFF"
         button6.TextColor3 = Color3.new(1, 1, 1)
-        isOff = false
-    
+        isAutoDodgeActive = false
+        
+        if autoDodgeConnection then
+            autoDodgeConnection:Disconnect()
+            autoDodgeConnection = nil
+        end
     else
+        -- Turn on Auto Dodge
         button6.Text = "Auto Dodge: ON"
         button6.TextColor3 = Color3.new(0, 1, 0)
-        isOff = true
+        isAutoDodgeActive = true
         
-        while isOff do
-            local nearbyPlayers = detectNearbyPlayers(range)
-    if #nearbyPlayers > 0 then
-        print("Nearby players detected:")
-        for _, p in ipairs(nearbyPlayers) do
-            DodgeNP()
-        end
-    end
-            wait(0.5)
-        end
+        autoDodgeConnection = RunService.Heartbeat:Connect(function()
+            if isAutoDodgeActive then
+                local nearbyPlayers = detectNearbyPlayers(range)
+                if #nearbyPlayers > 0 then
+                    print("Nearby players detected")
+                    for _, p in ipairs(nearbyPlayers) do
+                        DodgeNP()
+                    end
+                end
+            end
+        end)
     end
 end)
+
 
 -- 6 --
 
@@ -1225,7 +1235,7 @@ chat3.TextScaled = true
 chat3.Position = UDim2.new(0.1, 0, 0.15, 0)  -- Positioned below chat2
 chat3.TextColor3 = Color3.new(1, 1, 1)
 chat3.Font = Enum.Font.PatrickHand
-chat3.Text = "Say Others Are Cheater Too"
+chat3.Text = "Say Toxic Words"
 
 chat3.MouseButton1Click:Connect(function()
     local Players = game:GetService("Players")
@@ -1258,7 +1268,7 @@ end
 local function sendChatMessage(player)
     local chatEvent = ReplicatedStorage:FindFirstChild("DefaultChatSystemChatEvents")
     if chatEvent and chatEvent:FindFirstChild("SayMessageRequest") then
-        local message = player.Name .. ", You're Cheater Too !"
+        local message = player.Name .. ", Lol Kids EZ Haha !"
         local args = { message, "All" } -- Message first, then channel
         chatEvent.SayMessageRequest:FireServer(unpack(args))
     else
