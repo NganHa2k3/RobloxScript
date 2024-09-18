@@ -12,6 +12,33 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local localPlayer = Players.LocalPlayer
 
+-- UI Sound --
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+local sounds = {
+    UISound = "rbxassetid://6895079853",
+    NotificationSound = "rbxassetid://3398620867"
+}
+
+function Ps(name)
+    local soundId = sounds[name]
+    if soundId then
+        local sound = Instance.new("Sound")
+        sound.SoundId = soundId
+        sound.Parent = character
+        sound:Play()
+        sound.Ended:Connect(function()
+            sound:Destroy()
+        end)
+    else
+        warn("Sound not found: " .. name)
+    end
+end
+
+-- X --
+
 -- Function Box --
 
 if not localPlayer or not localPlayer.Character or not localPlayer.Character:FindFirstChild("HumanoidRootPart") then
@@ -330,8 +357,10 @@ local tween2 = TweenService:Create(ScrollingFrame, tweenInfo, {Position = goalPo
 local isToggled = false
 ToggleButton.MouseButton1Click:Connect(function()
     if isToggled then
+        Ps("UISound")
         tween2:Play()
     else
+        Ps("UISound")
         tween1:Play()
     end
     isToggled = not isToggled
@@ -610,12 +639,12 @@ end)
 local animationIds = {
     ["Anims1"] = "rbxassetid://15391323441",
     ["Anims2"] = "rbxassetid://12772543293",
-    ["Anims3"] = "rbxassetid://15090032390",
-    ["Anims4"] = "rbxassetid://17097409396",
-    ["Anims5"] = "rbxassetid://15503060948",
-    ["Anims6"] = "rbxassetid://12345678",
-    ["Anims7"] = "rbxassetid://12345678",
-    ["Anims8"] = "rbxassetid://12345678",
+    ["Anims3"] = "rbxassetid://15943915877",
+    ["Anims4"] = "rbxassetid://15311685628",
+    ["Anims5"] = "rbxassetid://12351854556",
+    ["Anims6"] = "rbxassetid://15128849047",
+    ["Anims7"] = "rbxassetid://13927612951",
+    ["Anims8"] = "rbxassetid://12342141464",
     ["Anims9"] = "rbxassetid://12345678",
     ["Anims10"] = "rbxassetid://12345678",
     ["Anims11"] = "rbxassetid://12345678",
@@ -738,6 +767,102 @@ Anima2.Text = "Destruction Cyborg: Awakening"
 Anima2.MouseButton1Click:Connect(function()
     playAnimation("Anims2")
     playSound("Anims2")
+end)
+
+local Anima3 = Instance.new("TextButton")
+Anima3.Parent = ScrollingAnims
+Anima3.BackgroundColor3 = Color3.new(0, 0, 0)
+Anima3.BackgroundTransparency = 0.5
+Anima3.Size = UDim2.new(0.8, 0, 0.05, 0)  -- Adjusted size for better visibility
+Anima3.TextScaled = true
+Anima3.Position = UDim2.new(0.1, 0, 0.15, 0)  -- Positioned inside the ScrollingFrame
+Anima3.TextColor3 = Color3.new(1, 1, 1)
+Anima3.Font = Enum.Font.PatrickHand
+Anima3.Text = "Destruction Cyborg: Wall Combo"
+
+Anima3.MouseButton1Click:Connect(function()
+    playAnimation("Anims3")
+    playSound("Anims3")
+end)
+
+local Anima4 = Instance.new("TextButton")
+Anima4.Parent = ScrollingAnims
+Anima4.BackgroundColor3 = Color3.new(0, 0, 0)
+Anima4.BackgroundTransparency = 0.5
+Anima4.Size = UDim2.new(0.8, 0, 0.05, 0)  -- Adjusted size for better visibility
+Anima4.TextScaled = true
+Anima4.Position = UDim2.new(0.1, 0, 0.22, 0)  -- Positioned inside the ScrollingFrame
+Anima4.TextColor3 = Color3.new(1, 1, 1)
+Anima4.Font = Enum.Font.PatrickHand
+Anima4.Text = "Samurai: Fake Counter"
+
+Anima4.MouseButton1Click:Connect(function()
+    playAnimation("Anims4")
+    playSound("Anims4")
+end)
+
+local Anima5 = Instance.new("TextButton")
+Anima5.Parent = ScrollingAnims
+Anima5.BackgroundColor3 = Color3.new(0, 0, 0)
+Anima5.BackgroundTransparency = 0.5
+Anima5.Size = UDim2.new(0.8, 0, 0.05, 0)  -- Adjusted size for better visibility
+Anima5.TextScaled = true
+Anima5.Position = UDim2.new(0.1, 0, 0.29, 0)  -- Positioned inside the ScrollingFrame
+Anima5.TextColor3 = Color3.new(1, 1, 1)
+Anima5.Font = Enum.Font.PatrickHand
+Anima5.Text = "Garou: Fake Counter"
+
+Anima5.MouseButton1Click:Connect(function()
+    playAnimation("Anims5")
+    playSound("Anims5")
+end)
+
+local Anima6 = Instance.new("TextButton")
+Anima6.Parent = ScrollingAnims
+Anima6.BackgroundColor3 = Color3.new(0, 0, 0)
+Anima6.BackgroundTransparency = 0.5
+Anima6.Size = UDim2.new(0.8, 0, 0.05, 0)  -- Adjusted size for better visibility
+Anima6.TextScaled = true
+Anima6.Position = UDim2.new(0.1, 0, 0.36, 0)  -- Positioned inside the ScrollingFrame
+Anima6.TextColor3 = Color3.new(1, 1, 1)
+Anima6.Font = Enum.Font.PatrickHand
+Anima6.Text = "Metal Bat: Fake Counter"
+
+Anima6.MouseButton1Click:Connect(function()
+    playAnimation("Anims6")
+    playSound("Anims6")
+end)
+
+local Anima7 = Instance.new("TextButton")
+Anima7.Parent = ScrollingAnims
+Anima7.BackgroundColor3 = Color3.new(0, 0, 0)
+Anima7.BackgroundTransparency = 0.5
+Anima7.Size = UDim2.new(0.8, 0, 0.05, 0)  -- Adjusted size for better visibility
+Anima7.TextScaled = true
+Anima7.Position = UDim2.new(0.1, 0, 0.43, 0)  -- Positioned inside the ScrollingFrame
+Anima7.TextColor3 = Color3.new(1, 1, 1)
+Anima7.Font = Enum.Font.PatrickHand
+Anima7.Text = "Saitama: Fake Omni Punch"
+
+Anima7.MouseButton1Click:Connect(function()
+    playAnimation("Anims7")
+    playSound("Anims7")
+end)
+
+local Anima8 = Instance.new("TextButton")
+Anima8.Parent = ScrollingAnims
+Anima8.BackgroundColor3 = Color3.new(0, 0, 0)
+Anima8.BackgroundTransparency = 0.5
+Anima8.Size = UDim2.new(0.8, 0, 0.05, 0)  -- Adjusted size for better visibility
+Anima8.TextScaled = true
+Anima8.Position = UDim2.new(0.1, 0, 0.50, 0)  -- Positioned inside the ScrollingFrame
+Anima8.TextColor3 = Color3.new(1, 1, 1)
+Anima8.Font = Enum.Font.PatrickHand
+Anima8.Text = "Garou: Awakening"
+
+Anima8.MouseButton1Click:Connect(function()
+    playAnimation("Anims8")
+    playSound("Anims8")
 end)
 
 -- End of Animation Box --
@@ -1252,6 +1377,8 @@ end)
 -- End of Chat Spam Box --
 
 -- Credit --
+
+Ps("NotificationSound")
 
 local CoreGui = game:GetService("StarterGui")
 
