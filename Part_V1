@@ -98,39 +98,27 @@ local function updateDelayTime()
     end
 end
 
--- Function to find the first matching part
-local function findFirstPart(partName)
-    for _, obj in pairs(game:GetService("Workspace"):GetChildren()) do
-        if obj:IsA("BasePart") and obj.Name == partName then
-            return obj  -- Return the first matching part
-        end
-        if obj:IsA("Model") or obj:IsA("Folder") then
-            local part = findFirstPartInModel(obj, partName)
-            if part then
-                return part
+-- Function to find parts
+local function findParts(partName)
+    local parts = {}
+    
+    local function search(parent)
+        for _, obj in pairs(parent:GetChildren()) do
+            if obj:IsA("BasePart") and obj.Name == partName then
+                table.insert(parts, obj)
+            end
+            if obj:IsA("Model") or obj:IsA("Folder") then
+                search(obj)  -- Recursive call for nested models or folders
             end
         end
     end
-    return nil
+    search(game:GetService("Workspace"))
+    
+    return parts
 end
 
-local function findFirstPartInModel(model, partName)
-    for _, obj in pairs(model:GetChildren()) do
-        if obj:IsA("BasePart") and obj.Name == partName then
-            return obj
-        end
-        if obj:IsA("Model") or obj:IsA("Folder") then
-            local part = findFirstPartInModel(obj, partName)
-            if part then
-                return part
-            end
-        end
-    end
-    return nil
-end
-
--- Function to tween player to a single part
-local function tweenToSinglePart(partName)
+-- Function to tween player to each part
+local function tweenToParts(partName)
     local player = game.Players.LocalPlayer
     local character = player.Character
     local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
@@ -140,42 +128,24 @@ local function tweenToSinglePart(partName)
         return
     end
 
-    local part = findFirstPart(partName)
-    if part then
+    local parts = findParts(partName)
+
+    -- Tween to each part
+    for _, part in ipairs(parts) do
         local tweenInfo = TweenInfo.new((part.Position - humanoidRootPart.Position).magnitude / delayTime, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
         local goal = {CFrame = part.CFrame + Vector3.new(0, 5, 0)}  -- Position above the part
         
         local tween = game:GetService("TweenService"):Create(humanoidRootPart, tweenInfo, goal)
         tween:Play()
         tween.Completed:Wait()  -- Wait for the tween to finish
-    else
-        warn("No part found with name: " .. partName)
     end
 end
 
--- Function to handle looping tweening for all parts
+-- Function to handle looping tweening
 local function handleLoop(partName)
     while isLooping do
-        local player = game.Players.LocalPlayer
-        local character = player.Character
-        local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
-
-        if not humanoidRootPart then
-            warn("Player's character is missing HumanoidRootPart")
-            return
-        end
-
-        local parts = findParts(partName)
-
-        for _, part in ipairs(parts) do
-            local tweenInfo = TweenInfo.new((part.Position - humanoidRootPart.Position).magnitude / delayTime, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
-            local goal = {CFrame = part.CFrame + Vector3.new(0, 5, 0)}  -- Position above the part
-            
-            local tween = game:GetService("TweenService"):Create(humanoidRootPart, tweenInfo, goal)
-            tween:Play()
-            tween.Completed:Wait()  -- Wait for the tween to finish
-        end
-        wait(delayTime) -- Wait before starting the loop again
+        tweenToParts(partName)
+        wait(delayTime)
     end
 end
 
@@ -184,10 +154,10 @@ delayTextBox.FocusLost:Connect(function()
     updateDelayTime()
 end)
 
--- Connect TweenButton to the tweenToSinglePart function
+-- Connect TweenButton to the tweenToParts function
 tweenButton.MouseButton1Click:Connect(function()
     local partName = textBox.Text
-    tweenToSinglePart(partName)
+    tweenToParts(partName)
 end)
 
 -- Connect Loop Button to toggle loop functionality
