@@ -12,33 +12,6 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local localPlayer = Players.LocalPlayer
 
--- UI Sound --
-
-local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-
-local sounds = {
-    UISound = "rbxassetid://6895079853",
-    NotificationSound = "rbxassetid://3398620867"
-}
-
-function Ps(name)
-    local soundId = sounds[name]
-    if soundId then
-        local sound = Instance.new("Sound")
-        sound.SoundId = soundId
-        sound.Parent = character
-        sound:Play()
-        sound.Ended:Connect(function()
-            sound:Destroy()
-        end)
-    else
-        warn("Sound not found: " .. name)
-    end
-end
-
--- X --
-
 -- Function Box --
 
 if not localPlayer or not localPlayer.Character or not localPlayer.Character:FindFirstChild("HumanoidRootPart") then
@@ -357,10 +330,8 @@ local tween2 = TweenService:Create(ScrollingFrame, tweenInfo, {Position = goalPo
 local isToggled = false
 ToggleButton.MouseButton1Click:Connect(function()
     if isToggled then
-        Ps("UISound")
         tween2:Play()
     else
-        Ps("UISound")
         tween1:Play()
     end
     isToggled = not isToggled
@@ -1377,8 +1348,6 @@ end)
 -- End of Chat Spam Box --
 
 -- Credit --
-
-Ps("NotificationSound")
 
 local CoreGui = game:GetService("StarterGui")
 
