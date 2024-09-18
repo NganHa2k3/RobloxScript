@@ -1,0 +1,185 @@
+-- Create UI elements
+local coreGui = game:GetService("CoreGui")
+
+local screenGui = Instance.new("ScreenGui")
+local frame = Instance.new("Frame")
+local textBox = Instance.new("TextBox")
+local tweenButton = Instance.new("TextButton")
+local loopButton = Instance.new("TextButton")
+local openCloseButton = Instance.new("TextButton")
+local delayTextBox = Instance.new("TextBox")  -- New TextBox for delay
+
+-- Set properties for the ScreenGui
+screenGui.Name = "PartCountGui"
+screenGui.Parent = coreGui
+
+-- Set properties for the Frame
+frame.Name = "PartCountFrame"
+frame.Size = UDim2.new(0.25, 0, 0.4, 0) -- Increased size
+frame.Position = UDim2.new(0, 0, 0.35, 0) -- Position
+frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+frame.BackgroundTransparency = 0.8
+frame.BorderSizePixel = 1
+frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+frame.Draggable = true
+frame.Parent = screenGui
+
+-- Add UICorner to the Frame
+local uiCorner = Instance.new("UICorner")
+uiCorner.CornerRadius = UDim.new(0, 10)
+uiCorner.Parent = frame
+
+-- Set properties for the TextBox (Part Name)
+textBox.Name = "PartNameInput"
+textBox.Size = UDim2.new(0.8, 0, 0.15, 0) -- Adjusted size
+textBox.Position = UDim2.new(0.1, 0, 0.05, 0) -- Adjusted position
+textBox.PlaceholderText = "Part Name Example: Part"
+textBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+textBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+textBox.BorderSizePixel = 1
+textBox.Parent = frame
+
+-- Set properties for the TextBox (Delay Time)
+delayTextBox.Name = "DelayTimeInput"
+delayTextBox.Size = UDim2.new(0.8, 0, 0.15, 0) -- Adjusted size
+delayTextBox.Position = UDim2.new(0.1, 0, 0.22, 0) -- Adjusted position
+delayTextBox.PlaceholderText = "Delay Speed (Default: 50)"
+delayTextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+delayTextBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+delayTextBox.BorderSizePixel = 1
+delayTextBox.Parent = frame
+
+-- Set properties for the TweenButton
+tweenButton.Name = "TweenButton"
+tweenButton.Size = UDim2.new(0.8, 0, 0.15, 0) -- Adjusted size
+tweenButton.Position = UDim2.new(0.1, 0, 0.38, 0) -- Adjusted position
+tweenButton.Text = "Tween to Specific Part"
+tweenButton.BackgroundColor3 = Color3.fromRGB(0, 128, 0)
+tweenButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+tweenButton.BorderSizePixel = 1
+tweenButton.Parent = frame
+
+-- Set properties for the Loop Button
+loopButton.Name = "LoopButton"
+loopButton.Size = UDim2.new(0.8, 0, 0.15, 0) -- Adjusted size
+loopButton.Position = UDim2.new(0.1, 0, 0.55, 0) -- Adjusted position (below Tween Button)
+loopButton.Text = "Loop: Off"
+loopButton.BackgroundColor3 = Color3.fromRGB(128, 0, 0)
+loopButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+loopButton.BorderSizePixel = 1
+loopButton.Parent = frame
+
+-- Set properties for the Open/Close Button
+openCloseButton.Name = "OpenCloseButton"
+openCloseButton.Size = UDim2.new(0.05, 0, 0.1, 0) -- Size
+openCloseButton.Position = UDim2.new(0.90, 0, 0.45, 0) -- Adjusted Position
+openCloseButton.Text = "Open"
+openCloseButton.BackgroundColor3 = Color3.fromRGB(0, 0, 128)
+openCloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+openCloseButton.Draggable = true
+openCloseButton.BorderSizePixel = 1
+openCloseButton.Parent = screenGui
+
+-- Add UICorner to OpenCloseButton
+local openCloseUICorner = Instance.new("UICorner")
+openCloseUICorner.CornerRadius = UDim.new(0, 5)
+openCloseUICorner.Parent = openCloseButton
+
+-- Initialize default values
+local delayTime = 50
+local isLooping = false
+local isFrameVisible = true
+
+-- Function to update the delay time
+local function updateDelayTime()
+    local delay = tonumber(delayTextBox.Text)
+    if delay then
+        delayTime = delay
+    end
+end
+
+-- Function to find parts
+local function findParts(partName)
+    local parts = {}
+    
+    local function search(parent)
+        for _, obj in pairs(parent:GetChildren()) do
+            if obj:IsA("BasePart") and obj.Name == partName then
+                table.insert(parts, obj)
+            end
+            if obj:IsA("Model") or obj:IsA("Folder") then
+                search(obj)  -- Recursive call for nested models or folders
+            end
+        end
+    end
+    search(game:GetService("Workspace"))
+    
+    return parts
+end
+
+-- Function to tween player to each part
+local function tweenToParts(partName)
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
+    
+    if not humanoidRootPart then
+        warn("Player's character is missing HumanoidRootPart")
+        return
+    end
+
+    local parts = findParts(partName)
+
+    -- Tween to each part
+    for _, part in ipairs(parts) do
+        local tweenInfo = TweenInfo.new((part.Position - humanoidRootPart.Position).magnitude / delayTime, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
+        local goal = {CFrame = part.CFrame + Vector3.new(0, 5, 0)}  -- Position above the part
+        
+        local tween = game:GetService("TweenService"):Create(humanoidRootPart, tweenInfo, goal)
+        tween:Play()
+        tween.Completed:Wait()  -- Wait for the tween to finish
+    end
+end
+
+-- Function to handle looping tweening
+local function handleLoop(partName)
+    while isLooping do
+        tweenToParts(partName)
+        wait(delayTime)
+    end
+end
+
+-- Connect TextBox to update delay time when focus is lost
+delayTextBox.FocusLost:Connect(function()
+    updateDelayTime()
+end)
+
+-- Connect TweenButton to the tweenToParts function
+tweenButton.MouseButton1Click:Connect(function()
+    local partName = textBox.Text
+    tweenToParts(partName)
+end)
+
+-- Connect Loop Button to toggle loop functionality
+loopButton.MouseButton1Click:Connect(function()
+    isLooping = not isLooping
+    loopButton.Text = isLooping and "Loop: On" or "Loop: Off"
+    loopButton.BackgroundColor3 = isLooping and Color3.fromRGB(0, 128, 0) or Color3.fromRGB(128, 0, 0)
+    
+    -- Start or stop looping
+    if isLooping then
+        spawn(function() handleLoop(textBox.Text) end)
+    end
+end)
+
+-- Connect Open/Close Button to show/hide the frame and other elements
+openCloseButton.MouseButton1Click:Connect(function()
+    isFrameVisible = not isFrameVisible
+    frame.Visible = isFrameVisible
+    textBox.Visible = isFrameVisible
+    delayTextBox.Visible = isFrameVisible
+    tweenButton.Visible = isFrameVisible
+    loopButton.Visible = isFrameVisible
+    openCloseButton.Text = isFrameVisible and "Close" or "Open"
+    openCloseButton.BackgroundColor3 = isFrameVisible and Color3.fromRGB(0, 128, 0) or Color3.fromRGB(0, 0, 128)
+end)
