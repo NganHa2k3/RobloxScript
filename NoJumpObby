@@ -1,1 +1,80 @@
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local TextBox = Instance.new("TextBox")
+local AutoCompleteButton = Instance.new("TextButton")
+local SetZeroButton = Instance.new("TextButton")
 
+ScreenGui.Parent = game.CoreGui
+
+Frame.Parent = ScreenGui
+Frame.Size = UDim2.new(0.2, 0, 0.3, 0)
+Frame.Position = UDim2.new(0.1, 0, 0.2, 0)
+Frame.BackgroundColor3 = Color3.new(0, 0, 0)
+Frame.BackgroundTransparency = 0.5
+Frame.Active = true
+Frame.Draggable = true
+
+TextBox.Parent = Frame
+TextBox.Size = UDim2.new(0.8, 0, 0.2, 0)
+TextBox.Position = UDim2.new(0.1, 0, 0.1, 0)
+TextBox.BackgroundColor3 = Color3.new(0, 0, 0)
+TextBox.BackgroundTransparency = 0.4
+TextBox.ClearTextOnFocus = false
+TextBox.Text = "1"  -- Start with 1
+TextBox.TextColor3 = Color3.new(1, 1, 1)
+
+AutoCompleteButton.Parent = Frame
+AutoCompleteButton.Size = UDim2.new(0.8, 0, 0.2, 0)
+AutoCompleteButton.Position = UDim2.new(0.1, 0, 0.4, 0)
+AutoCompleteButton.BackgroundColor3 = Color3.new(0, 0, 0)
+AutoCompleteButton.BackgroundTransparency = 0.4
+AutoCompleteButton.Text = "Auto Complete"
+
+SetZeroButton.Parent = Frame
+SetZeroButton.Size = UDim2.new(0.8, 0, 0.2, 0)
+SetZeroButton.Position = UDim2.new(0.1, 0, 0.65, 0)
+SetZeroButton.BackgroundColor3 = Color3.new(0, 0, 0)
+SetZeroButton.BackgroundTransparency = 0.4
+SetZeroButton.Text = "Set 0"
+SetZeroButton.TextColor3 = Color3.new(1, 1, 0)
+
+local stagex = 1
+local isAutom = false
+local targetNumber = 245  -- Change this to the specific number you want
+
+AutoCompleteButton.MouseButton1Click:Connect(function()
+    if isAutom then
+        AutoCompleteButton.TextColor3 = Color3.new(1, 1, 1)
+        isAutom = false
+    else
+        AutoCompleteButton.TextColor3 = Color3.new(0, 1, 0)
+        isAutom = true
+        
+        while isAutom do
+            stagex = stagex + 1
+            TextBox.Text = tostring(stagex)
+
+            if stagex >= targetNumber then
+                print("Reached the target number: " .. targetNumber)
+                
+                isAutom = false
+                
+                stagex = 0  -- Set stagex to 0
+                TextBox.Text = tostring(stagex)  -- Update the TextBox
+            end
+
+            local checkpoint = game:GetService("Workspace").Checkpoints:FindFirstChild(tostring(stagex))
+            if checkpoint and game.Players.LocalPlayer.Character then
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = checkpoint.CFrame
+            else
+                print("Checkpoint not found for stage:", stagex)
+            end
+            wait(0.05)
+        end
+    end
+end)
+
+SetZeroButton.MouseButton1Click:Connect(function()
+    stagex = 0
+    TextBox.Text = tostring(stagex)  -- Set the TextBox value to 0
+end)
