@@ -318,7 +318,7 @@ local function onPlayerChatted(message)
 elseif words[1] == "+r" then
     resetCharacter()
 elseif words[1] == "+cmds" then
-    print("All Commands Prefix is + : +t , +tw , +tw2 , +r , +bcurve , +cube , +e and +noe , +ee , +m and +nom , +loadstring1 , +loadstring2 , +s1 and +nos1 , +j1 and +noj1 , +r1 and +nor1 , +sit , +test1 , +spawnbase , +removebase , +spawnhouse , +spawnladder , +partnamedetector , +serverbrowser , +jobid , +thechosenone and +thechosenone1 , +svhop , +br1 , +br [name] , +luobu , +bundles , +rspy , +feadmin , +car , +Hoho , +Arkenstone , +EArkenstone , +TArkenstone , +mm21 , +fun , +heavenlystrike , +heavenlystrike_loops , +heavenlystrike_stop , with n r f !")
+    print("All Commands Prefix is + : +t , +tw , +tw2 , +r , +bcurve , +cube , +e and +noe , +ee , +m and +nom , +loadstring1 , +loadstring2 , +s1 and +nos1 , +j1 and +noj1 , +r1 and +nor1 , +sit , +test1 , +spawnbase , +removebase , +spawnhouse , +spawnladder , +partnamedetector , +serverbrowser , +jobid , +thechosenone and +thechosenone1 , +svhop , +br1 , +br [name] , +luobu , +bundles , +rspy , +feadmin , +car , +Hoho , +Arkenstone , +EArkenstone , +TArkenstone , +mm21 , +fun , +heavenlystrike , +heavenlystrike_loops , +heavenlystrike_stop , +kb , with n r f !")
 elseif words[1] == "+s1" then
     game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 200
 elseif words[1] == "+nos1" then
@@ -458,6 +458,8 @@ stopRotation()
 
     elseif words[1] == "+loadstring2" then
         loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+    elseif words[1] == "+kb" then
+        loadstring(game:HttpGet(('https://pastefy.app/Te4dwSw2/raw'),true))()
     elseif words[1] == "+help" then
         warn("All Commands Prefix is + : +cmds , +t [name] , +tw [name] , +r , +e and +noe , +m and +nom , +loadstring1 , +loadstring2 , +s1 and +nos1 , +j1 and +noj1 , +r1 and +nor1 , +sit , +test1 , +spawnbase , +removebase , +partnamedetector , +br1 , +br [name] , with n r f !")
     elseif words[1] == "+test1" then
@@ -601,21 +603,17 @@ local function showWelcomeMessage()
     -- Create a new TextButton for the welcome message
     local welcomeTextButton = Instance.new("TextButton")
     welcomeTextButton.Parent = screenGui
-    welcomeTextButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    welcomeTextButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     welcomeTextButton.BackgroundTransparency = 0.5
     welcomeTextButton.BorderColor3 = Color3.fromRGB(255, 255, 255)
     welcomeTextButton.BorderSizePixel = 2
     welcomeTextButton.Position = UDim2.new(0.5, -100, 0.5, -50)  -- Center of the screen
     welcomeTextButton.Size = UDim2.new(0, 200, 0, 100)
     welcomeTextButton.Text = "All Commands Prefix is + : +t , +tw , +tw2 , +r , +bcurve , +cube , +e and +noe , +ee , +m and +nom , +loadstring1 , +loadstring2 , +s1 and +nos1 , +j1 and +noj1 , +r1 and +nor1 , +sit , +test1 , +spawnbase , +removebase , +spawnhouse , +spawnladder , +partnamedetector , +serverbrowser , +jobid , +thechosenone and +thechosenone1 , +svhop , +br1 , +br [name] , +luobu , +bundles , +rspy , +feadmin , +car , +Hoho , +Arkenstone , +EArkenstone , +mm21 , with n r f !"
-    welcomeTextButton.TextColor3 = Color3.fromRGB(255, 0, 255)
+    welcomeTextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     welcomeTextButton.Font = Enum.Font.PatrickHand
     welcomeTextButton.TextScaled = true
     welcomeTextButton.TextWrapped = true
-
-    local uiCornerWelcomeTextButton = Instance.new("UICorner")
-    uiCornerWelcomeTextButton.CornerRadius = UDim.new(0.5, 0)
-    uiCornerWelcomeTextButton.Parent = welcomeTextButton
 
     local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.In)
     local goal = {TextTransparency = 1}
@@ -642,7 +640,3 @@ CoreGui:SetCore("SendNotification", {
     Text = "Type +cmds or +help to find out how to use this script !",
     Duration = 5,
 })
-
-wait(5)
-
-loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/RobloxScript/counter/Players_Counter'))()
