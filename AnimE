@@ -1,0 +1,36 @@
+-- Free Bundles: IDK [W]
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+-- AFunction [A]
+local function G_AnimationId(LP, Ani_mationName)
+    return game.Workspace:WaitForChild(player.Name):WaitForChild("Animate"):WaitForChild(Ani_mationName)
+end
+-- Animation [S]
+local AIdle_0 = G_AnimationId(player, "idle")
+local AWalk_0 = G_AnimationId(player, "walk")
+local ARun_0 = G_AnimationId(player, "run")
+local AJump_0 = G_AnimationId(player, "jump")
+local AFall_0 = G_AnimationId(player, "fall")
+local ASwim_0 = G_AnimationId(player, "swim")
+local ASwim_1 = G_AnimationId(player, "swimidle")
+local AClimb_0 = G_AnimationId(player, "climb")
+-- getgenv()
+local Udzath = true
+
+local function ChangedDefaultAnim_Bundles()
+    if Udzath then
+        AIdle_0.Animation1.AnimationId = "http://www.roblox.com/asset/?id=3303162274"
+        AIdle_0.Animation2.AnimationId = "http://www.roblox.com/asset/?id=3303162549"
+        AWalk_0.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=4211223236"
+        ARun_0.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=4211220381"
+        AJump_0.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=4211219390"
+        AFall_0.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=4211216152"
+        ASwim_0.Swim.AnimationId = "http://www.roblox.com/asset/?id=913384386"
+        ASwim_1.SwimIdle.AnimationId = "http://www.roblox.com/asset/?id=913389285"
+        AClimb_0.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=4211214992"
+        wait(0.1)
+        print("Successfully Loaded Animation !")
+    end
+end
+
+ChangedDefaultAnim_Bundles()
