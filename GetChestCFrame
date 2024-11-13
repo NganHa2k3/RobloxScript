@@ -1,0 +1,13 @@
+game:IsLoaded()
+task.wait(0.1)
+print("Team: Pirates 'Selected'")
+
+local args = {
+    [1] = "SetTeam",
+    [2] = "Pirates"
+}
+
+game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+
+task.wait(4.5)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/NganHa2k3/Tensura/refs/heads/main/ChestCFrame"))()
