@@ -1,3 +1,5 @@
+--[[ Successfully Edited/Backup Saved It In-Case Their Removed Source Code /By NganHa2k3 For Fun ]]--
+
 --[[
     SimpleSpy v2.2 SOURCE
 
@@ -23,7 +25,7 @@ local Players = game:GetService("Players")
 local CoreGui = game:GetService("CoreGui")
 local Highlight =
 	loadstring(
-		game:HttpGet("https://github.com/exxtremestuffs/SimpleSpySource/raw/master/highlight.lua")
+		game:HttpGet("https://raw.githubusercontent.com/NganHa2k3/RobloxScript/refs/heads/source_requirements/Simple_Spy_Highlight_Source")
 	)()
 
 ---- GENERATED (kinda sorta mostly) BY GUI to LUA ----
