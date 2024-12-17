@@ -370,6 +370,8 @@ elseif words[1] == "+Arkenstone" then
     loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/RobloxScript/counter/Tools_Counter'))()
 elseif words[1] == "+EArkenstone" then
     loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/DetectTool/main/TCO_V1'))()
+elseif words[1] == "+Dex" or words[1] == "+dex" then
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/RobloxScript/refs/heads/item/Dex_Explorer_For_Mobile'))()
 elseif words[1] == "+serverbrowser" then
     loadstring(game:HttpGet("https://www.scriptblox.com/raw/Server-Browser_80", true))()
 elseif words[1] == "+jobid" then
