@@ -384,6 +384,8 @@ elseif words[1] == "+TArkenstone" then
     loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/RobloxScript/Gameplay/TCO_V0_0'))()
 elseif words[1] == "+thechosenone1" then
     loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/RobloxScript/Gameplay/TCO_V1'))()
+elseif words[1] == "+fling" or words[1] == "+op" then
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/RobloxScript/refs/heads/item/FlingScript'))()
 elseif words[1] == "+luobu" then
     loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/RobloxScript/item/LUA'))()
 
