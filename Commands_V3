@@ -460,16 +460,18 @@ local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 
 stopRotation()
 
-    elseif words[1] == "+loadstring2" then
+    elseif words[1] == "+loadstring1" then
         loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
     elseif words[1] == "+kb" then
         loadstring(game:HttpGet(('https://pastefy.app/Te4dwSw2/raw'),true))()
     elseif words[1] == "+help" then
-        warn("All Commands Prefix is + : +cmds , +t [name] , +tw [name] , +r , +e and +noe , +m and +nom , +loadstring1 , +loadstring2 , +s1 and +nos1 , +j1 and +noj1 , +r1 and +nor1 , +sit , +test1 , +spawnbase , +removebase , +partnamedetector , +br1 , +br [name] , with n r f !")
+        warn("All Commands Prefix is + : +cmds , +t [name] , +tw [name] , +r , +e and +noe , +m and +nom , +loadstring1 , +executor_v1, +executor_v2, +s1 and +nos1 , +j1 and +noj1 , +r1 and +nor1 , +sit , +test1 , +spawnbase , +removebase , +partnamedetector , +br1 , +br [name] , with n r f !")
     elseif words[1] == "+test1" then
         loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/Hello/mess/ResetMess'))()
-    elseif words[1] == "+loadstring1" then
+    elseif words[1] == "+executor_v1" then
         loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/RobloxScript_0/main/Executor_V1'))()
+    elseif words[1] == "+executor_v2" then
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/NganHa2k3/RobloxScript_0/main/Executor_V2'))()
     elseif words[1] == "+partnamedetector" then
         loadstring(game:HttpGet('https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Part%20Name%20Detector'))()
     elseif words[1] == "+spawnbase" then
